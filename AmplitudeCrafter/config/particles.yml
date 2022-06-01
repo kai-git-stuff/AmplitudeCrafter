@@ -1,0 +1,10 @@
+kaon:
+  mass: 495
+  spin: 0
+  parity: -1
+  type: meson
+
+D0:
+  mass: 2000
+  spin: 0
+  parity: -1
