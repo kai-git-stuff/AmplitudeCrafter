@@ -1,0 +1,24 @@
+
+Kmatrix:
+  func: jitter.resonances.KmatX
+  expects:
+    - channels: 
+      - m1: real
+      - m2: real
+      - index: int
+      - bg: real
+    - alphas: list[complex]
+    - resonances:
+      - pole mass: real
+      - g: list[real]
+    - sigma: data
+    - L: int
+    - index: int
+    
+Breit Wigner:
+  func: jitter.resonances.BWresonance
+  expects: 
+    - sigma: data
+    - m: real
+    - width: real
+
