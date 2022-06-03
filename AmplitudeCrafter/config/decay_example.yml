@@ -1,34 +1,74 @@
 Kmatrix:
   func: jitter.resonances.KmatX
+  d: 1.4
+  M0: 1.2
+  spin: 1
+  parity: -1
+  channel: 1
+  partial waves in:
+    - L: 0
+      S: 1
+      coupling: complex(1,0)
+    - L: 2
+      S: 1
+      coupling: complex(1,0)
+    - L: 2
+      S: 3
+      coupling: complex(1,0)
+  partial waves out:
+    - L: 2
+      S: 0
+      coupling: complex(1,0)
+  type: D0-Kmatrix
   expects:
     - channels: 
       - chanel1:
-        - m1: real
-        - m2: real
+        - m1: 1
+        - m2: 1
         - index: const 0
-        - bg: real
+        - bg: 1
       - chanel2:
-        - m1: real
-        - m2: real
+        - m1: 1
+        - m2: 1
         - index: const 1
-        - bg: real
+        - bg: 1
     - alphas: 
-      - a1: complex(real,real)
-      - a2: complex(real,real)
+      - a1: complex(1,2)
+      - a2: complex(1,0)
     - resonances:
       - pole1:
-        - pole mass: real
-        - g: list[real]
+        - pole mass: 1
+        - g: 
+          - g1: 1
+          - g2: 2
       - pole2:
-        - pole mass: real
-        - g: list[real]
-    - sigma: data
+        - pole mass: 1
+        - g: 
+          - g1: 1
+          - g2: 2
+    - sigma: sigma1
     - L: const 2
     - index: const 0
+
     
 D2300:
   func: jitter.resonances.BWresonance
+  d: 1.4
+  M0: 1.2
+  spin: 0
+  parity: -1
+  channel: 2
+  type: BW Res
+  expects:
   expects: 
-    - sigma: data
-    - m: real
-    - width: real
+    - sigma: sigma1
+    - m: 1
+    - width: 1
+  partial waves in:
+    - L: 0
+      S: 0
+      coupling: complex(1,0)
+  partial waves out:
+    - L: 0
+      S: 0
+      coupling: complex(1,0)
