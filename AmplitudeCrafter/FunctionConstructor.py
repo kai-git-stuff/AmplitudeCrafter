@@ -10,8 +10,9 @@ def run_lineshape(resonance_tuple,args,mapping_dict):
 
 def construct_function(masses,spins,parities,param_names,params,mapping_dict,resonances,resonance_tuples,bls_in,bls_out,resonance_args,smp,phsp):
 
-    resonances_filled = [run_lineshape(r,resonance_args[i][j],mapping_dict) for i, res in enumerate(resonance_tuples) for j,r in enumerate(res) ]
-    free_indices = [not r.fixed() for res in resonances for r in res ]
+    resonances_filled = [[run_lineshape(r,resonance_args[i][j],mapping_dict) for j,r in enumerate(res)] for i, res in enumerate(resonance_tuples)  ]
+    free_indices = [[not r.fixed() for r in res ] for res in resonances ]
+
 
     decay = DalitzDecay(*masses,*spins,*parities,smp,resonances_filled,bls_in,bls_out,phsp=phsp)
 
