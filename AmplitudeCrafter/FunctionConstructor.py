@@ -8,12 +8,12 @@ def run_lineshape(resonance_tuple,args,mapping_dict):
     lineshape = lineshape(map_arguments(args,mapping_dict))
     return (s,p,hel,lineshape,M0,d,p0)
 
-def construct_function(param_names,params,mapping_dict,resonances,bls_in,bls_out,resonance_args,smp,phsp):
+def construct_function(masses,spins,parities,param_names,params,mapping_dict,resonances,bls_in,bls_out,resonance_args,smp,phsp):
 
     resonances_filled = [run_lineshape(r,resonance_args[i][j],mapping_dict) for i, res in enumerate(resonances) for j,r in enumerate(res) ]
     free_indices = [not r.fixed() for res in resonances for r in res ]
 
-    decay = DalitzDecay(md,ma,mb,mc,sd,sa,sb,sc,pd,pa,pb,pc,smp,resonances_filled,bls_in,bls_out,phsp=None)
+    decay = DalitzDecay(*masses,*spins,*parities,smp,resonances_filled,bls_in,bls_out,phsp=phsp)
 
     start = map_arguments(params,mapping_dict)
 
@@ -37,7 +37,7 @@ def construct_function(param_names,params,mapping_dict,resonances,bls_in,bls_out
             tmp = chain(decay,nu,*lambdas,resonances_filled[2],bls_in_mapped[2],bls_out_mapped[2],3) + chain(decay,nu,*lambdas,resonances_filled[1],bls_in_mapped[1],bls_out_mapped[1],2) + chain(decay,nu,*lambdas,resonances_filled[0],bls_in_mapped[0],bls_out_mapped[0],1)
             return tmp
 
-        ampl = sum(sum(jnp.abs(O(ld,[la,0,0]))**2  for la in sp.direction_options(decay["sa"])) for ld in sp.direction_options(sd))
+        ampl = sum(sum(jnp.abs(O(ld,[la,0,0]))**2  for la in sp.direction_options(decay["sa"])) for ld in sp.direction_options(decay["sa"]))
         return ampl
 
     return f

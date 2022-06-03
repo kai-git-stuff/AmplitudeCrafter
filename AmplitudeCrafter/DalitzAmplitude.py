@@ -1,6 +1,6 @@
 from jitter.amplitudes.dalitz_plot_function import DalitzDecay
 from AmplitudeCrafter.loading import load
-from ParticleLibrary import particle
+from AmplitudeCrafter.ParticleLibrary import particle
 from jitter.phasespace.DalitzPhasespace import DalitzPhaseSpace
 from AmplitudeCrafter.locals import config_dir
 from AmplitudeCrafter.Resonances import load_resonances, is_free
@@ -57,10 +57,20 @@ class DalitzAmplitude:
         mapping_dict = self.mapping_dict
         bls_in = self.get_bls_in()
         bls_out = self.get_bls_out()
-        resonances = self.get_resonance_tuples()
+        resonance_tuples = self.get_resonance_tuples()
         resonance_args = self.get_resonance_targs()
 
-        f = construct_function(param_names,params,mapping_dict,resonances,bls_in,bls_out,resonance_args,smp,self.phsp)
+        spins = [self.p0.spin] + [p.spin for p in self.particles]
+        parities = [self.p0.parity] + [p.parity for p in self.particles]
+        masses = [self.p0.mass] + [p.mass for p in self.particles]
+
+        mapping_dict["sigma3"] = self.phsp.m2ab(smp)
+        mapping_dict["sigma2"] = self.phsp.m2ac(smp)
+        mapping_dict["sigma1"] = self.phsp.m2bc(smp)
+        resonances = [self.resonances[i] for i in [1,2,3]]
+        f = construct_function(masses,spins,parities,param_names,params,mapping_dict,
+                                resonances,resonance_tuples,bls_in,bls_out,resonance_args,smp,self.phsp)
+        return f
 
         
 
