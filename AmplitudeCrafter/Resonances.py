@@ -25,8 +25,8 @@ def analyse_value(value,name,dtc,lst):
         dtc[name] = FitParameter(name,value,-100,100,0.01)
         return True
     if "sigma" in value:
-        lst.append(name)
-        dtc[name] = "data"
+        lst.append(value)
+        dtc[value] = value
     if "const" in value:
         value = value.replace("const","")
         try:
@@ -142,7 +142,7 @@ class Resonance:
         self.args = kwargs["args"]
         self.mapping_dict = mapping_dict
 
-        self.data_key = [k for k,v in mapping_dict.items() if "sigma" in v][0]
+        self.data_key = [k for k,v in mapping_dict.items() if isinstance(v,str) and "sigma" in v][0]
 
         self.lineshape = getattr(resonances,kwargs["func"].split(".")[-1])
 
@@ -186,7 +186,7 @@ class Resonance:
         return string
 
 if __name__=="__main__":
-    from locals import config_dir
+    from AmplitudeCrafter.locals import config_dir
     res, mapping_dict = load_resonances(config_dir + "decay_example.yml")
     for r in res[1]:
         r.mapping_dict[r.data_key] = 50

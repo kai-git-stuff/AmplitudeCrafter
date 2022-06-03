@@ -5,12 +5,12 @@ from jax import numpy as jnp
 
 def run_lineshape(resonance_tuple,args,mapping_dict):
     s,p,hel,lineshape,M0,d,p0 = resonance_tuple
-    lineshape = lineshape(map_arguments(args,mapping_dict))
+    lineshape = lineshape(*map_arguments(args,mapping_dict))
     return (s,p,hel,lineshape,M0,d,p0)
 
-def construct_function(masses,spins,parities,param_names,params,mapping_dict,resonances,bls_in,bls_out,resonance_args,smp,phsp):
+def construct_function(masses,spins,parities,param_names,params,mapping_dict,resonances,resonance_tuples,bls_in,bls_out,resonance_args,smp,phsp):
 
-    resonances_filled = [run_lineshape(r,resonance_args[i][j],mapping_dict) for i, res in enumerate(resonances) for j,r in enumerate(res) ]
+    resonances_filled = [run_lineshape(r,resonance_args[i][j],mapping_dict) for i, res in enumerate(resonance_tuples) for j,r in enumerate(res) ]
     free_indices = [not r.fixed() for res in resonances for r in res ]
 
     decay = DalitzDecay(*masses,*spins,*parities,smp,resonances_filled,bls_in,bls_out,phsp=phsp)
@@ -26,7 +26,7 @@ def construct_function(masses,spins,parities,param_names,params,mapping_dict,res
         for i,l in enumerate(free_indices):
             for j, free in enumerate(l):
                 if free:
-                    resonances_filled[i][j] = run_lineshape(resonances[i][j],resonance_args[i][j],mapping_dict)
+                    resonances_filled[i][j] = run_lineshape(resonance_tuples[i][j],resonance_args[i][j],mapping_dict)
 
     def f(args):
         fill_args(args,mapping_dict)

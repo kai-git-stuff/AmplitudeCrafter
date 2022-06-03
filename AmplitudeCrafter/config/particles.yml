@@ -1,10 +1,25 @@
-kaon:
-  mass: 495
+K:
+  mass: 493.677
   spin: 0
   parity: -1
   type: meson
 
 D0:
-  mass: 2000
+  mass: 1864.84
   spin: 0
   parity: -1
+  spin: 0
+  parity: -1
+  type: meson
+
+Lc:
+  mass : 2286.46
+  spin: 1
+  parity: 1
+  type: baryon
+
+Lb:
+  mass: 5619.60
+  spin: 1
+  parity: 1
+  type: baryon
