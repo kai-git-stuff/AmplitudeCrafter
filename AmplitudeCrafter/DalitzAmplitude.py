@@ -6,6 +6,8 @@ from AmplitudeCrafter.locals import config_dir
 from AmplitudeCrafter.Resonances import load_resonances, is_free
 from AmplitudeCrafter.FunctionConstructor import construct_function
 from jitter.fitting import FitParameter
+from jitter.kinematics import two_body_momentum
+
 
 class DalitzAmplitude:
     def __init__(self,p0:particle,p1:particle,p2:particle,p3:particle):
@@ -44,6 +46,10 @@ class DalitzAmplitude:
         res, mapping_dict = load_resonances(f)
         self.resonances = res
         self.mapping_dict = mapping_dict
+        masses= {1:(self.mb,self.mc),2:(self.ma,self.mc),3:(self.ma,self.mb)}
+        for channel,resonances_channel in self.resonances.items():
+            for resonance in resonances_channel:
+                resonance.p0 = two_body_momentum(self.md,*masses[channel])
 
     def get_resonance_tuples(self):
         return [[r.tuple() for r in self.resonances[i]]  for i in [1,2,3]]
@@ -52,14 +58,13 @@ class DalitzAmplitude:
         return [[r.arguments for r in self.resonances[i]]  for i in [1,2,3]]
     
     def get_amplitude_function(self,smp):
-        param_names = [p for p in self.mapping_dict.keys() if is_free(p)]
+        param_names = [k for k,p in self.mapping_dict.items() if is_free(p)]
         params = [self.mapping_dict[p] for p in param_names]
         mapping_dict = self.mapping_dict
         bls_in = self.get_bls_in()
         bls_out = self.get_bls_out()
         resonance_tuples = self.get_resonance_tuples()
         resonance_args = self.get_resonance_targs()
-
         spins = [self.p0.spin] + [p.spin for p in self.particles]
         parities = [self.p0.parity] + [p.parity for p in self.particles]
         masses = [self.p0.mass] + [p.mass for p in self.particles]
@@ -68,9 +73,9 @@ class DalitzAmplitude:
         mapping_dict["sigma2"] = self.phsp.m2ac(smp)
         mapping_dict["sigma1"] = self.phsp.m2bc(smp)
         resonances = [self.resonances[i] for i in [1,2,3]]
-        f = construct_function(masses,spins,parities,param_names,params,mapping_dict,
+        f,start = construct_function(masses,spins,parities,param_names,params,mapping_dict,
                                 resonances,resonance_tuples,bls_in,bls_out,resonance_args,smp,self.phsp)
-        return f
+        return f,start
 
         
 

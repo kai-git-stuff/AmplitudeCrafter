@@ -137,7 +137,7 @@ class Resonance:
 
         self.M0 = kwargs["M0"]
         self.d = kwargs["d"]
-        self.p0 = 0 # todo two_body_breakup Momentum based on data and stuff
+        self.p0 = None # todo two_body_breakup Momentum based on data and stuff
 
         self.args = kwargs["args"]
         self.mapping_dict = mapping_dict

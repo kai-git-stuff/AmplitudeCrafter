@@ -23,52 +23,52 @@ Kmatrix:
   expects:
     - channels: 
       - chanel1:
-        - m1: 1
-        - m2: 1
+        - m1: 1864.84
+        - m2: 493.677
         - index: const 0
-        - bg: 1
+        - bg: 0.00046646033624466593 
       - chanel2:
-        - m1: 1
-        - m2: 1
+        - m1: 493.677
+        - m2: 2006.85
         - index: const 1
-        - bg: 1
+        - bg: -0.0024885762382539436
     - alphas: 
-      - a1: complex(1,2)
-      - a2: complex(1,0)
+      - a1: complex(-21.838053922163205,2.5835176753426845)
+      - a2: complex(97.92875728553436 , -25.05989712965156)
     - resonances:
       - pole1:
-        - pole mass: 1
+        - pole mass: 2713.6
         - g: 
-          - g1: 1
-          - g2: 2
+          - g1: 8.766707041735982
+          - g2: -14.803591954940154
       - pole2:
-        - pole mass: 1
+        - pole mass: 2967.1
         - g: 
-          - g1: 1
-          - g2: 2
+          - g1: -26.929560109929664
+          - g2: 4.898837086811296
     - sigma: sigma1
     - L: const 2
     - index: const 0
 
     
-D2300:
-  func: jitter.resonances.BWresonance
-  d: 1.4
-  M0: 1.2
-  spin: 0
-  parity: -1
-  channel: 2
-  type: BW Res
-  expects:
-  expects: 
-    - sigma: sigma1
-    - m: 1
-    - width: 1
-  partial waves in:
-    - L: 0
-      S: 0
-      coupling: complex(1,0)
-  partial waves out:
-    - L: 0
-      S: 0
-      coupling: complex(1,0)
+# D2300:
+#   func: jitter.resonances.BWresonance
+#   d: 1.4
+#   M0: 1.2
+#   spin: 0
+#   parity: -1
+#   channel: 2
+#   type: BW Res
+#   expects:
+#   expects: 
+#     - sigma: sigma1
+#     - m: 1
+#     - width: 1
+#   partial waves in:
+#     - L: 0
+#       S: 0
+#       coupling: complex(1,0)
+#   partial waves out:
+#     - L: 0
+#       S: 0
+#       coupling: complex(1,0)
