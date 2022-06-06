@@ -46,6 +46,19 @@ class DalitzAmplitude:
     def get_bls_out(self):
         return [[r.bls_out for r in self.resonances[i]]  for i in [1,2,3]]
 
+    def add_resonances(self,f=config_dir + "decay_example.yml"):
+        if not self.loaded:
+            raise ValueError("Can only add resonances if a base set is loaded!")
+        res, mapping_dict = load_resonances(f)
+        self.resonances.extend(res)
+        self.mapping_dict.update(mapping_dict)
+        masses= {1:(self.mb,self.mc),2:(self.ma,self.mc),3:(self.ma,self.mb)}
+        for channel,resonances_channel in self.resonances.items():
+            for resonance in resonances_channel:
+                resonance.p0 = two_body_momentum(self.md,*masses[channel])
+        self.__loaded = True
+
+
     def load_resonances(self,f=config_dir + "decay_example.yml"):
         res, mapping_dict = load_resonances(f)
         self.resonances = res
