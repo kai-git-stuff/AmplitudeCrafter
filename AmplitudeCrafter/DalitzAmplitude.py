@@ -85,7 +85,7 @@ class DalitzAmplitude:
         
         param_names = [k for k,p in self.mapping_dict.items() if is_free(p)]
         params = [self.mapping_dict[p] for p in param_names]
-        mapping_dict = self.mapping_dict
+        mapping_dict = self.mapping_dict.copy()
         bls_in = self.get_bls_in()
         bls_out = self.get_bls_out()
         resonance_tuples = self.get_resonance_tuples()
