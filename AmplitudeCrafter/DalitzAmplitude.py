@@ -50,7 +50,8 @@ class DalitzAmplitude:
         if not self.loaded:
             raise ValueError("Can only add resonances if a base set is loaded!")
         res, mapping_dict = load_resonances(f)
-        self.resonances.extend(res)
+        for k,v in res.items():
+            self.resonances[k].append(v)
         self.mapping_dict.update(mapping_dict)
         masses= {1:(self.mb,self.mc),2:(self.ma,self.mc),3:(self.ma,self.mb)}
         for channel,resonances_channel in self.resonances.items():
