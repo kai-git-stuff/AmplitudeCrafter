@@ -47,10 +47,6 @@ def construct_function(masses,spins,parities,param_names,params,mapping_dict,res
 
         def O(nu,lambdas):       
             tmp = chain(decay,nu,*lambdas,resonances_filled[2],bls_in_mapped[2],bls_out_mapped[2],3) + chain(decay,nu,*lambdas,resonances_filled[1],bls_in_mapped[1],bls_out_mapped[1],2) + chain(decay,nu,*lambdas,resonances_filled[0],bls_in_mapped[0],bls_out_mapped[0],1)
-            # print("-----------------%s------------------"%lambdas)
-            # print(resonances_filled[0])
-            # print(chain(decay,nu,*lambdas,resonances_filled[0],bls_in_mapped[0],bls_out_mapped[0],1))
-            # print(bls_in_mapped[0])
             return tmp
 
         ampl = sum(sum(jnp.abs(O(ld,[la,0,0]))**2  for la in sp.direction_options(decay["sa"])) for ld in sp.direction_options(decay["sd"]))
