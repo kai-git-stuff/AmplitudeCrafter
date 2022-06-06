@@ -1,14 +1,14 @@
 Kmatrix:
   func: jitter.resonances.KmatX
-  d: 1.4
-  M0: 1.2
-  spin: 1
+  d: 0.0015
+  M0: 2850.
+  spin: 2
   parity: -1
   channel: 1
   partial waves in:
     - L: 0
       S: 1
-      coupling: complex(1,0)
+      coupling: complex(1,0) const
     - L: 2
       S: 1
       coupling: complex(1,0)
@@ -23,15 +23,17 @@ Kmatrix:
   expects:
     - channels: 
       - chanel1:
+        - index: const 0
+        - L: const 2
+        - bg: 0.00046646033624466593 
         - m1: 1864.84
         - m2: 493.677
-        - index: const 0
-        - bg: 0.00046646033624466593 
       - chanel2:
+        - index: const 1
+        - L: const 2
+        - bg: -0.0024885762382539436
         - m1: 493.677
         - m2: 2006.85
-        - index: const 1
-        - bg: -0.0024885762382539436
     - alphas: 
       - a1: complex(-21.838053922163205,2.5835176753426845)
       - a2: complex(97.92875728553436 , -25.05989712965156)
@@ -50,25 +52,90 @@ Kmatrix:
     - L: const 2
     - index: const 0
 
-    
-# D2300:
-#   func: jitter.resonances.BWresonance
-#   d: 1.4
-#   M0: 1.2
-#   spin: 0
-#   parity: -1
-#   channel: 2
-#   type: BW Res
-#   expects:
-#   expects: 
-#     - sigma: sigma1
-#     - m: 1
-#     - width: 1
-#   partial waves in:
-#     - L: 0
-#       S: 0
-#       coupling: complex(1,0)
-#   partial waves out:
-#     - L: 0
-#       S: 0
-#       coupling: complex(1,0)
+D2300:
+  func: jitter.resonances.BWresonance
+  d: 0.0015
+  M0: 2317
+  spin: 0
+  parity: 1
+  channel: 1
+  type: D2300-BW
+  expects:
+  expects: 
+    - sigma: sigma1
+    - m: 2317. const
+    - width: 53. const
+  partial waves in:
+    - L: 0
+      S: 1
+      coupling: complex(1,0)
+  partial waves out:
+    - L: 0
+      S: 0
+      coupling: complex(1,0) const
+
+Ds3_2860:
+  func: jitter.resonances.BWresonance
+  d: 0.0015
+  M0: 2860
+  spin: 6
+  parity: -1
+  channel: 1
+  type: Ds3_2860-BW
+  expects:
+  expects: 
+    - sigma: sigma1
+    - m: 2860. const
+    - width: 53. const
+  partial waves in:
+    - L: 4
+      S: 5
+      coupling: complex(1,0) 
+  partial waves out:
+    - L: 6
+      S: 0
+      coupling: complex(1,0) const
+
+xi_c_2791:
+  func: jitter.resonances.BWresonance
+  d: 0.0015
+  M0: 2791.9
+  spin: 1
+  parity: -1
+  channel: 2
+  type: xi_c_2791-BW
+  expects:
+  expects: 
+    - sigma: sigma1
+    - m: 2791.9 const
+    - width: 8.9 const
+  partial waves in:
+    - L: 0
+      S: 1
+      coupling: complex(1,0) 
+  partial waves out:
+    - L: 0
+      S: 1
+      coupling: complex(1,0) const
+
+xi_c_2815:
+  func: jitter.resonances.BWresonance
+  d: 0.0015
+  M0: 2815
+  spin: 1
+  parity: -1
+  channel: 2
+  type: xi_c_2815-BW
+  expects:
+  expects: 
+    - sigma: sigma1
+    - m: 2815 const
+    - width: 2.43 const
+  partial waves in:
+    - L: 0
+      S: 1
+      coupling: complex(1,0) 
+  partial waves out:
+    - L: 0
+      S: 1
+      coupling: complex(1,0) const

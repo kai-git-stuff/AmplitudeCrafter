@@ -2,11 +2,19 @@ from jitter import resonances
 from jitter.constants import spin as sp
 from AmplitudeCrafter.loading import load
 from jitter.fitting import FitParameter
+import importlib
 
 def is_free(p):
     if isinstance(p,FitParameter):
         return not p.fixed
     return False
+
+def process_complex(value):
+    value = value.replace("complex","")
+    value = value.replace("(","")
+    value = value.replace(")","")
+    real, imag = value.split(",")
+    return float(real) + 1j * float(imag)
 
 def flatten(listoflists):
     lst = []
@@ -29,6 +37,10 @@ def analyse_value(value,name,dtc,lst):
         dtc[value] = value
     if "const" in value:
         value = value.replace("const","")
+        if "complex" in value:
+            dtc[name] = process_complex(value)
+            lst.append(name)
+            return True
         try:
             dtc[name] = int(value)
         except ValueError:
@@ -106,6 +118,17 @@ def get_fit_parameter(arg,mapping_dict):
         val = val
     return val
 
+def needed_parameter_names(param_names):
+    # this only translates all _complex values into real and imaginary
+    needed_names = []
+    for p in param_names:
+        if "_complex" in p:
+            r, i = p.replace("_complex","_real"), p.replace("_complex","_imag")
+            needed_names.append(r)
+            needed_names.append(i)
+        else:
+            needed_names.append(p)
+    return needed_names
 
 def map_arguments(args,mapping_dict):
     if isinstance(args,list):
@@ -131,6 +154,7 @@ def read_bls(bls_dicts,mapping_dict,name):
 
 class Resonance:
     def __init__(self,kwargs,mapping_dict):
+        self.kwargs = kwargs
         self.type = kwargs["type"]
         self.spin = kwargs["spin"]
         self.parity = kwargs["parity"]
@@ -144,26 +168,40 @@ class Resonance:
 
         self.data_key = [k for k,v in mapping_dict.items() if isinstance(v,str) and "sigma" in v][0]
 
-        self.lineshape = getattr(resonances,kwargs["func"].split(".")[-1])
+        module = importlib.import_module(".".join(kwargs["func"].split(".")[:-1]))
+
+        self.lineshape = getattr(module,kwargs["func"].split(".")[-1])
 
         self.__bls_in = read_bls(kwargs["partial waves in"],self.mapping_dict,self.type+"=>"+"bls_in")
         self.__bls_out = read_bls(kwargs["partial waves out"],self.mapping_dict,self.type+"=>"+"bls_out")
 
 
+    def dumpd(self):
+        # todo not Finished yet
+        dtc = self.kwargs.copy()
+        for key, value in self.mapping_dict.items():
+            try:
+                key_chain = key.split("=>")[1:]
+                temp_dtc = dtc["expects"]
+                for sub_key in key_chain[:-1]:
+                    temp_dtc = temp_dtc[sub_key]
+                temp_dtc[key_chain[-1]] = value
+            except:
+                continue
+        print(dtc)
+        return dtc
+
     @property
     def arguments(self):
         return self.args
-        return map_arguments(self.args,self.mapping_dict)
     
     @property
     def bls_in(self):
         return self.__bls_in
-        return map_arguments(self.__bls_in,self.mapping_dict)
     
     @property
     def bls_out(self):
         return self.__bls_out
-        return map_arguments(self.__bls_out,self.mapping_dict)
 
     def tuple(self,s=None):
         if s is not None:

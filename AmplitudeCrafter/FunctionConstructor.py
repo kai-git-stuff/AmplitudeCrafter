@@ -1,12 +1,15 @@
 from jitter.amplitudes.dalitz_plot_function import DalitzDecay, chain
 from jitter.constants import spin as sp
-from AmplitudeCrafter.Resonances import map_arguments
+from AmplitudeCrafter.Resonances import map_arguments, needed_parameter_names
 from jax import numpy as jnp
+from jax import jit
 
 def run_lineshape(resonance_tuple,args,mapping_dict):
     s,p,hel,lineshape,M0,d,p0 = resonance_tuple
     lineshape = lineshape(*map_arguments(args,mapping_dict))
     return (s,p,hel,lineshape,M0,d,p0)
+
+
 
 def construct_function(masses,spins,parities,param_names,params,mapping_dict,resonances,resonance_tuples,bls_in,bls_out,resonance_args,smp,phsp):
 
@@ -16,9 +19,13 @@ def construct_function(masses,spins,parities,param_names,params,mapping_dict,res
     bls_out_mapped = map_arguments(bls_out,mapping_dict)
 
     decay = DalitzDecay(*masses,*spins,*parities,smp,resonances_filled,[bls_in_mapped,bls_out_mapped],phsp=phsp)
-    start = map_arguments(param_names,mapping_dict)
+    
+    needed_param_names = needed_parameter_names(param_names)
+    # we need to translate all _complex values into real and imaginary
+    start = map_arguments(needed_param_names,mapping_dict)
+
     def fill_args(args,mapping_dict):
-        for name, val in zip(param_names,args):
+        for name, val in zip(needed_param_names,args):
             mapping_dict[name] = val
         return mapping_dict
 
@@ -28,6 +35,7 @@ def construct_function(masses,spins,parities,param_names,params,mapping_dict,res
                 if free:
                     resonances_filled[i][j] = run_lineshape(resonance_tuples[i][j],resonance_args[i][j],mapping_dict)
 
+    @jit
     def f(args):
         fill_args(args,mapping_dict)
         update()
