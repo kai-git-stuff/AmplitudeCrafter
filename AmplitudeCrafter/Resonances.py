@@ -148,7 +148,7 @@ def read_bls(bls_dicts,mapping_dict,name):
     dtc = {}
     for bls in bls_dicts:
         lst = []
-        analyse_value(bls["coupling"],name,mapping_dict,lst)
+        analyse_value(bls["coupling"],name+f"L:{bls['L']},S:{bls['S']}",mapping_dict,lst)
         dtc[(bls["L"],bls["S"])] = lst[0]
     return dtc
 
