@@ -11,7 +11,7 @@ def load(f:str):
 def write(dtc,f:str):
     with open(f, "w") as stream:
         try:
-            res = yaml.dump(dtc,stream)
+            res = yaml.dump(dtc,stream,sort_keys=False)
         except yaml.YAMLError as exc:
             print(exc)
     return res
