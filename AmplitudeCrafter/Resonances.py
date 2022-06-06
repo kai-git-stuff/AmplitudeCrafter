@@ -219,8 +219,8 @@ class Resonance:
         del dtc["args"]
         mapping_dict[self.data_key] = "sigma%s"%self.kwargs["channel"]
         dump_in_dict(dtc["expects"],mapping_dict,self.name)
-        dtc["partial waves in"] = [{"L":S,"S":S,"coupling":dump_bls(b,mapping_dict)} for (L,S), b in self.bls_in.items()]
-        dtc["partial waves out"] = [{"L":S,"S":S,"coupling":dump_bls(b,mapping_dict)} for (L,S), b in self.bls_out.items()]
+        dtc["partial waves in"] = [{"L":L,"S":S,"coupling":dump_bls(b,mapping_dict)} for (L,S), b in self.bls_in.items()]
+        dtc["partial waves out"] = [{"L":L,"S":S,"coupling":dump_bls(b,mapping_dict)} for (L,S), b in self.bls_out.items()]
         return dtc
 
     @property
