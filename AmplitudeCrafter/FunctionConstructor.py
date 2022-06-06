@@ -1,5 +1,6 @@
 from jitter.amplitudes.dalitz_plot_function import DalitzDecay, chain
 from jitter.constants import spin as sp
+from numpy import ma
 from AmplitudeCrafter.Resonances import map_arguments, needed_parameter_names
 from jax import numpy as jnp
 from jax import jit
@@ -34,16 +35,18 @@ def construct_function(masses,spins,parities,param_names,params,mapping_dict,res
             dtc[name] = val
         return dtc
 
+    def update(mapping_dict):
+        for i,l in enumerate(free_indices):
+            for j, free in enumerate(l):
+                if free:
+                    resonances_filled[i][j] = run_lineshape(resonance_tuples[i][j],resonance_args[i][j],mapping_dict)
+
     @jit
     def f(args):
         mapping_dict = fill_args(args,mapping_dict_global)
         bls_in_mapped = map_arguments(bls_in,mapping_dict)
         bls_out_mapped = map_arguments(bls_out,mapping_dict)
-
-        for i,l in enumerate(free_indices):
-            for j, free in enumerate(l):
-                if free:
-                    resonances_filled[i][j] = run_lineshape(resonance_tuples[i][j],resonance_args[i][j],mapping_dict)
+        update(mapping_dict)
 
         def O(nu,lambdas):       
             tmp = chain(decay,nu,*lambdas,resonances_filled[2],bls_in_mapped[2],bls_out_mapped[2],3) + chain(decay,nu,*lambdas,resonances_filled[1],bls_in_mapped[1],bls_out_mapped[1],2) + chain(decay,nu,*lambdas,resonances_filled[0],bls_in_mapped[0],bls_out_mapped[0],1)
