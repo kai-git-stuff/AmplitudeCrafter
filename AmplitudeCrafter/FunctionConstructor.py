@@ -12,7 +12,7 @@ def run_lineshape(resonance_tuple,args,mapping_dict):
 
 
 def construct_function(masses,spins,parities,param_names,params,mapping_dict,resonances,resonance_tuples,bls_in,bls_out,resonance_args,smp,phsp):
-
+    mapping_dict_global = mapping_dict
     resonances_filled = [[run_lineshape(r,resonance_args[i][j],mapping_dict) for j,r in enumerate(res)] for i, res in enumerate(resonance_tuples)  ]
     free_indices = [[not r.fixed() for r in res ] for res in resonances ]
     bls_in_mapped = map_arguments(bls_in,mapping_dict)
@@ -25,11 +25,12 @@ def construct_function(masses,spins,parities,param_names,params,mapping_dict,res
     start = map_arguments(needed_param_names,mapping_dict)
 
     def fill_args(args,mapping_dict):
+        dtc = mapping_dict.copy()
         for name, val in zip(needed_param_names,args):
-            mapping_dict[name] = val
-        return mapping_dict
+            dtc[name] = val
+        return dtc
 
-    def update():
+    def update(mapping_dict):
         for i,l in enumerate(free_indices):
             for j, free in enumerate(l):
                 if free:
@@ -37,8 +38,8 @@ def construct_function(masses,spins,parities,param_names,params,mapping_dict,res
 
     @jit
     def f(args):
-        fill_args(args,mapping_dict)
-        update()
+        mapping_dict = fill_args(args,mapping_dict_global)
+        update(mapping_dict)
         bls_in_mapped = map_arguments(bls_in,mapping_dict)
         bls_out_mapped = map_arguments(bls_out,mapping_dict)
 
