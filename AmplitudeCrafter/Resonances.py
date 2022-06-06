@@ -1,6 +1,6 @@
 from jitter import resonances
 from jitter.constants import spin as sp
-from AmplitudeCrafter.loading import load
+from AmplitudeCrafter.loading import load, write
 from jitter.fitting import FitParameter
 import importlib
 
@@ -80,6 +80,36 @@ def analyze_structure(parameters,parameter_dict,designation=""):
         analyse_value(value,new_name,ret_dict,ret_list)
     return ret_list,ret_dict
 
+def dump_value(param,name,value,new_name,mapping_dict):
+    if not isinstance(value,str):
+        param[name] = mapping_dict[new_name]
+    elif "const" in value:
+        param[name] = value
+    elif "sigma" in name:
+        param[name] = value
+    elif "complex" in value:
+        r,i =  mapping_dict[new_name+"_real"] , mapping_dict[new_name+"_imag"]
+        param[name] = "complex(%s,%s)"%(r,i)
+    else:
+        raise ValueError("Cant map value (%s) of type %s"%(value,type(value)))
+
+def dump_in_dict(replace_dict,mapping_dict,designation):
+    for param in replace_dict:
+        if not isinstance(param,dict):
+            raise ValueError("All parameters need to have a name!")
+        if len(param.keys()) != 1:
+            raise(ValueError("only one Value per name! %s"%param))
+        
+        name, = param.keys()
+        value,  = param.values()
+
+        new_name = designation + "=>" + name
+        if isinstance(value,list):
+            dump_in_dict(value,mapping_dict,designation=new_name)
+        else:
+            dump_value(param,name,value,new_name,mapping_dict)
+    return True
+
 def handle_resonance_config(config_dict:dict,name):
     parameter_dict = {}
     parameter_dict["type"] = config_dict["func"].split(".")[-1]
@@ -95,7 +125,7 @@ def load_resonances(f:str):
     for resonance_name, resonance in resonance_dict.items():
         params, mapping_dict = handle_resonance_config(resonance,resonance_name)
         resonance["args"] = params
-        r = Resonance(resonance,mapping_dict)
+        r = Resonance(resonance,mapping_dict,resonance_name)
         resonances[resonance["channel"]].append(r)
         global_mapping_dict.update(r.mapping_dict)
     return resonances, global_mapping_dict
@@ -152,12 +182,19 @@ def read_bls(bls_dicts,mapping_dict,name):
         dtc[(bls["L"],bls["S"])] = lst[0]
     return dtc
 
+def dump_bls(b,mapping_dict):
+    val = get_val(b,mapping_dict)
+    if isinstance(val,complex):
+        val = "complex(%s,%s)"%(val.real,val.imag)
+    return val
+
 class Resonance:
-    def __init__(self,kwargs,mapping_dict):
+    def __init__(self,kwargs,mapping_dict,name):
         self.kwargs = kwargs
         self.type = kwargs["type"]
         self.spin = kwargs["spin"]
         self.parity = kwargs["parity"]
+        self.name = name
 
         self.M0 = kwargs["M0"]
         self.d = kwargs["d"]
@@ -167,28 +204,23 @@ class Resonance:
         self.mapping_dict = mapping_dict
 
         self.data_key = [k for k,v in mapping_dict.items() if isinstance(v,str) and "sigma" in v][0]
+        self.data_replacement = mapping_dict[self.data_key]
 
         module = importlib.import_module(".".join(kwargs["func"].split(".")[:-1]))
 
         self.lineshape = getattr(module,kwargs["func"].split(".")[-1])
 
-        self.__bls_in = read_bls(kwargs["partial waves in"],self.mapping_dict,self.type+"=>"+"bls_in")
-        self.__bls_out = read_bls(kwargs["partial waves out"],self.mapping_dict,self.type+"=>"+"bls_out")
+        self.__bls_in = read_bls(kwargs["partial waves in"],self.mapping_dict,self.name+"=>"+"bls_in")
+        self.__bls_out = read_bls(kwargs["partial waves out"],self.mapping_dict,self.name+"=>"+"bls_out")
 
-
-    def dumpd(self):
+    def dumpd(self,mapping_dict):
         # todo not Finished yet
         dtc = self.kwargs.copy()
-        for key, value in self.mapping_dict.items():
-            try:
-                key_chain = key.split("=>")[1:]
-                temp_dtc = dtc["expects"]
-                for sub_key in key_chain[:-1]:
-                    temp_dtc = temp_dtc[sub_key]
-                temp_dtc[key_chain[-1]] = value
-            except:
-                continue
-        print(dtc)
+        del dtc["args"]
+        mapping_dict[self.data_key] = "sigma%s"%self.kwargs["channel"]
+        dump_in_dict(dtc["expects"],mapping_dict,self.name)
+        dtc["partial waves in"] = [{"L":S,"S":S,"coupling":dump_bls(b,mapping_dict)} for (L,S), b in self.bls_in.items()]
+        dtc["partial waves out"] = [{"L":S,"S":S,"coupling":dump_bls(b,mapping_dict)} for (L,S), b in self.bls_out.items()]
         return dtc
 
     @property

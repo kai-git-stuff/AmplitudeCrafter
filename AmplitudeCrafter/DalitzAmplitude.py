@@ -1,5 +1,5 @@
 from jitter.amplitudes.dalitz_plot_function import DalitzDecay
-from AmplitudeCrafter.loading import load
+from AmplitudeCrafter.loading import write
 from AmplitudeCrafter.ParticleLibrary import particle
 from jitter.phasespace.DalitzPhasespace import DalitzPhaseSpace
 from AmplitudeCrafter.locals import config_dir
@@ -20,7 +20,11 @@ class DalitzAmplitude:
         self.md = p0.mass
 
         self.phsp = DalitzPhaseSpace(self.ma,self.mb,self.mc,self.md)
+        self.__loaded = False
 
+    @property
+    def loaded(self):
+        return self.__loaded
 
     def reload(self):
         spins = [self.p0.spin] + [p.spin for p in self.particles]
@@ -51,6 +55,8 @@ class DalitzAmplitude:
             for resonance in resonances_channel:
                 resonance.p0 = two_body_momentum(self.md,*masses[channel])
 
+        self.__loaded = True
+
     def get_resonance_tuples(self):
         return [[r.tuple() for r in self.resonances[i]]  for i in [1,2,3]]
     
@@ -58,14 +64,25 @@ class DalitzAmplitude:
         return [[r.arguments for r in self.resonances[i]]  for i in [1,2,3]]
     
     def dumpd(self,parameters):
+        if not self.loaded:
+            raise ValueError("Load Resonance config first, before saving!")
         dtc = {}
+        mapping_dict = self.mapping_dict.copy()
+        for param,name in zip(parameters,self.get_arg_names()):
+            mapping_dict[name] = param
         for i, resonances in self.resonances.items():
             for res in resonances:
-                dtc[res.name] = res.dumpd()
+                dtc[res.name] = res.dumpd(mapping_dict)
         return dtc
+
+    def dump(self,parameters,fname):
+        write(self.dumpd(parameters),fname)
             
 
     def get_amplitude_function(self,smp):
+        if not self.loaded:
+            raise ValueError("Load Resonance config first, before building Amplitude!")
+        
         param_names = [k for k,p in self.mapping_dict.items() if is_free(p)]
         params = [self.mapping_dict[p] for p in param_names]
         mapping_dict = self.mapping_dict
@@ -85,11 +102,14 @@ class DalitzAmplitude:
                                 resonances,resonance_tuples,bls_in,bls_out,resonance_args,smp,self.phsp)
         return f,start
 
-    def get_args(self):
-        from AmplitudeCrafter.FunctionConstructor import map_arguments
+    def get_arg_names(self):
         param_names = [k for k,p in self.mapping_dict.items() if is_free(p)]
         # translate values with _complex in to imaginary and real part
-        needed_param_names = needed_parameter_names(param_names)
+        return needed_parameter_names(param_names)
+
+    def get_args(self):
+        from AmplitudeCrafter.FunctionConstructor import map_arguments
+        needed_param_names = self.get_arg_names()
         mapped_args = map_arguments(needed_param_names,self.mapping_dict)
         return [FitParameter(name,value,-600.,600.) for name, value in zip(needed_param_names,mapped_args)]
 
