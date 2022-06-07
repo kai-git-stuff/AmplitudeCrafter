@@ -77,11 +77,12 @@ class DalitzAmplitude:
         return dtc
     
     def __repr__(self):
-        string = "Dalitz Amplitude Resonances: %s"
+        string = "Dalitz Amplitude %s \nResonances: %s"
         if self.loaded:
             mp = self.resonance_map
             resonances = list(mp.keys())
-        resonance_string = "\n".join(resonances)
+        resonance_string = "%s -> %s %s %s"%(self.p0.name, self.p1.name,self.p2.name, self.p3.name)
+        resonance_string = resonance_string + "\n".join(resonances)
         return string%resonance_string
             
     def load_resonances(self,f=config_dir + "decay_example.yml"):
