@@ -116,6 +116,8 @@ class DalitzAmplitude:
         write(self.dumpd(parameters),fname)
 
     def get_amplitude_function(self,smp,resonances = None):
+        # resonances parameter designed to get run systematic studies later
+        # so we can use the same config, but exclude or include specific resonances
         if not self.loaded:
             raise ValueError("Load Resonance config first, before building Amplitude!")
         
@@ -123,7 +125,7 @@ class DalitzAmplitude:
             resonances = list(self.resonance_map.keys())
         if any([not isinstance(r,str) for r in resonances]):
             raise ValueError("Only string allowed for the selection of resonances!")
-        
+
         param_names = [k for k,p in self.mapping_dict.items() 
                                 if is_free(p) and k.split("=>")[0] in resonances]
         params = [self.mapping_dict[p] for p in param_names]
