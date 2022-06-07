@@ -74,6 +74,7 @@ class DalitzAmplitude:
         for channel,resonances_channel in self.resonances.items():
             for resonance in resonances_channel:
                 dtc[resonance.name] = resonance
+        return dtc
     
     def __repr__(self):
         string = "Dalitz Amplitude Resonances: %s"
