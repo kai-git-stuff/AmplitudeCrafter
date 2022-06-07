@@ -19,7 +19,7 @@ class particle:
         self.name = name
         particle.particles_by_name[name] = self
         
-        particle.particles[self.name].append(self)
+        particle.particles[self.type].append(self)
 
     @staticmethod
     def get_particle(name):
@@ -31,8 +31,7 @@ class particle:
             p = particle(**specifications,name=name)
 
     def __repr__(self):
-        num = particle.particles[self.name].index(self)
-
+        num = particle.particles[self.type].index(self)
         return f"{self.name} {num} ({self.mass}MeV, (J:P)=({self.spin}:{self.parity}))"
 
 particle.load_library(particle_config)
