@@ -128,7 +128,7 @@ class DalitzAmplitude:
             raise ValueError("Only string allowed for the selection of resonances!")
 
         param_names = [k for k,p in self.mapping_dict.items() 
-                                if is_free(p) and k.split("=>")[0] in resonances]
+                                if is_free(p) ]
         params = [self.mapping_dict[p] for p in param_names]
         mapping_dict = self.mapping_dict.copy()
         bls_in = self.get_bls_in(resonances)
