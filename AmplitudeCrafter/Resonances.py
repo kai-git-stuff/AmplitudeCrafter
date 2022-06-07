@@ -182,7 +182,9 @@ def read_bls(bls_dicts,mapping_dict,name):
         dtc[(bls["L"],bls["S"])] = lst[0]
     return dtc
 
-def dump_bls(b,mapping_dict):
+def dump_bls(b,mapping_dict,coupling):
+    if "const" in coupling:
+        return coupling
     val = get_val(b,mapping_dict)
     if isinstance(val,complex):
         val = "complex(%s,%s)"%(val.real,val.imag)
@@ -219,8 +221,8 @@ class Resonance:
         del dtc["args"]
         mapping_dict[self.data_key] = "sigma%s"%self.kwargs["channel"]
         dump_in_dict(dtc["expects"],mapping_dict,self.name)
-        dtc["partial waves in"] = [{"L":L,"S":S,"coupling":dump_bls(b,mapping_dict)} for (L,S), b in self.bls_in.items()]
-        dtc["partial waves out"] = [{"L":L,"S":S,"coupling":dump_bls(b,mapping_dict)} for (L,S), b in self.bls_out.items()]
+        dtc["partial waves in"] = [{"L":pw["L"],"S":pw["S"], "coupling":dump_bls(self.bls_in[(pw["L"],pw["S"])],mapping_dict,pw["coupling"])} for pw in self.kwargs["partial waves in"]]
+        dtc["partial waves out"] = [{"L":pw["L"],"S":pw["S"], "coupling":dump_bls(self.bls_out[(pw["L"],pw["S"])],mapping_dict,pw["coupling"])} for pw in self.kwargs["partial waves out"]]
         return dtc
 
     @property

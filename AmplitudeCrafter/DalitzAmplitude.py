@@ -91,7 +91,6 @@ class DalitzAmplitude:
 
     def dump(self,parameters,fname):
         write(self.dumpd(parameters),fname)
-            
 
     def get_amplitude_function(self,smp):
         if not self.loaded:
