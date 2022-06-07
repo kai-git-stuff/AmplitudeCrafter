@@ -35,6 +35,6 @@ class particle:
 
         return f"{self.name} {num} ({self.mass}MeV, (J:P)=({self.spin}:{self.parity}))"
 
-for name, specifications in load(particle_config).items():
-    p = particle(**specifications,name=name)
+particle.load_library(particle_config)
+
 
