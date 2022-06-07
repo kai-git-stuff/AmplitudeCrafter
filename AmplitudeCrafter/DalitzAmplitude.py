@@ -3,7 +3,7 @@ from AmplitudeCrafter.loading import write
 from AmplitudeCrafter.ParticleLibrary import particle
 from jitter.phasespace.DalitzPhasespace import DalitzPhaseSpace
 from AmplitudeCrafter.locals import config_dir
-from AmplitudeCrafter.Resonances import load_resonances, is_free, needed_parameter_names
+from AmplitudeCrafter.Resonances import load_resonances, is_free, needed_parameter_names, check_if_wanted
 from AmplitudeCrafter.FunctionConstructor import construct_function
 from jitter.fitting import FitParameter
 from jitter.kinematics import two_body_momentum
@@ -40,11 +40,11 @@ class DalitzAmplitude:
                                             self.sample,
                                             resonances,bls,d=1.5/1000.,phsp = None)
 
-    def get_bls_in(self):
-        return [[r.bls_in for r in self.resonances[i]]  for i in [1,2,3]]
+    def get_bls_in(self,resonances):
+        return [[r.bls_in for r in self.resonances[i] if check_if_wanted(r.name,resonances)]  for i in [1,2,3]]
 
-    def get_bls_out(self):
-        return [[r.bls_out for r in self.resonances[i]]  for i in [1,2,3]]
+    def get_bls_out(self,resonances):
+        return [[r.bls_out for r in self.resonances[i] if check_if_wanted(r.name,resonances)]  for i in [1,2,3]]
 
     def check_new(self,resonances_channel):
         names = [res.name for res in resonances_channel]
@@ -68,7 +68,21 @@ class DalitzAmplitude:
                 resonance.p0 = two_body_momentum(self.md,*masses[channel])
         self.__loaded = True
 
-
+    @property
+    def resonance_map(self):
+        dtc = {}
+        for channel,resonances_channel in self.resonances.items():
+            for resonance in resonances_channel:
+                dtc[resonance.name] = resonance
+    
+    def __repr__(self):
+        string = "Dalitz Amplitude Resonances: %s"
+        if self.loaded:
+            mp = self.resonance_map
+            resonances = list(mp.keys())
+        resonance_string = "\n".join(resonances)
+        return string%resonance_string
+            
     def load_resonances(self,f=config_dir + "decay_example.yml"):
         res, mapping_dict = load_resonances(f)
         self.resonances = res
@@ -80,11 +94,11 @@ class DalitzAmplitude:
 
         self.__loaded = True
 
-    def get_resonance_tuples(self):
-        return [[r.tuple() for r in self.resonances[i]]  for i in [1,2,3]]
+    def get_resonance_tuples(self,resonances=None):
+        return [[r.tuple() for r in self.resonances[i] if check_if_wanted(r.name,resonances)]  for i in [1,2,3]]
     
-    def get_resonance_targs(self):
-        return [[r.arguments for r in self.resonances[i]]  for i in [1,2,3]]
+    def get_resonance_targs(self,resonances=None):
+        return [[r.arguments for r in self.resonances[i] if check_if_wanted(r.name,resonances)]  for i in [1,2,3]]
     
     def dumpd(self,parameters):
         if not self.loaded:
@@ -101,17 +115,23 @@ class DalitzAmplitude:
     def dump(self,parameters,fname):
         write(self.dumpd(parameters),fname)
 
-    def get_amplitude_function(self,smp):
+    def get_amplitude_function(self,smp,resonances = None):
         if not self.loaded:
             raise ValueError("Load Resonance config first, before building Amplitude!")
         
-        param_names = [k for k,p in self.mapping_dict.items() if is_free(p)]
+        if resonances is None:
+            resonances = list(self.resonance_map.keys())
+        if any([not isinstance(r,str) for r in resonances]):
+            raise ValueError("Only string allowed for the selection of resonances!")
+        
+        param_names = [k for k,p in self.mapping_dict.items() 
+                                if is_free(p) and k.split("=>")[0] in resonances]
         params = [self.mapping_dict[p] for p in param_names]
         mapping_dict = self.mapping_dict.copy()
-        bls_in = self.get_bls_in()
-        bls_out = self.get_bls_out()
-        resonance_tuples = self.get_resonance_tuples()
-        resonance_args = self.get_resonance_targs()
+        bls_in = self.get_bls_in(resonances)
+        bls_out = self.get_bls_out(resonances)
+        resonance_tuples = self.get_resonance_tuples(resonances)
+        resonance_args = self.get_resonance_targs(resonances)
         spins = [self.p0.spin] + [p.spin for p in self.particles]
         parities = [self.p0.parity] + [p.parity for p in self.particles]
         masses = [self.p0.mass] + [p.mass for p in self.particles]

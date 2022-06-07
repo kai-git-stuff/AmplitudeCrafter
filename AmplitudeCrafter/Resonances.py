@@ -190,6 +190,10 @@ def dump_bls(b,mapping_dict,coupling):
         val = "complex(%s,%s)"%(val.real,val.imag)
     return val
 
+def check_if_wanted(name,resonance_names):
+    if resonance_names is None:
+        return True
+    return name in resonance_names
 class Resonance:
     def __init__(self,kwargs,mapping_dict,name):
         self.kwargs = kwargs
