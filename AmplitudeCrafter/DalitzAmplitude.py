@@ -46,11 +46,20 @@ class DalitzAmplitude:
     def get_bls_out(self):
         return [[r.bls_out for r in self.resonances[i]]  for i in [1,2,3]]
 
+    def check_new(self,resonances_channel):
+        names = [res.name for res in resonances_channel]
+        existing_names = [res.name for res in resonances_channel]
+
+        if any([n in existing_names for n in names]):
+            double_names = [n for n in names if n in existing_names]
+            raise ValueError("Resoances of names %s already exist!"%double_names)
+
     def add_resonances(self,f=config_dir + "decay_example.yml"):
         if not self.loaded:
             raise ValueError("Can only add resonances if a base set is loaded!")
         res, mapping_dict = load_resonances(f)
         for k,v in res.items():
+            self.check_new(v)
             self.resonances[k].extend(v)
         self.mapping_dict.update(mapping_dict)
         masses= {1:(self.mb,self.mc),2:(self.ma,self.mc),3:(self.ma,self.mb)}
