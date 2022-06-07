@@ -17,6 +17,8 @@ class particle:
         else:
             self.type = type
         self.name = name
+        if particle.particles_by_name.get(name,None) is not None:
+            print("WARNING: Particle of Name %s already exists as %s! It will be replaced with %s"%(name,particle.particles_by_name[name],self))
         particle.particles_by_name[name] = self
         
         particle.particles[self.type].append(self)
@@ -32,7 +34,7 @@ class particle:
 
     def __repr__(self):
         num = particle.particles[self.type].index(self)
-        return f"{self.name} {num} ({self.mass}MeV, (J:P)=({self.spin}:{self.parity}))"
+        return f"{self.name} ({self.type}) ({self.mass}MeV, (J:P)=({self.spin}:{self.parity}))"
 
 particle.load_library(particle_config)
 
