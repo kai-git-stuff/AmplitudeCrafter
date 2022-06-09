@@ -1,3 +1,4 @@
+from unicodedata import numeric
 from jitter.amplitudes.dalitz_plot_function import DalitzDecay
 from AmplitudeCrafter.loading import write
 from AmplitudeCrafter.ParticleLibrary import particle
@@ -65,7 +66,7 @@ class DalitzAmplitude:
         for k,v in res.items():
             self.check_new(v)
             self.resonances[k].extend(v)
-        self.mapping_dict.update(mapping_dict)
+        self.__mapping_dict.update(mapping_dict)
         masses= {1:(self.mb,self.mc),2:(self.ma,self.mc),3:(self.ma,self.mb)}
         for channel,resonances_channel in self.resonances.items():
             for resonance in resonances_channel:
@@ -88,11 +89,15 @@ class DalitzAmplitude:
         decay_description = "%s -> %s %s %s"%tuple([self.p0.name] + [p.name for p in self.particles])
         resonance_string ="\n".join(resonances)
         return string%(decay_description, resonance_string)
+
+    @property
+    def mapping_dict(self):
+        return self.__mapping_dict.copy()
             
     def load_resonances(self,f=config_dir + "decay_example.yml"):
         res, mapping_dict = load_resonances(f)
         self.resonances = res
-        self.mapping_dict = mapping_dict
+        self.__mapping_dict = mapping_dict
         masses= {1:(self.mb,self.mc),2:(self.ma,self.mc),3:(self.ma,self.mb)}
         for channel,resonances_channel in self.resonances.items():
             for resonance in resonances_channel:
@@ -156,7 +161,6 @@ class DalitzAmplitude:
         f,start = self.get_amplitude_function(smp,resonances=resonances,total_absolute=False)
         def interference(args):
             return f(args,nu1,lambdas1) * conjugate(f(args,nu2,lambdas2))
-        
         return interference
          
     def get_arg_names(self):
@@ -164,11 +168,11 @@ class DalitzAmplitude:
         # translate values with _complex in to imaginary and real part
         return needed_parameter_names(param_names)
 
-    def get_args(self):
+    def get_args(self,numeric=False):
         from AmplitudeCrafter.FunctionConstructor import map_arguments
         needed_param_names = self.get_arg_names()
-        mapped_args = map_arguments(needed_param_names,self.mapping_dict)
-        return [FitParameter(name,value,-600.,600.) for name, value in zip(needed_param_names,mapped_args)]
+        mapped_args = map_arguments(needed_param_names,self.mapping_dict,numeric=numeric)
+        return [value for name, value in zip(needed_param_names,mapped_args)]
 
 
         

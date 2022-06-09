@@ -26,12 +26,22 @@ def flatten(listoflists):
     flatten_recursive(listoflists,lst)
     return lst
 
+def get_FitParameter(name,value):
+    words = value.split(" ")
+    words = [word for word in words if " " not in word]
+    frm = float(words[words.index("from") + 1])
+    to = float(words[words.index("to") + 1])
+    val = float(value[0])
+    return FitParameter(name,val,frm,to,0.01)
+
 
 def analyse_value(value,name,dtc,lst):
     if not isinstance(value,str):
         lst.append(name)
         dtc[name] = FitParameter(name,value,-100,100,0.01)
         return True
+    if "from" in value and "to" in value:
+        dtc[name] = get_FitParameter(name,value)
     if "sigma" in value:
         lst.append(value)
         dtc[value] = value
@@ -130,12 +140,12 @@ def load_resonances(f:str):
         global_mapping_dict.update(r.mapping_dict)
     return resonances, global_mapping_dict
 
-def get_val(arg,mapping_dict):
+def get_val(arg,mapping_dict,numeric=True):
     if "_complex" in arg:
         r, i = arg.replace("_complex","_real"), arg.replace("_complex","_imag")
         return get_val(r,mapping_dict) + 1j * get_val(i,mapping_dict)
     val = mapping_dict[arg]
-    if isinstance(val,FitParameter):
+    if isinstance(val,FitParameter) and numeric:
         val = val()
     return val
 
@@ -160,12 +170,13 @@ def needed_parameter_names(param_names):
             needed_names.append(p)
     return needed_names
 
-def map_arguments(args,mapping_dict):
+def map_arguments(args,mapping_dict,numeric = True):
     if isinstance(args,list):
-        return [map_arguments(l,mapping_dict) for l in args]
+        return [map_arguments(l,mapping_dict,numeric) for l in args]
     if isinstance(args,dict):
-        return {k:map_arguments(v,mapping_dict) for k,v in args.items()}
-    return get_val(args,mapping_dict)
+        return {k:map_arguments(v,mapping_dict,numeric) for k,v in args.items()}
+
+    return get_val(args,mapping_dict,numeric)
 
 def get_fit_params(args,mapping_dict):
     if isinstance(args,list):
