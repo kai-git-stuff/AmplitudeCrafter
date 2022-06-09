@@ -55,7 +55,7 @@ def construct_function(masses,spins,parities,param_names,params,mapping_dict,res
             ampl =            sum(
                 sum(
                     jnp.abs(O(ld,[la,lb,lc]))**2  
-                        for la,lb,lc in helicity_options(decay["sa"])
+                        for la,lb,lc in helicity_options(decay["sa"],decay["sb"],decay["sc"])
                             ) for ld in sp.direction_options(decay["sd"]))
             return ampl
     else:
