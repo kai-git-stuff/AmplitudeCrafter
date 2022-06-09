@@ -9,8 +9,9 @@ from AmplitudeCrafter.FunctionConstructor import construct_function
 from jitter.fitting import FitParameter
 from jitter.kinematics import two_body_momentum
 from jitter.interface import real, imaginary, conjugate
-
-
+from jitter.constants import spin as sp
+from jitter.amplitudes.dalitz_plot_function import helicity_options
+from jax import numpy as jnp
 class DalitzAmplitude:
     def __init__(self,p0:particle,p1:particle,p2:particle,p3:particle):
         self.particles = [p1,p2,p3]
@@ -157,11 +158,21 @@ class DalitzAmplitude:
                                 resonances,resonance_tuples,bls_in,bls_out,resonance_args,smp,self.phsp,total_absolute)
         return f,start
 
-    def get_interference_terms(self,smp,nu1,nu2,lambdas1,lambdas2, resonances = None):
-        f,start = self.get_amplitude_function(smp,resonances=resonances,total_absolute=False)
-        def interference(args):
-            return f(args,nu1,lambdas1) * conjugate(f(args,nu2,lambdas2)) + 
-        return interference
+    def get_interference_terms(self,smp,resonances1,resonances2):
+        f1,start = self.get_amplitude_function(smp,resonances=resonances1,total_absolute=False)
+        f2,start = self.get_amplitude_function(smp,resonances=resonances2,total_absolute=False)
+
+        def interference(args,nu,lambdas):
+            return f1(args,nu,lambdas) * conjugate(f2(args,nu,lambdas)) + conjugate(f1(args,nu,lambdas)) * f2(args,nu2,lambdas2)
+
+        def full_interference(args):
+            sum(
+                sum(
+                    jnp.abs(O(ld,[la,lb,lc]))**2  
+                        for la,lb,lc in helicity_options(*[p.spin for p in self.particles])
+                            ) for ld in sp.direction_options(self.p0.spin))
+
+        return full_interference
          
     def get_arg_names(self):
         param_names = [k for k,p in self.mapping_dict.items() if is_free(p)]

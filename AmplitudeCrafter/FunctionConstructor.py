@@ -3,6 +3,7 @@ from jitter.constants import spin as sp
 from numpy import ma
 from AmplitudeCrafter.Resonances import map_arguments, needed_parameter_names
 from jax import numpy as jnp
+from jitter.amplitudes.dalitz_plot_function import helicity_options
 from jax import jit
 
 def run_lineshape(resonance_tuple,args,mapping_dict):
@@ -51,7 +52,11 @@ def construct_function(masses,spins,parities,param_names,params,mapping_dict,res
             def O(nu,lambdas):       
                 tmp = chain(decay,nu,*lambdas,resonances_filled[2],bls_in_mapped[2],bls_out_mapped[2],3) + chain(decay,nu,*lambdas,resonances_filled[1],bls_in_mapped[1],bls_out_mapped[1],2) + chain(decay,nu,*lambdas,resonances_filled[0],bls_in_mapped[0],bls_out_mapped[0],1)
                 return tmp
-            ampl = sum(sum(jnp.abs(O(ld,[la,0,0]))**2  for la in sp.direction_options(decay["sa"])) for ld in sp.direction_options(decay["sd"]))
+            ampl =            sum(
+                sum(
+                    jnp.abs(O(ld,[la,lb,lc]))**2  
+                        for la,lb,lc in helicity_options(decay["sa"])
+                            ) for ld in sp.direction_options(decay["sd"]))
             return ampl
     else:
         @jit
