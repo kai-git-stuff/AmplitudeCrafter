@@ -160,7 +160,7 @@ class DalitzAmplitude:
     def get_interference_terms(self,smp,nu1,nu2,lambdas1,lambdas2, resonances = None):
         f,start = self.get_amplitude_function(smp,resonances=resonances,total_absolute=False)
         def interference(args):
-            return f(args,nu1,lambdas1) * conjugate(f(args,nu2,lambdas2))
+            return f(args,nu1,lambdas1) * conjugate(f(args,nu2,lambdas2)) + 
         return interference
          
     def get_arg_names(self):

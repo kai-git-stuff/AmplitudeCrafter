@@ -41,7 +41,9 @@ def analyse_value(value,name,dtc,lst):
         dtc[name] = FitParameter(name,value,-100,100,0.01)
         return True
     if "from" in value and "to" in value:
+        lst.append(name)
         dtc[name] = get_FitParameter(name,value)
+        return True
     if "sigma" in value:
         lst.append(value)
         dtc[value] = value
