@@ -7,6 +7,7 @@ from AmplitudeCrafter.Resonances import load_resonances, is_free, needed_paramet
 from AmplitudeCrafter.FunctionConstructor import construct_function
 from jitter.fitting import FitParameter
 from jitter.kinematics import two_body_momentum
+from jitter.interface import real, imaginary, conjugate
 
 
 class DalitzAmplitude:
@@ -120,7 +121,7 @@ class DalitzAmplitude:
     def dump(self,parameters,fname):
         write(self.dumpd(parameters),fname)
 
-    def get_amplitude_function(self,smp,resonances = None):
+    def get_amplitude_function(self,smp,resonances = None, total_absolute=True):
         # resonances parameter designed to get run systematic studies later
         # so we can use the same config, but exclude or include specific resonances
         if not self.loaded:
@@ -148,12 +149,16 @@ class DalitzAmplitude:
         mapping_dict["sigma1"] = self.phsp.m2bc(smp)
         resonances = [[r for r in self.resonances[i] if check_if_wanted(r.name,resonances)] for i in [1,2,3]]
         f,start = construct_function(masses,spins,parities,param_names,params,mapping_dict,
-                                resonances,resonance_tuples,bls_in,bls_out,resonance_args,smp,self.phsp)
+                                resonances,resonance_tuples,bls_in,bls_out,resonance_args,smp,self.phsp,total_absolute)
         return f,start
 
-    def get_interference_terms(self,smp, resonances = None):
-        raise NotImplementedError("To be implemented soon!")
-
+    def get_interference_terms(self,smp,nu1,nu2,lambdas1,lambdas2, resonances = None):
+        f,start = self.get_amplitude_function(smp,resonances=resonances,total_absolute=False)
+        def interference(args):
+            return f(args,nu1,lambdas1) * conjugate(f(args,nu2,lambdas2))
+        
+        return interference
+         
     def get_arg_names(self):
         param_names = [k for k,p in self.mapping_dict.items() if is_free(p)]
         # translate values with _complex in to imaginary and real part
