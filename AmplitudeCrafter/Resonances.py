@@ -31,7 +31,7 @@ def get_FitParameter(name,value):
     words = [word for word in words if " " not in word]
     frm = float(words[words.index("from") + 1])
     to = float(words[words.index("to") + 1])
-    val = float(value[0])
+    val = float(words[0])
     return FitParameter(name,val,frm,to,0.01)
 
 
@@ -102,6 +102,10 @@ def dump_value(param,name,value,new_name,mapping_dict):
     elif "complex" in value:
         r,i =  mapping_dict[new_name+"_real"] , mapping_dict[new_name+"_imag"]
         param[name] = "complex(%s,%s)"%(r,i)
+    elif "to" in value and "from" in value:
+        fit_param = get_FitParameter("temp",value)
+        dumping_value = "%s from %s to %s"%(mapping_dict[new_name],fit_param.lower_limit,fit_param.upper_limit)
+        param[name] = dumping_value
     else:
         raise ValueError("Cant map value (%s) of type %s"%(value,type(value)))
 

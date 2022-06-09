@@ -163,12 +163,12 @@ class DalitzAmplitude:
         f2,start = self.get_amplitude_function(smp,resonances=resonances2,total_absolute=False)
 
         def interference(args,nu,lambdas):
-            return f1(args,nu,lambdas) * conjugate(f2(args,nu,lambdas)) + conjugate(f1(args,nu,lambdas)) * f2(args,nu2,lambdas2)
+            return f1(args,nu,lambdas) * conjugate(f2(args,nu,lambdas)) + conjugate(f1(args,nu,lambdas)) * f2(args,nu,lambdas)
 
         def full_interference(args):
             sum(
                 sum(
-                    jnp.abs(O(ld,[la,lb,lc]))**2  
+                    interference(ld,[la,lb,lc]) 
                         for la,lb,lc in helicity_options(*[p.spin for p in self.particles])
                             ) for ld in sp.direction_options(self.p0.spin))
 
