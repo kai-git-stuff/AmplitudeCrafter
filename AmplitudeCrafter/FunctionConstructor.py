@@ -12,7 +12,7 @@ def run_lineshape(resonance_tuple,args,mapping_dict):
 
 
 
-def construct_function(masses,spins,parities,param_names,params,mapping_dict,resonances,resonance_tuples,bls_in,bls_out,resonance_args,smp,phsp):
+def construct_function(masses,spins,parities,param_names,params,mapping_dict,resonances,resonance_tuples,bls_in,bls_out,resonance_args,smp,phsp,total_absolute=True):
     mapping_dict_global = mapping_dict
     resonances_filled = [[run_lineshape(r,resonance_args[i][j],mapping_dict) for j,r in enumerate(res)] for i, res in enumerate(resonance_tuples)  ]
     free_indices = [[not r.fixed() for r in res ] for res in resonances ]
@@ -40,19 +40,31 @@ def construct_function(masses,spins,parities,param_names,params,mapping_dict,res
             for j, free in enumerate(l):
                 if free:
                     resonances_filled[i][j] = run_lineshape(resonance_tuples[i][j],resonance_args[i][j],mapping_dict)
+    if total_absolute:
+        @jit
+        def f(args):
+            mapping_dict = fill_args(args,mapping_dict_global)
+            bls_in_mapped = map_arguments(bls_in,mapping_dict)
+            bls_out_mapped = map_arguments(bls_out,mapping_dict)
+            update(mapping_dict)
 
-    @jit
-    def f(args):
-        mapping_dict = fill_args(args,mapping_dict_global)
-        bls_in_mapped = map_arguments(bls_in,mapping_dict)
-        bls_out_mapped = map_arguments(bls_out,mapping_dict)
-        update(mapping_dict)
+            def O(nu,lambdas):       
+                tmp = chain(decay,nu,*lambdas,resonances_filled[2],bls_in_mapped[2],bls_out_mapped[2],3) + chain(decay,nu,*lambdas,resonances_filled[1],bls_in_mapped[1],bls_out_mapped[1],2) + chain(decay,nu,*lambdas,resonances_filled[0],bls_in_mapped[0],bls_out_mapped[0],1)
+                return tmp
+            ampl = sum(sum(jnp.abs(O(ld,[la,0,0]))**2  for la in sp.direction_options(decay["sa"])) for ld in sp.direction_options(decay["sd"]))
+            return ampl
+    else:
+        @jit
+        def f(args,nu,lambdas):
+            mapping_dict = fill_args(args,mapping_dict_global)
+            bls_in_mapped = map_arguments(bls_in,mapping_dict)
+            bls_out_mapped = map_arguments(bls_out,mapping_dict)
+            update(mapping_dict)
 
-        def O(nu,lambdas):       
-            tmp = chain(decay,nu,*lambdas,resonances_filled[2],bls_in_mapped[2],bls_out_mapped[2],3) + chain(decay,nu,*lambdas,resonances_filled[1],bls_in_mapped[1],bls_out_mapped[1],2) + chain(decay,nu,*lambdas,resonances_filled[0],bls_in_mapped[0],bls_out_mapped[0],1)
-            return tmp
-        ampl = sum(sum(jnp.abs(O(ld,[la,0,0]))**2  for la in sp.direction_options(decay["sa"])) for ld in sp.direction_options(decay["sd"]))
-        return ampl
+            def O(nu,lambdas):       
+                tmp = chain(decay,nu,*lambdas,resonances_filled[2],bls_in_mapped[2],bls_out_mapped[2],3) + chain(decay,nu,*lambdas,resonances_filled[1],bls_in_mapped[1],bls_out_mapped[1],2) + chain(decay,nu,*lambdas,resonances_filled[0],bls_in_mapped[0],bls_out_mapped[0],1)
+                return tmp
+            return O(nu,lambdas)
 
     return f, start
 

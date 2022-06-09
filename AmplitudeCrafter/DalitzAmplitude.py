@@ -151,6 +151,9 @@ class DalitzAmplitude:
                                 resonances,resonance_tuples,bls_in,bls_out,resonance_args,smp,self.phsp)
         return f,start
 
+    def get_interference_terms(self,smp, resonances = None):
+        raise NotImplementedError("To be implemented soon!")
+
     def get_arg_names(self):
         param_names = [k for k,p in self.mapping_dict.items() if is_free(p)]
         # translate values with _complex in to imaginary and real part
