@@ -38,7 +38,7 @@ def get_FitParameter(name,value):
 def analyse_value(value,name,dtc,lst):
     if not isinstance(value,str):
         lst.append(name)
-        dtc[name] = FitParameter(name,value,-100,100,0.01)
+        dtc[name] = FitParameter(name,value,-600,600,0.01)
         return True
     if "from" in value and "to" in value:
         lst.append(name)

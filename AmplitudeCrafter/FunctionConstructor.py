@@ -41,6 +41,7 @@ def construct_function(masses,spins,parities,param_names,params,mapping_dict,res
             for j, free in enumerate(l):
                 if free:
                     resonances_filled[i][j] = run_lineshape(resonance_tuples[i][j],resonance_args[i][j],mapping_dict)
+
     if total_absolute:
         @jit
         def f(args):
@@ -52,10 +53,10 @@ def construct_function(masses,spins,parities,param_names,params,mapping_dict,res
             def O(nu,lambdas):       
                 tmp = chain(decay,nu,*lambdas,resonances_filled[2],bls_in_mapped[2],bls_out_mapped[2],3) + chain(decay,nu,*lambdas,resonances_filled[1],bls_in_mapped[1],bls_out_mapped[1],2) + chain(decay,nu,*lambdas,resonances_filled[0],bls_in_mapped[0],bls_out_mapped[0],1)
                 return tmp
-            ampl =            sum(
+            ampl =  sum(
                 sum(
                     jnp.abs(O(ld,[la,lb,lc]))**2  
-                        for la,lb,lc in helicity_options(decay["sa"],decay["sb"],decay["sc"])
+                        for la,lb,lc in decay["HelicityOptions"]
                             ) for ld in sp.direction_options(decay["sd"]))
             return ampl
     else:
