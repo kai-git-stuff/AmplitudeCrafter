@@ -60,7 +60,6 @@ def construct_function(masses,spins,parities,param_names,params,mapping_dict,res
                             ) for ld in sp.direction_options(decay["sd"]))
             return ampl
     else:
-        @jit
         def f(args,nu,lambdas):
             mapping_dict = fill_args(args,mapping_dict_global)
             bls_in_mapped = map_arguments(bls_in,mapping_dict)

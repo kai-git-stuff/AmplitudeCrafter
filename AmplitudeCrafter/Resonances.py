@@ -63,8 +63,8 @@ def analyse_value(value,name,dtc,lst):
         value = value.replace("complex(","").replace(")","")
         v1,v2 = [float(v) for v in value.split(",") ]
         n1, n2 = name + "_real", name + "_imag"
-        dtc[n1] = FitParameter(n1,v1,-100,100,0.01)
-        dtc[n2] = FitParameter(n2,v2,-100,100,0.01)
+        dtc[n1] = FitParameter(n1,v1,-600,600,0.01)
+        dtc[n2] = FitParameter(n2,v2,-600,600,0.01)
 
         lst.append(name+"_complex")
         return True

@@ -10,7 +10,7 @@ from jitter.fitting import FitParameter
 from jitter.kinematics import two_body_momentum
 from jitter.interface import real, imaginary, conjugate
 from jitter.constants import spin as sp
-from jitter.amplitudes.dalitz_plot_function import helicity_options
+from jitter.amplitudes.dalitz_plot_function import helicity_options_nojit
 from jax import numpy as jnp
 class DalitzAmplitude:
     def __init__(self,p0:particle,p1:particle,p2:particle,p3:particle):
@@ -166,13 +166,29 @@ class DalitzAmplitude:
             return f1(args,nu,lambdas) * conjugate(f2(args,nu,lambdas)) + conjugate(f1(args,nu,lambdas)) * f2(args,nu,lambdas)
 
         def full_interference(args):
-            sum(
+            return sum(
                 sum(
-                    interference(ld,[la,lb,lc]) 
-                        for la,lb,lc in helicity_options(*[p.spin for p in self.particles])
+                    interference(args,ld,[la,lb,lc]) 
+                        for la,lb,lc in helicity_options_nojit(*[p.spin for p in self.particles])
                             ) for ld in sp.direction_options(self.p0.spin))
 
-        return full_interference
+        return full_interference, start
+
+    def run_function(self,args,smp,resonances = None,parallel = True):
+        if resonances is None:
+            resonances = list(self.resonance_map.keys())
+        amplitude_abs = jnp.zeros_like(smp[...,0],dtype=jnp.float64)
+        for nu in sp.direction_options(self.p0.spin):
+            for lambdas in helicity_options_nojit(*[p.spin for p in self.particles]):
+                print(resonances[0])
+                f,start = self.get_amplitude_function(smp,resonances=[resonances[0]],total_absolute=False)
+                amplitude = f(args,nu,lambdas)
+                for resonance in resonances[1:]:
+                    print(resonance)
+                    f,start = self.get_amplitude_function(smp,resonances=[resonance],total_absolute=False)
+                    amplitude += f(args,nu,lambdas)
+                amplitude_abs += jnp.abs(amplitude)**2
+        return amplitude_abs
          
     def get_arg_names(self):
         param_names = [k for k,p in self.mapping_dict.items() if is_free(p)]
