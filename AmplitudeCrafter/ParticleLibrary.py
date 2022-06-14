@@ -33,7 +33,6 @@ class particle:
             p = particle(**specifications,name=name)
 
     def __repr__(self):
-        num = particle.particles[self.type].index(self)
         return f"{self.name} ({self.type}) ({self.mass}MeV, (J:P)=({self.spin}:{self.parity}))"
 
 particle.load_library(particle_config)

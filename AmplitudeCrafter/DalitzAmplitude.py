@@ -88,7 +88,10 @@ class DalitzAmplitude:
             mp = self.resonance_map
             resonances = list(mp.keys())
         decay_description = "%s -> %s %s %s"%tuple([self.p0.name] + [p.name for p in self.particles])
-        resonance_string ="\n".join(resonances)
+        if self.loaded:
+             resonance_string ="\n".join(resonances)
+        else:
+            resonance_string=""
         return string%(decay_description, resonance_string)
 
     @property
