@@ -37,20 +37,6 @@ class DalitzAmplitude:
     def add_file(self,f):
         self.loaded_files.append(f.replace(".yml","").replace(".yaml","").split("/")[-1])
 
-    def reload(self):
-        spins = [self.p0.spin] + [p.spin for p in self.particles]
-        parities = [self.p0.parity] + [p.parity for p in self.particles]
-        masses = [self.p0.mass] + [p.mass for p in self.particles]
-
-        resonances = self.get_resonance_tuples()
-        bls = self.get_bls()
-        
-        self.decay_descriptor = DalitzDecay(*masses,
-                                            *spins,
-                                            *parities,
-                                            self.sample,
-                                            resonances,bls,d=1.5/1000.,phsp = None)
-
     def get_bls_in(self,resonances):
         return [[r.bls_in for r in self.resonances[i] if check_if_wanted(r.name,resonances)]  for i in [1,2,3]]
 
@@ -72,10 +58,10 @@ class DalitzAmplitude:
         if not self.loaded:
             raise ValueError("Can only add resonances if a base set is loaded!")
         res, mapping_dict = load_resonances(f)
-        self.add_file(f)
         for k,v in res.items():
             self.check_new(v)
             self.resonances[k].extend(v)
+        self.add_file(f)
         self.__mapping_dict.update(mapping_dict)
         masses= {1:(self.mb,self.mc),2:(self.ma,self.mc),3:(self.ma,self.mb)}
         for channel,resonances_channel in self.resonances.items():
