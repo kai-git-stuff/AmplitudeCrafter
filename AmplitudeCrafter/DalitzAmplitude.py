@@ -24,10 +24,18 @@ class DalitzAmplitude:
 
         self.phsp = DalitzPhaseSpace(self.ma,self.mb,self.mc,self.md)
         self.__loaded = False
+        self.loaded_files = []
 
     @property
     def loaded(self):
         return self.__loaded
+    
+    @property
+    def saving_name(self):
+        return "+".join(self.loaded_files)
+    
+    def add_file(self,f):
+        self.loaded_files.append(f.replace(".yml","").replace(".yaml","").split("/")[-1])
 
     def reload(self):
         spins = [self.p0.spin] + [p.spin for p in self.particles]
@@ -64,6 +72,7 @@ class DalitzAmplitude:
         if not self.loaded:
             raise ValueError("Can only add resonances if a base set is loaded!")
         res, mapping_dict = load_resonances(f)
+        self.add_file(f)
         for k,v in res.items():
             self.check_new(v)
             self.resonances[k].extend(v)
@@ -100,6 +109,7 @@ class DalitzAmplitude:
             
     def load_resonances(self,f=config_dir + "decay_example.yml"):
         res, mapping_dict = load_resonances(f)
+        self.add_file(f)
         self.resonances = res
         self.__mapping_dict = mapping_dict
         masses= {1:(self.mb,self.mc),2:(self.ma,self.mc),3:(self.ma,self.mb)}
