@@ -136,6 +136,9 @@ def handle_resonance_config(config_dict:dict,name):
 
 def load_resonances(f:str):
     resonance_dict = load(f)
+    if "fit_result" in resonance_dict:
+        del resonance_dict["fit_result"]
+    
     global_mapping_dict = {}
     resonances = {1:[],2:[],3:[]}
     for resonance_name, resonance in resonance_dict.items():
@@ -230,9 +233,8 @@ class Resonance:
         self.data_replacement = mapping_dict[self.data_key]
 
         module = importlib.import_module(".".join(kwargs["func"].split(".")[:-1]))
-
         self.lineshape = getattr(module,kwargs["func"].split(".")[-1])
-
+        
         self.__bls_in = read_bls(kwargs["partial waves in"],self.mapping_dict,self.name+"=>"+"bls_in")
         self.__bls_out = read_bls(kwargs["partial waves out"],self.mapping_dict,self.name+"=>"+"bls_out")
 

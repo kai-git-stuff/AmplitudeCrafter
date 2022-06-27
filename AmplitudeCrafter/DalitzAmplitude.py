@@ -12,6 +12,12 @@ from jitter.interface import real, imaginary, conjugate
 from jitter.constants import spin as sp
 from jitter.amplitudes.dalitz_plot_function import helicity_options_nojit
 from jax import numpy as jnp
+from multiprocessing import Pool
+
+def run(self,args,smp,nu,lambdas,resonance):
+    print(resonance)
+    f,start = self.get_amplitude_function(smp,resonances=[resonance],total_absolute=False)
+    return f(args,nu,lambdas)
 class DalitzAmplitude:
     def __init__(self,p0:particle,p1:particle,p2:particle,p3:particle):
         self.particles = [p1,p2,p3]
@@ -111,7 +117,7 @@ class DalitzAmplitude:
     def get_resonance_targs(self,resonances=None):
         return [[r.arguments for r in self.resonances[i] if check_if_wanted(r.name,resonances)]  for i in [1,2,3]]
     
-    def dumpd(self,parameters):
+    def dumpd(self,parameters,fit_result=None):
         if not self.loaded:
             raise ValueError("Load Resonance config first, before saving!")
         dtc = {}
@@ -121,10 +127,12 @@ class DalitzAmplitude:
         for i, resonances in self.resonances.items():
             for res in resonances:
                 dtc[res.name] = res.dumpd(mapping_dict)
+        if fit_result is not None:
+            dtc["fit_result"] = fit_result
         return dtc
 
-    def dump(self,parameters,fname):
-        write(self.dumpd(parameters),fname)
+    def dump(self,parameters,fname,fit_result=None):
+        write(self.dumpd(parameters),fname,fit_result)
 
     def get_amplitude_function(self,smp,resonances = None, total_absolute=True):
         # resonances parameter designed to get run systematic studies later
@@ -173,19 +181,21 @@ class DalitzAmplitude:
 
         return full_interference, start
 
-    def run_function(self,args,smp,resonances = None,parallel = True):
+    def run_function(self,args,smp,resonances = None,parallel = False):
+        pool = Pool(6)
         if resonances is None:
             resonances = list(self.resonance_map.keys())
         amplitude_abs = jnp.zeros_like(smp[...,0],dtype=jnp.float64)
+
         for nu in sp.direction_options(self.p0.spin):
             for lambdas in helicity_options_nojit(*[p.spin for p in self.particles]):
-                print(resonances[0])
-                f,start = self.get_amplitude_function(smp,resonances=[resonances[0]],total_absolute=False)
-                amplitude = f(args,nu,lambdas)
-                for resonance in resonances[1:]:
-                    print(resonance)
-                    f,start = self.get_amplitude_function(smp,resonances=[resonance],total_absolute=False)
-                    amplitude += f(args,nu,lambdas)
+                if not parallel:
+                    amplitudes = []
+                    for resonance in resonances:
+                        amplitudes.append( run(self,args,smp,args,nu,lambdas,resonance))
+                else:
+                    amplitudes = pool.map(run,[(self,args,smp,nu,lambdas,resonance) for resonance in resonances])
+                amplitude = sum(amplitudes)
                 amplitude_abs += jnp.abs(amplitude)**2
         return amplitude_abs
          
