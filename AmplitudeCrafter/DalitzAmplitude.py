@@ -132,7 +132,7 @@ class DalitzAmplitude:
         return dtc
 
     def dump(self,parameters,fname,fit_result=None):
-        write(self.dumpd(parameters),fname,fit_result)
+        write(self.dumpd(parameters,fit_result),fname)
 
     def get_amplitude_function(self,smp,resonances = None, total_absolute=True):
         # resonances parameter designed to get run systematic studies later
