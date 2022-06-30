@@ -17,8 +17,8 @@ def get_parity(L,p1,p2):
 
 def check_bls(mother:particle,daughter1:particle,daughter2:particle,bls,parity_conserved=False):
     Ls = []
-    for S in range(abs(daughter1.spin - daughter2.spin),abs(daughter2.spin + daughter1.spin) + 1,2):
-        for L in range(abs(mother.spin - S),abs(mother.spin + S) + 1 , 2):
+    for S in sp.couple(daughter1.spin,daughter2.spin):
+        for L in sp.couple(mother.spin,S):
             if get_parity(L,daughter1.parity,daughter2.parity) == mother.parity or not parity_conserved:
                 Ls.append((L,S))
     minL,minS = min(Ls,key=lambda x: x[0])
