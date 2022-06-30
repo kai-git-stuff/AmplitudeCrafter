@@ -4,7 +4,7 @@ from AmplitudeCrafter.loading import write
 from AmplitudeCrafter.ParticleLibrary import particle
 from jitter.phasespace.DalitzPhasespace import DalitzPhaseSpace
 from AmplitudeCrafter.locals import config_dir
-from AmplitudeCrafter.Resonances import load_resonances, is_free, needed_parameter_names, check_if_wanted
+from AmplitudeCrafter.Resonances import check_bls, load_resonances, is_free, needed_parameter_names, check_if_wanted
 from AmplitudeCrafter.FunctionConstructor import construct_function
 from jitter.fitting import FitParameter
 from jitter.kinematics import two_body_momentum
@@ -59,6 +59,20 @@ class DalitzAmplitude:
                 raise ValueError("Resoances of names %s already exist!"%double_names)
             else:
                 print("WARNING: Resoances of names %s already exist!"%double_names)
+    
+    def check_bls(self):
+        particles = {1:(self.particles[1],self.particles[2]),
+                    2:(self.particles[0],self.particles[2]),
+                    3:(self.particles[0],self.particles[1])}
+        for k,v in self.resonances.items():
+            p1,p2 = particles[k]
+            pk = self.particles[k-1]
+            for res in v:
+                pR = res.to_particle()
+                check_bls(self.p0,pk,pR,res.bls_in,False)
+                check_bls(pR,p1,p2,res.bls_out,True)
+
+
 
     def add_resonances(self,f=config_dir + "decay_example.yml"):
         if not self.loaded:
@@ -73,6 +87,7 @@ class DalitzAmplitude:
         for channel,resonances_channel in self.resonances.items():
             for resonance in resonances_channel:
                 resonance.p0 = two_body_momentum(self.md,*masses[channel])
+        self.check_bls()
         self.__loaded = True
 
     @property
@@ -103,12 +118,13 @@ class DalitzAmplitude:
         res, mapping_dict = load_resonances(f)
         self.add_file(f)
         self.resonances = res
+         
         self.__mapping_dict = mapping_dict
         masses= {1:(self.mb,self.mc),2:(self.ma,self.mc),3:(self.ma,self.mb)}
         for channel,resonances_channel in self.resonances.items():
             for resonance in resonances_channel:
                 resonance.p0 = two_body_momentum(self.md,*masses[channel])
-
+        self.check_bls()
         self.__loaded = True
 
     def get_resonance_tuples(self,resonances=None):

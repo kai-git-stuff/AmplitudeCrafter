@@ -3,11 +3,34 @@ from jitter.constants import spin as sp
 from AmplitudeCrafter.loading import load, write
 from jitter.fitting import FitParameter
 import importlib
+from AmplitudeCrafter.ParticleLibrary import particle
 
 def is_free(p):
     if isinstance(p,FitParameter):
         return not p.fixed
     return False
+
+def get_parity(L,p1,p2):
+    if L % 2 != 0:
+        raise ValueError("Angular momentum has to be multiple of 2!")
+    return p1 * p2 * (-1)**(L//2)
+
+def check_bls(mother:particle,daughter1:particle,daughter2:particle,bls,parity_conserved=False):
+    Ls = []
+    for S in range(abs(daughter1.spin - daughter2.spin),abs(daughter2.spin + daughter1.spin) + 1,2):
+        for L in range(abs(mother.spin - S),abs(mother.spin + S) + 1 , 2):
+            if get_parity(L,daughter1.parity,daughter2.parity) == mother.parity or not parity_conserved:
+                Ls.append((L,S))
+    minL,minS = min(Ls,key=lambda x: x[0])
+    Ls_bls = [L for L,S in bls.keys()]
+    Lset = set([L for L,_ in Ls])
+    if min(Ls_bls) != minL:
+        raise ValueError(f"""Lowest partial wave {(minL,minS)} not contained in LS couplings {list(bls.keys())}!
+        Values {mother} -> {daughter1} {daughter2} 
+        Parity{" " if parity_conserved else " not "}conserved!""")
+    if not all([L in Lset for L,S in bls.keys()]):
+        raise ValueError(f"Not all couplings possible!")
+
 
 def process_complex(value):
     value = value.replace("complex","")
@@ -238,6 +261,9 @@ class Resonance:
         self.__bls_in = read_bls(kwargs["partial waves in"],self.mapping_dict,self.name+"=>"+"bls_in")
         self.__bls_out = read_bls(kwargs["partial waves out"],self.mapping_dict,self.name+"=>"+"bls_out")
 
+    def to_particle(self):
+        return particle(self.M0,self.spin,self.parity,self.name)
+
     def dumpd(self,mapping_dict):
         # todo not Finished yet
         dtc = self.kwargs.copy()
@@ -254,6 +280,7 @@ class Resonance:
     
     @property
     def bls_in(self):
+        # TODO: maybe needs to be copied
         return self.__bls_in
     
     @property
