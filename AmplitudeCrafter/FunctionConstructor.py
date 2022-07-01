@@ -9,9 +9,8 @@ from jax import jit
 def run_lineshape(resonance_tuple,args,mapping_dict):
     s,p,hel,lineshape,M0,d,p0 = resonance_tuple
     lineshape = lineshape(*map_arguments(args,mapping_dict))
+    M0 = M0(*map_arguments(args,mapping_dict))
     return (s,p,hel,lineshape,M0,d,p0)
-
-
 
 def construct_function(masses,spins,parities,param_names,params,mapping_dict,resonances,resonance_tuples,bls_in,bls_out,resonance_args,smp,phsp,total_absolute=True):
     mapping_dict_global = mapping_dict

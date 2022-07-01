@@ -245,7 +245,12 @@ class Resonance:
         self.parity = kwargs["parity"]
         self.name = name
 
-        self.M0 = kwargs["M0"]
+        self.__M0 = kwargs["M0"]
+
+        if isinstance(self.__M0,str):
+            module_M0 = importlib.import_module(".".join(self.__M0.split(".")[:-1]))
+            self.__M0 = getattr(module_M0,self.__M0.split(".")[-1])
+        
         self.d = kwargs["d"]
         self.p0 = None # todo two_body_breakup Momentum based on data and stuff
 
@@ -262,7 +267,7 @@ class Resonance:
         self.__bls_out = read_bls(kwargs["partial waves out"],self.mapping_dict,self.name+"=>"+"bls_out")
 
     def to_particle(self):
-        return particle(self.M0,self.spin,self.parity,self.name)
+        return particle(self.M0(*map_arguments(self.args,self.mapping_dict)),self.spin,self.parity,self.name)
 
     def dumpd(self,mapping_dict):
         # todo not Finished yet
@@ -273,6 +278,12 @@ class Resonance:
         dtc["partial waves in"] = [{"L":pw["L"],"S":pw["S"], "coupling":dump_bls(self.bls_in[(pw["L"],pw["S"])],mapping_dict,pw["coupling"])} for pw in self.kwargs["partial waves in"]]
         dtc["partial waves out"] = [{"L":pw["L"],"S":pw["S"], "coupling":dump_bls(self.bls_out[(pw["L"],pw["S"])],mapping_dict,pw["coupling"])} for pw in self.kwargs["partial waves out"]]
         return dtc
+
+    @property
+    def M0(self):
+        if isinstance(self.__M0,float):
+            return lambda *args,**kwargs : self.__M0
+        return self.__M0
 
     @property
     def arguments(self):
@@ -291,8 +302,8 @@ class Resonance:
         if s is not None:
             self.mapping_dict[self.data_key] = s
             return (self.spin,self.parity,sp.direction_options(self.spin),
-                        self.lineshape(map_arguments(self.args,self.mapping_dict)),
-                        self.M0,self.d,self.p0)
+                        self.lineshape(*map_arguments(self.args,self.mapping_dict)),
+                        self.M0(*map_arguments(self.args,self.mapping_dict)),self.d,self.p0)
         return (self.spin,self.parity,sp.direction_options(self.spin),
                         self.lineshape,
                         self.M0,self.d,self.p0)
@@ -304,7 +315,8 @@ class Resonance:
                     )])
 
     def __repr__(self):
-        string = f"{self.type} - Resonance(M={self.M0}, S={self.spin},P={self.parity}) \n{self.arguments}\n{self.bls_in} {self.bls_out}"
+        M0 = self.M0(*map_arguments(self.args,self.mapping_dict))
+        string = f"{self.type} - Resonance(M={M0}, S={self.spin},P={self.parity}) \n{self.arguments}\n{self.bls_in} {self.bls_out}"
         return string
 
 if __name__=="__main__":
