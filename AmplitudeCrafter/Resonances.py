@@ -246,7 +246,7 @@ class Resonance:
         self.name = name
 
         
-
+        self.__M0 = kwargs["M0"]
         if isinstance(self.__M0,str):
             module_M0 = importlib.import_module(".".join(self.__M0.split(".")[:-1]))
             self.__M0 = getattr(module_M0,self.__M0.split(".")[-1])
