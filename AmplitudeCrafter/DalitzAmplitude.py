@@ -126,7 +126,7 @@ class DalitzAmplitude:
                 resonance.p0 = two_body_momentum(self.md,*masses[channel])
         self.check_bls()
         self.__loaded = True
-
+  
     def get_resonance_tuples(self,resonances=None):
         return [[r.tuple() for r in self.resonances[i] if check_if_wanted(r.name,resonances)]  for i in [1,2,3]]
     
@@ -225,6 +225,7 @@ class DalitzAmplitude:
         needed_param_names = self.get_arg_names()
         mapped_args = map_arguments(needed_param_names,self.mapping_dict,numeric=numeric)
         return [value for name, value in zip(needed_param_names,mapped_args)]
+
 
 
         
