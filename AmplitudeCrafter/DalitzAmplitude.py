@@ -1,4 +1,3 @@
-from unicodedata import numeric
 from jitter.amplitudes.dalitz_plot_function import DalitzDecay
 from AmplitudeCrafter.loading import write
 from AmplitudeCrafter.ParticleLibrary import particle

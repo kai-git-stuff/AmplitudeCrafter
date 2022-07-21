@@ -24,12 +24,15 @@ def check_bls(mother:particle,daughter1:particle,daughter2:particle,bls,parity_c
     minL,minS = min(Ls,key=lambda x: x[0])
     Ls_bls = [L for L,S in bls.keys()]
     Lset = set([L for L,_ in Ls])
+    Sset = set([S for L,S in Ls])
     if min(Ls_bls) != minL:
         raise ValueError(f"""Lowest partial wave {(minL,minS)} not contained in LS couplings {list(bls.keys())}!
         Values {mother} -> {daughter1} {daughter2} 
         Parity{" " if parity_conserved else " not "}conserved!""")
     if not all([L in Lset for L,S in bls.keys()]):
-        raise ValueError(f"Not all couplings possible!")
+        raise ValueError(f"Not all L couplings possible!")
+    if not all([S in Sset for L,S in bls.keys()]):
+        raise ValueError(f"Not all S couplings possible!")
 
 
 def process_complex(value):
@@ -158,10 +161,10 @@ def handle_resonance_config(config_dict:dict,name):
     return params, mapping_dict
 
 def load_resonances(f:str):
+    # load Resonances based on a yml file including multiple resoances
     resonance_dict = load(f)
     if "fit_result" in resonance_dict:
-        del resonance_dict["fit_result"]
-    
+            del resonance_dict["fit_result"]
     global_mapping_dict = {}
     resonances = {1:[],2:[],3:[]}
     for resonance_name, resonance in resonance_dict.items():
@@ -267,6 +270,12 @@ class Resonance:
         
         self.__bls_in = read_bls(kwargs["partial waves in"],self.mapping_dict,self.name+"=>"+"bls_in")
         self.__bls_out = read_bls(kwargs["partial waves out"],self.mapping_dict,self.name+"=>"+"bls_out")
+
+    @staticmethod
+    def load_resonance(f):
+        resonances, mapping_dict = load_resonances(f)
+        resonance, = [r for k,v in resonances.items() for r in v]
+        return resonance,mapping_dict
 
     def to_particle(self):
         return particle(self.M0(*map_arguments(self.args,self.mapping_dict)),self.spin,self.parity,self.name)

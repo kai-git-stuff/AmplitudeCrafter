@@ -19,7 +19,7 @@ class particle:
         self.name = name
         if particle.particles_by_name.get(name,None) is not None:
             pass
-            # print("WARNING: Particle of Name %s already exists as %s! It will be replaced with %s"%(name,particle.particles_by_name[name],self))
+            print("WARNING: Particle of Name %s already exists as %s! It will be replaced with %s"%(name,particle.particles_by_name[name],self))
         particle.particles_by_name[name] = self
         
         particle.particles[self.type].append(self)
