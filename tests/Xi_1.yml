@@ -1,0 +1,24 @@
+xi_c(2879):
+  func: jitter.resonances.relativisticBWResonance
+  d: 0.0015
+  M0: jitter.resonances.BWM0
+  spin: 1
+  parity: -1
+  channel: 2
+  type: xi_c(2879)-BW
+  expects:
+  - sigma: sigma2
+  - m: 2879. from 2865. to 2885.
+  - width: 2. from 1. to 15.
+  - mLc: 2286.46 const
+  - mK: 493.677 const
+  - meson_radius: 0.0015 const
+  - l_orbit: "L"
+  partial waves in:
+  - L: 0
+    S: 1
+    coupling: complex(1.0,0.0)
+  partial waves out:
+  - L: 0
+    S: 1
+    coupling: complex(1.0,0.0) const

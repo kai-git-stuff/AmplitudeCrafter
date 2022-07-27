@@ -73,6 +73,7 @@ def analyse_value(value,name,dtc,lst):
     if "sigma" in value:
         lst.append(value)
         dtc[value] = value
+        return True
     if "const" in value:
         value = value.replace("const","")
         if "complex" in value:
@@ -94,7 +95,13 @@ def analyse_value(value,name,dtc,lst):
 
         lst.append(name+"_complex")
         return True
-    
+    if value.strip() == "L":
+        print("Angular Momentum Variable detected!")
+        dtc[name] = "L"
+        dtc["L"] = None # thsi has to be None for now, as we need to find mistakes
+        lst.append(name)
+        return True
+
     return False
 
 def analyze_structure(parameters,parameter_dict,designation=""):
@@ -115,7 +122,8 @@ def analyze_structure(parameters,parameter_dict,designation=""):
             ret_dict.update(value_dict)
             continue
 
-        analyse_value(value,new_name,ret_dict,ret_list)
+        if not analyse_value(value,new_name,ret_dict,ret_list):
+            raise ValueError("Can not interprete value %s with name %s!"%(value,name))
     return ret_list,ret_dict
 
 def dump_value(param,name,value,new_name,mapping_dict):
@@ -176,12 +184,16 @@ def load_resonances(f:str):
     return resonances, global_mapping_dict
 
 def get_val(arg,mapping_dict,numeric=True):
+    
     if "_complex" in arg:
         r, i = arg.replace("_complex","_real"), arg.replace("_complex","_imag")
         return get_val(r,mapping_dict) + 1j * get_val(i,mapping_dict)
     val = mapping_dict[arg]
     if isinstance(val,FitParameter) and numeric:
         val = val()
+    if val == "L":
+        # TODO: ,aybeset these special charakters in a config somewhere?
+        return mapping_dict["L"]
     return val
 
 def get_fit_parameter(arg,mapping_dict):
