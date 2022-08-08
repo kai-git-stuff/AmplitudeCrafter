@@ -3,7 +3,9 @@ from AmplitudeCrafter.ParticleLibrary import particle
 import numpy as np
 
 
-amplitude_file = "/home/kai/LHCb/AmplitudeCrafter/tests/Xi_1.yml"
+amplitude_file = "/home/kai/LHCb/AmplitudeCrafter/tests/DKmatrix+Xi_c_2791+Ds3_2860+D2300.yml"
+dump_file = "/home/kai/LHCb/AmplitudeCrafter/tests/Xi_1_dump.yml"
+cov_file = "/home/kai/LHCb/AmplitudeCrafter/tests/DKmatrix+Xi_c_2791+Ds3_2860+D2300_cov.yml"
 
 p0 = particle.get_particle("Lb")
 p1 = particle.get_particle("Lc")
@@ -14,10 +16,22 @@ amplitude = DalitzAmplitude(p0,p1,p2,p3)
 amplitude.load_resonances(amplitude_file)
 smp = amplitude.phsp.rectangular_grid_sample(10,10)
 f, start = amplitude.get_amplitude_function(smp)
-print(amplitude.mapping_dict)
+# print(amplitude.mapping_dict)
+amplitude.dump(start,dump_file)
+print("Getting COV")
+cov = amplitude.get_cov(cov_file)
+print("Got COV")
+arg_sample = np.random.multivariate_normal(start,cov,100)
+print(arg_sample.shape)
+amplitudes = [f(a) for a in arg_sample]
+dAmplitude = np.std(amplitudes,axis=0)
 res_non_fix_L = f(start)
+for v,e in zip(res_non_fix_L.flatten(),dAmplitude.flatten()):
+    print(v,"+-",e)
+print(dAmplitude.shape)
+print(np.zeros(smp.shape[:-1]))
 
-
+exit(0)
 
 amplitude_file = "/home/kai/LHCb/AmplitudeCrafter/tests/Xi_1_fixedL.yml"
 
@@ -30,7 +44,7 @@ amplitude = DalitzAmplitude(p0,p1,p2,p3)
 amplitude.load_resonances(amplitude_file)
 smp = amplitude.phsp.rectangular_grid_sample(10,10)
 f, start = amplitude.get_amplitude_function(smp)
-print(amplitude.mapping_dict)
+# print(amplitude.mapping_dict)
 res_fix_L = f(start)
 
 

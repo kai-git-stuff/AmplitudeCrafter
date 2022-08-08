@@ -98,7 +98,7 @@ def analyse_value(value,name,dtc,lst):
     if value.strip() == "L":
         print("Angular Momentum Variable detected!")
         dtc[name] = "L"
-        dtc["L"] = None # thsi has to be None for now, as we need to find mistakes
+        dtc["L"] = None # this has to be None for now, as we need to find mistakes (None will somehwere down the line make issues, if it is not properly overwritten)
         lst.append(name)
         return True
 
@@ -129,6 +129,8 @@ def analyze_structure(parameters,parameter_dict,designation=""):
 def dump_value(param,name,value,new_name,mapping_dict):
     if not isinstance(value,str):
         param[name] = mapping_dict[new_name]
+    elif value.strip() == "L":
+        param[name] = "L"
     elif "const" in value:
         param[name] = value
     elif "sigma" in name:
@@ -297,6 +299,7 @@ class Resonance:
         dtc = self.kwargs.copy()
         del dtc["args"]
         mapping_dict[self.data_key] = "sigma%s"%self.kwargs["channel"]
+        mapping_dict["L"] = "L"
         dump_in_dict(dtc["expects"],mapping_dict,self.name)
         dtc["partial waves in"] = [{"L":pw["L"],"S":pw["S"], "coupling":dump_bls(self.bls_in[(pw["L"],pw["S"])],mapping_dict,pw["coupling"])} for pw in self.kwargs["partial waves in"]]
         dtc["partial waves out"] = [{"L":pw["L"],"S":pw["S"], "coupling":dump_bls(self.bls_out[(pw["L"],pw["S"])],mapping_dict,pw["coupling"])} for pw in self.kwargs["partial waves out"]]

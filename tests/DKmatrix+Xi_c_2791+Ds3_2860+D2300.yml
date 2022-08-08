@@ -1,0 +1,137 @@
+DKmatrix:
+  func: jitter.resonances.KmatX
+  d: 0.0015
+  M0: jitter.resonances.KmatM0
+  spin: 2
+  parity: -1
+  channel: 1
+  partial waves in:
+  - L: 0
+    S: 1
+    coupling: complex(1,0) const
+  - L: 2
+    S: 1
+    coupling: complex(-0.9024601594173283,-2.5332127239534)
+  - L: 2
+    S: 3
+    coupling: complex(2.8158791501493368,-0.3243050760487654)
+  partial waves out:
+  - L: 2
+    S: 0
+    coupling: complex(1,0.0) const
+  type: D0-Kmatrix
+  expects:
+  - channels:
+    - chanel1:
+      - index: const 0
+      - L: const 2
+      - bg: -1.8772545435030707e-05
+      - mDbar: 1864.84 const
+      - mKaon: 493.677 const
+    - chanel2:
+      - index: const 1
+      - L: const 2
+      - bg: -0.024724158714961697
+      - mKanon: 493.677 const
+      - mD2007: 2006.85 const
+    - chanel3:
+      - index: const 3
+      - L: const 0
+      - bg: 10.979460713638325
+      - mKanon: 493.677 const
+      - mD_1_0_2420: 2420.0 const
+  - alphas:
+    - a1: complex(-20.508833773831405,-33.43855011158661)
+    - a2: complex(-8.247816343917291,47.273560172458865)
+  - resonances:
+    - pole1:
+      - pole mass: 2727.361693398764 from 2700.0 to 2730.0
+      - g:
+        - g1: -11.851028586984752
+        - g2: -0.7854880361135815
+        - g3: -442.50645611655216
+    - pole2:
+      - pole mass: 2950.0025887950583 from 2950.0 to 2980.0
+      - g:
+        - g1: -13.800685963019822
+        - g2: 0.4435143035808427
+        - g3: -1.549243380487963
+  - sigma: sigma1
+  - L: const 2
+  - index: const 0
+Ds3_2860:
+  func: jitter.resonances.relativisticBWResonance
+  d: 0.0015
+  M0: jitter.resonances.BWM0
+  spin: 6
+  parity: -1
+  channel: 1
+  type: Ds3_2860-BW
+  expects:
+  - sigma: sigma1
+  - m: 2860. const
+  - width: 53. const
+  - mD: 1864.84 const
+  - mK: 493.677 const
+  - meson_radius: 0.0015 const
+  - l_orbit: 6 const
+  partial waves in:
+  - L: 4
+    S: 5
+    coupling: complex(28.254172001510163,-41.59839711894527)
+  partial waves out:
+  - L: 6
+    S: 0
+    coupling: complex(1,0) const
+D_s_2317:
+  func: jitter.resonances.FlatteResonance
+  d: 0.0015
+  M0: 2317.0
+  spin: 0
+  parity: 1
+  channel: 1
+  type: D2300-BW
+  expects:
+  - sigma: sigma1
+  - m: 2317. const
+  - gDK: 0.03779677225596032 from 0.0 to 100.0
+  - gDPi: 15. const
+  - mD: 1864.84 const
+  - mK: 493.677 const
+  - mD: 1864.84 const
+  - mPi: 139.5703 const
+  partial waves in:
+  - L: 0
+    S: 1
+    coupling: complex(-85.43221417833628,259.7141080772532)
+  partial waves out:
+  - L: 0
+    S: 0
+    coupling: complex(1,0) const
+xi_c_2791:
+  func: jitter.resonances.relativisticBWResonance
+  d: 0.0015
+  M0: jitter.resonances.BWM0
+  spin: 1
+  parity: -1
+  channel: 2
+  type: xi_c_2791-BW
+  expects:
+  - sigma: sigma2
+  - m: 2791.9 const
+  - width: 8.9 const
+  - mLc: 2286.46 const
+  - mK: 493.677 const
+  - meson_radius: 0.0015 const
+  - l_orbit: 0 const
+  partial waves in:
+  - L: 0
+    S: 1
+    coupling: complex(13.771112515816785,-76.00430871032465)
+  partial waves out:
+  - L: 0
+    S: 1
+    coupling: complex(1,0) const
+fit_result:
+  Log LH: -2304.0880808543325
+  Is Valid Minimum: 1

@@ -1,0 +1,702 @@
+DKmatrix=>channels=>chanel1=>bg:
+  DKmatrix=>channels=>chanel1=>bg: 1.007476853886833e-11
+  DKmatrix=>channels=>chanel2=>bg: -1.701612581480623e-11
+  DKmatrix=>channels=>chanel3=>bg: 2.011624534923621e-07
+  DKmatrix=>alphas=>a1_real: -2.8807262048103376e-07
+  DKmatrix=>alphas=>a1_imag: 1.6722794758421063e-07
+  DKmatrix=>alphas=>a2_real: 1.4863373578369463e-07
+  DKmatrix=>alphas=>a2_imag: 1.1107041792492972e-07
+  DKmatrix=>resonances=>pole1=>pole mass: 7.03547903645702e-07
+  DKmatrix=>resonances=>pole1=>g=>g1: 2.8718187813412872e-08
+  DKmatrix=>resonances=>pole1=>g=>g2: -8.69861846331372e-10
+  DKmatrix=>resonances=>pole1=>g=>g3: 3.7320713134838816e-07
+  DKmatrix=>resonances=>pole2=>pole mass: 1.1949318410177522e-07
+  DKmatrix=>resonances=>pole2=>g=>g1: -3.296870779900928e-08
+  DKmatrix=>resonances=>pole2=>g=>g2: 8.03809892388696e-11
+  DKmatrix=>resonances=>pole2=>g=>g3: -5.341564089423728e-06
+  DKmatrix=>bls_inL:2,S:1_real: -1.6252395410098425e-08
+  DKmatrix=>bls_inL:2,S:1_imag: -1.959012004763485e-08
+  DKmatrix=>bls_inL:2,S:3_real: 4.636078930794005e-08
+  DKmatrix=>bls_inL:2,S:3_imag: -2.4941368568175192e-08
+  xi_c_2791=>bls_inL:0,S:1_real: 6.617096395006155e-07
+  xi_c_2791=>bls_inL:0,S:1_imag: 1.0239029307682812e-06
+  Ds3_2860=>bls_inL:4,S:5_real: 6.130722400049434e-08
+  Ds3_2860=>bls_inL:4,S:5_imag: 1.4114462202095321e-06
+  D_s_2317=>gDK: 2.446900697828956e-07
+  D_s_2317=>bls_inL:0,S:1_real: -2.8225580415283394e-06
+  D_s_2317=>bls_inL:0,S:1_imag: -6.9073001730322275e-06
+DKmatrix=>channels=>chanel2=>bg:
+  DKmatrix=>channels=>chanel1=>bg: -1.701612581480623e-11
+  DKmatrix=>channels=>chanel2=>bg: 1.0049125197246277e-08
+  DKmatrix=>channels=>chanel3=>bg: -1.028025551773595e-05
+  DKmatrix=>alphas=>a1_real: 8.668040132367992e-06
+  DKmatrix=>alphas=>a1_imag: -3.083822388979395e-06
+  DKmatrix=>alphas=>a2_real: -3.789824725219749e-06
+  DKmatrix=>alphas=>a2_imag: -9.968645956260981e-06
+  DKmatrix=>resonances=>pole1=>pole mass: -9.675788726013764e-06
+  DKmatrix=>resonances=>pole1=>g=>g1: -3.4600566664945726e-06
+  DKmatrix=>resonances=>pole1=>g=>g2: -6.626706936690826e-08
+  DKmatrix=>resonances=>pole1=>g=>g3: -1.5674610942618347e-05
+  DKmatrix=>resonances=>pole2=>pole mass: 1.1934340453376187e-05
+  DKmatrix=>resonances=>pole2=>g=>g1: 3.4096072173415484e-06
+  DKmatrix=>resonances=>pole2=>g=>g2: 5.5401663330132736e-08
+  DKmatrix=>resonances=>pole2=>g=>g3: 9.169920963095543e-05
+  DKmatrix=>bls_inL:2,S:1_real: 8.098769861357902e-07
+  DKmatrix=>bls_inL:2,S:1_imag: 4.5494895436277706e-07
+  DKmatrix=>bls_inL:2,S:3_real: -1.6059286417170799e-06
+  DKmatrix=>bls_inL:2,S:3_imag: 1.7393012300168122e-06
+  xi_c_2791=>bls_inL:0,S:1_real: -0.00011225232784687112
+  xi_c_2791=>bls_inL:0,S:1_imag: -2.0371218180497955e-07
+  Ds3_2860=>bls_inL:4,S:5_real: -4.0507256256212597e-05
+  Ds3_2860=>bls_inL:4,S:5_imag: -2.727156946338475e-05
+  D_s_2317=>gDK: -1.7323666324143336e-05
+  D_s_2317=>bls_inL:0,S:1_real: 0.00019957629201457978
+  D_s_2317=>bls_inL:0,S:1_imag: 0.00042262426759405615
+DKmatrix=>channels=>chanel3=>bg:
+  DKmatrix=>channels=>chanel1=>bg: 2.011624534923621e-07
+  DKmatrix=>channels=>chanel2=>bg: -1.028025551773595e-05
+  DKmatrix=>channels=>chanel3=>bg: 0.8409485121764085
+  DKmatrix=>alphas=>a1_real: -0.7964996907113728
+  DKmatrix=>alphas=>a1_imag: 0.45011329595469135
+  DKmatrix=>alphas=>a2_real: 0.2653139638036778
+  DKmatrix=>alphas=>a2_imag: 0.47965376556029843
+  DKmatrix=>resonances=>pole1=>pole mass: 1.4135894214798472
+  DKmatrix=>resonances=>pole1=>g=>g1: 0.2298251617457351
+  DKmatrix=>resonances=>pole1=>g=>g2: -0.00016053768666152163
+  DKmatrix=>resonances=>pole1=>g=>g3: 2.44182461792666
+  DKmatrix=>resonances=>pole2=>pole mass: -0.35381339484600227
+  DKmatrix=>resonances=>pole2=>g=>g1: -0.19368813336769583
+  DKmatrix=>resonances=>pole2=>g=>g2: 0.0008615362829961484
+  DKmatrix=>resonances=>pole2=>g=>g3: -8.916132014206335
+  DKmatrix=>bls_inL:2,S:1_real: -0.04334402403312974
+  DKmatrix=>bls_inL:2,S:1_imag: -0.018088906610362606
+  DKmatrix=>bls_inL:2,S:3_real: 0.13386406789158237
+  DKmatrix=>bls_inL:2,S:3_imag: -0.12261016116677181
+  xi_c_2791=>bls_inL:0,S:1_real: 8.423929299706046
+  xi_c_2791=>bls_inL:0,S:1_imag: -0.5229975600010282
+  Ds3_2860=>bls_inL:4,S:5_real: 1.2466951139411002
+  Ds3_2860=>bls_inL:4,S:5_imag: 1.0358851340721906
+  D_s_2317=>gDK: 1.2828693336687544
+  D_s_2317=>bls_inL:0,S:1_real: -14.341111210134985
+  D_s_2317=>bls_inL:0,S:1_imag: -30.780200078422478
+DKmatrix=>alphas=>a1_real:
+  DKmatrix=>channels=>chanel1=>bg: -2.8807262048103376e-07
+  DKmatrix=>channels=>chanel2=>bg: 8.668040132367992e-06
+  DKmatrix=>channels=>chanel3=>bg: -0.7964996907113728
+  DKmatrix=>alphas=>a1_real: 0.8229670643031503
+  DKmatrix=>alphas=>a1_imag: -0.4239849190227507
+  DKmatrix=>alphas=>a2_real: -0.2560452541475154
+  DKmatrix=>alphas=>a2_imag: -0.45219681098038395
+  DKmatrix=>resonances=>pole1=>pole mass: -1.2920421976925367
+  DKmatrix=>resonances=>pole1=>g=>g1: -0.21689933455465837
+  DKmatrix=>resonances=>pole1=>g=>g2: 9.216139654910906e-05
+  DKmatrix=>resonances=>pole1=>g=>g3: -1.8445482895858796
+  DKmatrix=>resonances=>pole2=>pole mass: 0.3412867991178433
+  DKmatrix=>resonances=>pole2=>g=>g1: 0.18573380185341032
+  DKmatrix=>resonances=>pole2=>g=>g2: -0.0008194104471138358
+  DKmatrix=>resonances=>pole2=>g=>g3: 8.425629895786924
+  DKmatrix=>bls_inL:2,S:1_real: 0.0405148854528179
+  DKmatrix=>bls_inL:2,S:1_imag: 0.01716651453219205
+  DKmatrix=>bls_inL:2,S:3_real: -0.12816101845378433
+  DKmatrix=>bls_inL:2,S:3_imag: 0.11528404820266563
+  xi_c_2791=>bls_inL:0,S:1_real: -7.931382184837414
+  xi_c_2791=>bls_inL:0,S:1_imag: 0.4504370984518528
+  Ds3_2860=>bls_inL:4,S:5_real: -1.115454507939363
+  Ds3_2860=>bls_inL:4,S:5_imag: -0.9176930411762046
+  D_s_2317=>gDK: -1.210773725834712
+  D_s_2317=>bls_inL:0,S:1_real: 13.457162362061789
+  D_s_2317=>bls_inL:0,S:1_imag: 29.21440771717098
+DKmatrix=>alphas=>a1_imag:
+  DKmatrix=>channels=>chanel1=>bg: 1.6722794758421063e-07
+  DKmatrix=>channels=>chanel2=>bg: -3.083822388979395e-06
+  DKmatrix=>channels=>chanel3=>bg: 0.45011329595469135
+  DKmatrix=>alphas=>a1_real: -0.4239849190227507
+  DKmatrix=>alphas=>a1_imag: 0.2780186711225226
+  DKmatrix=>alphas=>a2_real: 0.1467743357426959
+  DKmatrix=>alphas=>a2_imag: 0.257479649973564
+  DKmatrix=>resonances=>pole1=>pole mass: 0.7206078229796604
+  DKmatrix=>resonances=>pole1=>g=>g1: 0.12425268940743996
+  DKmatrix=>resonances=>pole1=>g=>g2: 4.870567117130506e-05
+  DKmatrix=>resonances=>pole1=>g=>g3: 1.294192071280622
+  DKmatrix=>resonances=>pole2=>pole mass: -0.18608684275673254
+  DKmatrix=>resonances=>pole2=>g=>g1: -0.10527152953997179
+  DKmatrix=>resonances=>pole2=>g=>g2: 0.00046787058762552534
+  DKmatrix=>resonances=>pole2=>g=>g3: -4.771577927982617
+  DKmatrix=>bls_inL:2,S:1_real: -0.023849483091719265
+  DKmatrix=>bls_inL:2,S:1_imag: -0.010447656455236544
+  DKmatrix=>bls_inL:2,S:3_real: 0.07301920506425608
+  DKmatrix=>bls_inL:2,S:3_imag: -0.06667675410163935
+  xi_c_2791=>bls_inL:0,S:1_real: 4.535062110841527
+  xi_c_2791=>bls_inL:0,S:1_imag: -0.2467850118603683
+  Ds3_2860=>bls_inL:4,S:5_real: 0.663529531582962
+  Ds3_2860=>bls_inL:4,S:5_imag: 0.5990080595305308
+  D_s_2317=>gDK: 0.6986392110998986
+  D_s_2317=>bls_inL:0,S:1_real: -7.802021684583198
+  D_s_2317=>bls_inL:0,S:1_imag: -16.759441360216076
+DKmatrix=>alphas=>a2_real:
+  DKmatrix=>channels=>chanel1=>bg: 1.4863373578369463e-07
+  DKmatrix=>channels=>chanel2=>bg: -3.789824725219749e-06
+  DKmatrix=>channels=>chanel3=>bg: 0.2653139638036778
+  DKmatrix=>alphas=>a1_real: -0.2560452541475154
+  DKmatrix=>alphas=>a1_imag: 0.1467743357426959
+  DKmatrix=>alphas=>a2_real: 0.1214872643926223
+  DKmatrix=>alphas=>a2_imag: 0.15213366167793343
+  DKmatrix=>resonances=>pole1=>pole mass: 0.46260108588179044
+  DKmatrix=>resonances=>pole1=>g=>g1: 0.07361314999842736
+  DKmatrix=>resonances=>pole1=>g=>g2: -8.114259719772956e-05
+  DKmatrix=>resonances=>pole1=>g=>g3: 0.9419750557652375
+  DKmatrix=>resonances=>pole2=>pole mass: -0.13861098679030281
+  DKmatrix=>resonances=>pole2=>g=>g1: -0.061147609912488105
+  DKmatrix=>resonances=>pole2=>g=>g2: 0.00027062323498244615
+  DKmatrix=>resonances=>pole2=>g=>g3: -2.60281875004748
+  DKmatrix=>bls_inL:2,S:1_real: -0.01332478030663247
+  DKmatrix=>bls_inL:2,S:1_imag: -0.006149066387652129
+  DKmatrix=>bls_inL:2,S:3_real: 0.04436179556118291
+  DKmatrix=>bls_inL:2,S:3_imag: -0.038813906326615286
+  xi_c_2791=>bls_inL:0,S:1_real: 2.6019873521478165
+  xi_c_2791=>bls_inL:0,S:1_imag: -0.11088244619702857
+  Ds3_2860=>bls_inL:4,S:5_real: 0.33793951654950205
+  Ds3_2860=>bls_inL:4,S:5_imag: 0.28451536713800346
+  D_s_2317=>gDK: 0.4055979782015506
+  D_s_2317=>bls_inL:0,S:1_real: -4.386499304751424
+  D_s_2317=>bls_inL:0,S:1_imag: -9.970942579919518
+DKmatrix=>alphas=>a2_imag:
+  DKmatrix=>channels=>chanel1=>bg: 1.1107041792492972e-07
+  DKmatrix=>channels=>chanel2=>bg: -9.968645956260981e-06
+  DKmatrix=>channels=>chanel3=>bg: 0.47965376556029843
+  DKmatrix=>alphas=>a1_real: -0.45219681098038395
+  DKmatrix=>alphas=>a1_imag: 0.257479649973564
+  DKmatrix=>alphas=>a2_real: 0.15213366167793343
+  DKmatrix=>alphas=>a2_imag: 0.35227843882318566
+  DKmatrix=>resonances=>pole1=>pole mass: 0.7952069366029695
+  DKmatrix=>resonances=>pole1=>g=>g1: 0.12985369614681028
+  DKmatrix=>resonances=>pole1=>g=>g2: -0.00020086621422025794
+  DKmatrix=>resonances=>pole1=>g=>g3: 1.3406825148607313
+  DKmatrix=>resonances=>pole2=>pole mass: -0.16748879338227468
+  DKmatrix=>resonances=>pole2=>g=>g1: -0.10760037504330319
+  DKmatrix=>resonances=>pole2=>g=>g2: 0.0007825188475511592
+  DKmatrix=>resonances=>pole2=>g=>g3: -5.14041431157209
+  DKmatrix=>bls_inL:2,S:1_real: -0.024376529413446493
+  DKmatrix=>bls_inL:2,S:1_imag: -0.01002111388420562
+  DKmatrix=>bls_inL:2,S:3_real: 0.07737316500412558
+  DKmatrix=>bls_inL:2,S:3_imag: -0.0702673510997706
+  xi_c_2791=>bls_inL:0,S:1_real: 4.809897921811114
+  xi_c_2791=>bls_inL:0,S:1_imag: -0.3070063310730589
+  Ds3_2860=>bls_inL:4,S:5_real: 0.6170237658787413
+  Ds3_2860=>bls_inL:4,S:5_imag: 0.5863280335017987
+  D_s_2317=>gDK: 0.7428023636719028
+  D_s_2317=>bls_inL:0,S:1_real: -8.295418725467606
+  D_s_2317=>bls_inL:0,S:1_imag: -17.644550870980588
+DKmatrix=>resonances=>pole1=>pole mass:
+  DKmatrix=>channels=>chanel1=>bg: 7.03547903645702e-07
+  DKmatrix=>channels=>chanel2=>bg: -9.675788726013764e-06
+  DKmatrix=>channels=>chanel3=>bg: 1.4135894214798472
+  DKmatrix=>alphas=>a1_real: -1.2920421976925367
+  DKmatrix=>alphas=>a1_imag: 0.7206078229796604
+  DKmatrix=>alphas=>a2_real: 0.46260108588179044
+  DKmatrix=>alphas=>a2_imag: 0.7952069366029695
+  DKmatrix=>resonances=>pole1=>pole mass: 3.2390373430309136
+  DKmatrix=>resonances=>pole1=>g=>g1: 0.39110774655321995
+  DKmatrix=>resonances=>pole1=>g=>g2: 0.00022335451033531463
+  DKmatrix=>resonances=>pole1=>g=>g3: 3.3378028637550843
+  DKmatrix=>resonances=>pole2=>pole mass: -0.5303442733009565
+  DKmatrix=>resonances=>pole2=>g=>g1: -0.32405384723754826
+  DKmatrix=>resonances=>pole2=>g=>g2: 0.0016536425746902993
+  DKmatrix=>resonances=>pole2=>g=>g3: -14.878890514875215
+  DKmatrix=>bls_inL:2,S:1_real: -0.0753488616950956
+  DKmatrix=>bls_inL:2,S:1_imag: -0.035163795709752005
+  DKmatrix=>bls_inL:2,S:3_real: 0.23134915351928542
+  DKmatrix=>bls_inL:2,S:3_imag: -0.2095629973072175
+  xi_c_2791=>bls_inL:0,S:1_real: 14.312263795639995
+  xi_c_2791=>bls_inL:0,S:1_imag: -0.811114502955196
+  Ds3_2860=>bls_inL:4,S:5_real: 2.0817205244591555
+  Ds3_2860=>bls_inL:4,S:5_imag: 1.8817944940281488
+  D_s_2317=>gDK: 2.1695391440156366
+  D_s_2317=>bls_inL:0,S:1_real: -24.07065775281518
+  D_s_2317=>bls_inL:0,S:1_imag: -53.20129793394356
+DKmatrix=>resonances=>pole1=>g=>g1:
+  DKmatrix=>channels=>chanel1=>bg: 2.8718187813412872e-08
+  DKmatrix=>channels=>chanel2=>bg: -3.4600566664945726e-06
+  DKmatrix=>channels=>chanel3=>bg: 0.2298251617457351
+  DKmatrix=>alphas=>a1_real: -0.21689933455465837
+  DKmatrix=>alphas=>a1_imag: 0.12425268940743996
+  DKmatrix=>alphas=>a2_real: 0.07361314999842736
+  DKmatrix=>alphas=>a2_imag: 0.12985369614681028
+  DKmatrix=>resonances=>pole1=>pole mass: 0.39110774655321995
+  DKmatrix=>resonances=>pole1=>g=>g1: 0.06830493778543074
+  DKmatrix=>resonances=>pole1=>g=>g2: -8.771786542685611e-05
+  DKmatrix=>resonances=>pole1=>g=>g3: 0.6357163493494093
+  DKmatrix=>resonances=>pole2=>pole mass: -0.09407409294079852
+  DKmatrix=>resonances=>pole2=>g=>g1: -0.05167079988165283
+  DKmatrix=>resonances=>pole2=>g=>g2: 0.0002135451151678149
+  DKmatrix=>resonances=>pole2=>g=>g3: -2.491276134222754
+  DKmatrix=>bls_inL:2,S:1_real: -0.011893647083218904
+  DKmatrix=>bls_inL:2,S:1_imag: -0.004741124344073106
+  DKmatrix=>bls_inL:2,S:3_real: 0.036581338770537715
+  DKmatrix=>bls_inL:2,S:3_imag: -0.0336581176556237
+  xi_c_2791=>bls_inL:0,S:1_real: 2.256993346074874
+  xi_c_2791=>bls_inL:0,S:1_imag: -0.13367534755210542
+  Ds3_2860=>bls_inL:4,S:5_real: 0.35212592636144163
+  Ds3_2860=>bls_inL:4,S:5_imag: 0.28165343060773523
+  D_s_2317=>gDK: 0.35488621068577486
+  D_s_2317=>bls_inL:0,S:1_real: -3.982084834013459
+  D_s_2317=>bls_inL:0,S:1_imag: -8.42516232248269
+DKmatrix=>resonances=>pole1=>g=>g2:
+  DKmatrix=>channels=>chanel1=>bg: -8.69861846331372e-10
+  DKmatrix=>channels=>chanel2=>bg: -6.626706936690826e-08
+  DKmatrix=>channels=>chanel3=>bg: -0.00016053768666152163
+  DKmatrix=>alphas=>a1_real: 9.216139654910906e-05
+  DKmatrix=>alphas=>a1_imag: 4.870567117130506e-05
+  DKmatrix=>alphas=>a2_real: -8.114259719772956e-05
+  DKmatrix=>alphas=>a2_imag: -0.00020086621422025794
+  DKmatrix=>resonances=>pole1=>pole mass: 0.00022335451033531463
+  DKmatrix=>resonances=>pole1=>g=>g1: -8.771786542685611e-05
+  DKmatrix=>resonances=>pole1=>g=>g2: 1.660919631755685e-05
+  DKmatrix=>resonances=>pole1=>g=>g3: 0.00046967521298358467
+  DKmatrix=>resonances=>pole2=>pole mass: 0.00023378618573700752
+  DKmatrix=>resonances=>pole2=>g=>g1: 9.181795697225116e-05
+  DKmatrix=>resonances=>pole2=>g=>g2: 3.658382912352941e-07
+  DKmatrix=>resonances=>pole2=>g=>g3: 0.001069335786786758
+  DKmatrix=>bls_inL:2,S:1_real: 1.784709158088823e-05
+  DKmatrix=>bls_inL:2,S:1_imag: 1.9102218324496605e-05
+  DKmatrix=>bls_inL:2,S:3_real: -2.6449564654571625e-05
+  DKmatrix=>bls_inL:2,S:3_imag: 2.9789040198683153e-05
+  xi_c_2791=>bls_inL:0,S:1_real: -0.0020836277633671007
+  xi_c_2791=>bls_inL:0,S:1_imag: -3.931936205825897e-05
+  Ds3_2860=>bls_inL:4,S:5_real: -0.000548604118482181
+  Ds3_2860=>bls_inL:4,S:5_imag: -0.0009208855233198296
+  D_s_2317=>gDK: -0.0003087657430772652
+  D_s_2317=>bls_inL:0,S:1_real: 0.003131550988736244
+  D_s_2317=>bls_inL:0,S:1_imag: 0.007737160470484741
+DKmatrix=>resonances=>pole1=>g=>g3:
+  DKmatrix=>channels=>chanel1=>bg: 3.7320713134838816e-07
+  DKmatrix=>channels=>chanel2=>bg: -1.5674610942618347e-05
+  DKmatrix=>channels=>chanel3=>bg: 2.44182461792666
+  DKmatrix=>alphas=>a1_real: -1.8445482895858796
+  DKmatrix=>alphas=>a1_imag: 1.294192071280622
+  DKmatrix=>alphas=>a2_real: 0.9419750557652375
+  DKmatrix=>alphas=>a2_imag: 1.3406825148607313
+  DKmatrix=>resonances=>pole1=>pole mass: 3.3378028637550843
+  DKmatrix=>resonances=>pole1=>g=>g1: 0.6357163493494093
+  DKmatrix=>resonances=>pole1=>g=>g2: 0.00046967521298358467
+  DKmatrix=>resonances=>pole1=>g=>g3: 32.144558851347554
+  DKmatrix=>resonances=>pole2=>pole mass: -0.9041160169153702
+  DKmatrix=>resonances=>pole2=>g=>g1: -0.5927296778776658
+  DKmatrix=>resonances=>pole2=>g=>g2: 0.0028886798118362826
+  DKmatrix=>resonances=>pole2=>g=>g3: -28.34678013672576
+  DKmatrix=>bls_inL:2,S:1_real: -0.120482034637683
+  DKmatrix=>bls_inL:2,S:1_imag: -0.07185449966232813
+  DKmatrix=>bls_inL:2,S:3_real: 0.42949776786060223
+  DKmatrix=>bls_inL:2,S:3_imag: -0.33565634206235384
+  xi_c_2791=>bls_inL:0,S:1_real: 22.32612987447166
+  xi_c_2791=>bls_inL:0,S:1_imag: 0.06675400983834566
+  Ds3_2860=>bls_inL:4,S:5_real: 2.121260689136939
+  Ds3_2860=>bls_inL:4,S:5_imag: 2.780751366972859
+  D_s_2317=>gDK: 3.5716256636394754
+  D_s_2317=>bls_inL:0,S:1_real: -37.91503328723494
+  D_s_2317=>bls_inL:0,S:1_imag: -91.22430903097747
+DKmatrix=>resonances=>pole2=>pole mass:
+  DKmatrix=>channels=>chanel1=>bg: 1.1949318410177522e-07
+  DKmatrix=>channels=>chanel2=>bg: 1.1934340453376187e-05
+  DKmatrix=>channels=>chanel3=>bg: -0.35381339484600227
+  DKmatrix=>alphas=>a1_real: 0.3412867991178433
+  DKmatrix=>alphas=>a1_imag: -0.18608684275673254
+  DKmatrix=>alphas=>a2_real: -0.13861098679030281
+  DKmatrix=>alphas=>a2_imag: -0.16748879338227468
+  DKmatrix=>resonances=>pole1=>pole mass: -0.5303442733009565
+  DKmatrix=>resonances=>pole1=>g=>g1: -0.09407409294079852
+  DKmatrix=>resonances=>pole1=>g=>g2: 0.00023378618573700752
+  DKmatrix=>resonances=>pole1=>g=>g3: -0.9041160169153702
+  DKmatrix=>resonances=>pole2=>pole mass: 0.5021009387279939
+  DKmatrix=>resonances=>pole2=>g=>g1: 0.0700203329072987
+  DKmatrix=>resonances=>pole2=>g=>g2: -0.0009898599143117867
+  DKmatrix=>resonances=>pole2=>g=>g3: 4.201796402827556
+  DKmatrix=>bls_inL:2,S:1_real: 0.019217507286896893
+  DKmatrix=>bls_inL:2,S:1_imag: 0.008328748299843102
+  DKmatrix=>bls_inL:2,S:3_real: -0.05564670353867172
+  DKmatrix=>bls_inL:2,S:3_imag: 0.05260346402144247
+  xi_c_2791=>bls_inL:0,S:1_real: -3.71400943036765
+  xi_c_2791=>bls_inL:0,S:1_imag: 0.3453037238881229
+  Ds3_2860=>bls_inL:4,S:5_real: -0.5122977088945225
+  Ds3_2860=>bls_inL:4,S:5_imag: -0.5743747498462087
+  D_s_2317=>gDK: -0.5444846307392494
+  D_s_2317=>bls_inL:0,S:1_real: 6.246385379294664
+  D_s_2317=>bls_inL:0,S:1_imag: 13.032956329825979
+DKmatrix=>resonances=>pole2=>g=>g1:
+  DKmatrix=>channels=>chanel1=>bg: -3.296870779900928e-08
+  DKmatrix=>channels=>chanel2=>bg: 3.4096072173415484e-06
+  DKmatrix=>channels=>chanel3=>bg: -0.19368813336769583
+  DKmatrix=>alphas=>a1_real: 0.18573380185341032
+  DKmatrix=>alphas=>a1_imag: -0.10527152953997179
+  DKmatrix=>alphas=>a2_real: -0.061147609912488105
+  DKmatrix=>alphas=>a2_imag: -0.10760037504330319
+  DKmatrix=>resonances=>pole1=>pole mass: -0.32405384723754826
+  DKmatrix=>resonances=>pole1=>g=>g1: -0.05167079988165283
+  DKmatrix=>resonances=>pole1=>g=>g2: 9.181795697225116e-05
+  DKmatrix=>resonances=>pole1=>g=>g3: -0.5927296778776658
+  DKmatrix=>resonances=>pole2=>pole mass: 0.0700203329072987
+  DKmatrix=>resonances=>pole2=>g=>g1: 0.05518191630247117
+  DKmatrix=>resonances=>pole2=>g=>g2: -0.00020287277278840002
+  DKmatrix=>resonances=>pole2=>g=>g3: 2.0980571719115892
+  DKmatrix=>bls_inL:2,S:1_real: 0.010261488175636409
+  DKmatrix=>bls_inL:2,S:1_imag: 0.004401616002466275
+  DKmatrix=>bls_inL:2,S:3_real: -0.03138434421257494
+  DKmatrix=>bls_inL:2,S:3_imag: 0.028697135720723053
+  xi_c_2791=>bls_inL:0,S:1_real: -1.9050852830169147
+  xi_c_2791=>bls_inL:0,S:1_imag: 0.1058925853386893
+  Ds3_2860=>bls_inL:4,S:5_real: -0.3037143812141178
+  Ds3_2860=>bls_inL:4,S:5_imag: -0.2513808767070067
+  D_s_2317=>gDK: -0.29990879104535006
+  D_s_2317=>bls_inL:0,S:1_real: 3.344006446635149
+  D_s_2317=>bls_inL:0,S:1_imag: 7.2279048849202905
+DKmatrix=>resonances=>pole2=>g=>g2:
+  DKmatrix=>channels=>chanel1=>bg: 8.03809892388696e-11
+  DKmatrix=>channels=>chanel2=>bg: 5.5401663330132736e-08
+  DKmatrix=>channels=>chanel3=>bg: 0.0008615362829961484
+  DKmatrix=>alphas=>a1_real: -0.0008194104471138358
+  DKmatrix=>alphas=>a1_imag: 0.00046787058762552534
+  DKmatrix=>alphas=>a2_real: 0.00027062323498244615
+  DKmatrix=>alphas=>a2_imag: 0.0007825188475511592
+  DKmatrix=>resonances=>pole1=>pole mass: 0.0016536425746902993
+  DKmatrix=>resonances=>pole1=>g=>g1: 0.0002135451151678149
+  DKmatrix=>resonances=>pole1=>g=>g2: 3.658382912352941e-07
+  DKmatrix=>resonances=>pole1=>g=>g3: 0.0028886798118362826
+  DKmatrix=>resonances=>pole2=>pole mass: -0.0009898599143117867
+  DKmatrix=>resonances=>pole2=>g=>g1: -0.00020287277278840002
+  DKmatrix=>resonances=>pole2=>g=>g2: 2.215356657163777e-05
+  DKmatrix=>resonances=>pole2=>g=>g3: -0.008340265113000659
+  DKmatrix=>bls_inL:2,S:1_real: -5.9200830765844276e-05
+  DKmatrix=>bls_inL:2,S:1_imag: -1.0993579047577314e-05
+  DKmatrix=>bls_inL:2,S:3_real: 0.00012954564180809892
+  DKmatrix=>bls_inL:2,S:3_imag: -0.00014262243541624455
+  xi_c_2791=>bls_inL:0,S:1_real: 0.008724307783957693
+  xi_c_2791=>bls_inL:0,S:1_imag: 1.0203395159478443e-05
+  Ds3_2860=>bls_inL:4,S:5_real: 0.0040211269559070634
+  Ds3_2860=>bls_inL:4,S:5_imag: 0.0012568632418484243
+  D_s_2317=>gDK: 0.0013796548268796079
+  D_s_2317=>bls_inL:0,S:1_real: -0.017105379257750596
+  D_s_2317=>bls_inL:0,S:1_imag: -0.03314645861841827
+DKmatrix=>resonances=>pole2=>g=>g3:
+  DKmatrix=>channels=>chanel1=>bg: -5.341564089423728e-06
+  DKmatrix=>channels=>chanel2=>bg: 9.169920963095543e-05
+  DKmatrix=>channels=>chanel3=>bg: -8.916132014206335
+  DKmatrix=>alphas=>a1_real: 8.425629895786924
+  DKmatrix=>alphas=>a1_imag: -4.771577927982617
+  DKmatrix=>alphas=>a2_real: -2.60281875004748
+  DKmatrix=>alphas=>a2_imag: -5.14041431157209
+  DKmatrix=>resonances=>pole1=>pole mass: -14.878890514875215
+  DKmatrix=>resonances=>pole1=>g=>g1: -2.491276134222754
+  DKmatrix=>resonances=>pole1=>g=>g2: 0.001069335786786758
+  DKmatrix=>resonances=>pole1=>g=>g3: -28.34678013672576
+  DKmatrix=>resonances=>pole2=>pole mass: 4.201796402827556
+  DKmatrix=>resonances=>pole2=>g=>g1: 2.0980571719115892
+  DKmatrix=>resonances=>pole2=>g=>g2: -0.008340265113000659
+  DKmatrix=>resonances=>pole2=>g=>g3: 126.2624815604866
+  DKmatrix=>bls_inL:2,S:1_real: 0.45051595169899383
+  DKmatrix=>bls_inL:2,S:1_imag: 0.17243762971068477
+  DKmatrix=>bls_inL:2,S:3_real: -1.4465907905509927
+  DKmatrix=>bls_inL:2,S:3_imag: 1.3162366034700956
+  xi_c_2791=>bls_inL:0,S:1_real: -92.44625387830509
+  xi_c_2791=>bls_inL:0,S:1_imag: 5.948783226636653
+  Ds3_2860=>bls_inL:4,S:5_real: -12.815536877348388
+  Ds3_2860=>bls_inL:4,S:5_imag: -9.456241357469937
+  D_s_2317=>gDK: -13.694809445919436
+  D_s_2317=>bls_inL:0,S:1_real: 152.33439605536572
+  D_s_2317=>bls_inL:0,S:1_imag: 330.8917787533502
+DKmatrix=>bls_inL:2,S:1_real:
+  DKmatrix=>channels=>chanel1=>bg: -1.6252395410098425e-08
+  DKmatrix=>channels=>chanel2=>bg: 8.098769861357902e-07
+  DKmatrix=>channels=>chanel3=>bg: -0.04334402403312974
+  DKmatrix=>alphas=>a1_real: 0.0405148854528179
+  DKmatrix=>alphas=>a1_imag: -0.023849483091719265
+  DKmatrix=>alphas=>a2_real: -0.01332478030663247
+  DKmatrix=>alphas=>a2_imag: -0.024376529413446493
+  DKmatrix=>resonances=>pole1=>pole mass: -0.0753488616950956
+  DKmatrix=>resonances=>pole1=>g=>g1: -0.011893647083218904
+  DKmatrix=>resonances=>pole1=>g=>g2: 1.784709158088823e-05
+  DKmatrix=>resonances=>pole1=>g=>g3: -0.120482034637683
+  DKmatrix=>resonances=>pole2=>pole mass: 0.019217507286896893
+  DKmatrix=>resonances=>pole2=>g=>g1: 0.010261488175636409
+  DKmatrix=>resonances=>pole2=>g=>g2: -5.9200830765844276e-05
+  DKmatrix=>resonances=>pole2=>g=>g3: 0.45051595169899383
+  DKmatrix=>bls_inL:2,S:1_real: 0.008611579716294098
+  DKmatrix=>bls_inL:2,S:1_imag: 0.003237775666256794
+  DKmatrix=>bls_inL:2,S:3_real: -0.004884885803355989
+  DKmatrix=>bls_inL:2,S:3_imag: 0.008055631619770852
+  xi_c_2791=>bls_inL:0,S:1_real: -0.4444408030215231
+  xi_c_2791=>bls_inL:0,S:1_imag: 0.013370405619549375
+  Ds3_2860=>bls_inL:4,S:5_real: -0.05819580319482441
+  Ds3_2860=>bls_inL:4,S:5_imag: -0.04349293136886751
+  D_s_2317=>gDK: -0.06067215192191647
+  D_s_2317=>bls_inL:0,S:1_real: 0.6569315191807786
+  D_s_2317=>bls_inL:0,S:1_imag: 1.47093570278702
+DKmatrix=>bls_inL:2,S:1_imag:
+  DKmatrix=>channels=>chanel1=>bg: -1.959012004763485e-08
+  DKmatrix=>channels=>chanel2=>bg: 4.5494895436277706e-07
+  DKmatrix=>channels=>chanel3=>bg: -0.018088906610362606
+  DKmatrix=>alphas=>a1_real: 0.01716651453219205
+  DKmatrix=>alphas=>a1_imag: -0.010447656455236544
+  DKmatrix=>alphas=>a2_real: -0.006149066387652129
+  DKmatrix=>alphas=>a2_imag: -0.01002111388420562
+  DKmatrix=>resonances=>pole1=>pole mass: -0.035163795709752005
+  DKmatrix=>resonances=>pole1=>g=>g1: -0.004741124344073106
+  DKmatrix=>resonances=>pole1=>g=>g2: 1.9102218324496605e-05
+  DKmatrix=>resonances=>pole1=>g=>g3: -0.07185449966232813
+  DKmatrix=>resonances=>pole2=>pole mass: 0.008328748299843102
+  DKmatrix=>resonances=>pole2=>g=>g1: 0.004401616002466275
+  DKmatrix=>resonances=>pole2=>g=>g2: -1.0993579047577314e-05
+  DKmatrix=>resonances=>pole2=>g=>g3: 0.17243762971068477
+  DKmatrix=>bls_inL:2,S:1_real: 0.003237775666256794
+  DKmatrix=>bls_inL:2,S:1_imag: 0.008309370586737024
+  DKmatrix=>bls_inL:2,S:3_real: -0.00393879397968888
+  DKmatrix=>bls_inL:2,S:3_imag: 0.0013184803195229289
+  xi_c_2791=>bls_inL:0,S:1_real: -0.2203285679187905
+  xi_c_2791=>bls_inL:0,S:1_imag: 0.07045761432224695
+  Ds3_2860=>bls_inL:4,S:5_real: -0.03563986968095913
+  Ds3_2860=>bls_inL:4,S:5_imag: 0.012719613915499958
+  D_s_2317=>gDK: -0.0414268455833509
+  D_s_2317=>bls_inL:0,S:1_real: 0.5772057518984788
+  D_s_2317=>bls_inL:0,S:1_imag: 0.57201906777531
+DKmatrix=>bls_inL:2,S:3_real:
+  DKmatrix=>channels=>chanel1=>bg: 4.636078930794005e-08
+  DKmatrix=>channels=>chanel2=>bg: -1.6059286417170799e-06
+  DKmatrix=>channels=>chanel3=>bg: 0.13386406789158237
+  DKmatrix=>alphas=>a1_real: -0.12816101845378433
+  DKmatrix=>alphas=>a1_imag: 0.07301920506425608
+  DKmatrix=>alphas=>a2_real: 0.04436179556118291
+  DKmatrix=>alphas=>a2_imag: 0.07737316500412558
+  DKmatrix=>resonances=>pole1=>pole mass: 0.23134915351928542
+  DKmatrix=>resonances=>pole1=>g=>g1: 0.036581338770537715
+  DKmatrix=>resonances=>pole1=>g=>g2: -2.6449564654571625e-05
+  DKmatrix=>resonances=>pole1=>g=>g3: 0.42949776786060223
+  DKmatrix=>resonances=>pole2=>pole mass: -0.05564670353867172
+  DKmatrix=>resonances=>pole2=>g=>g1: -0.03138434421257494
+  DKmatrix=>resonances=>pole2=>g=>g2: 0.00012954564180809892
+  DKmatrix=>resonances=>pole2=>g=>g3: -1.4465907905509927
+  DKmatrix=>bls_inL:2,S:1_real: -0.004884885803355989
+  DKmatrix=>bls_inL:2,S:1_imag: -0.00393879397968888
+  DKmatrix=>bls_inL:2,S:3_real: 0.034404469630129574
+  DKmatrix=>bls_inL:2,S:3_imag: -0.02133954911647853
+  xi_c_2791=>bls_inL:0,S:1_real: 1.4187226137968043
+  xi_c_2791=>bls_inL:0,S:1_imag: -0.14947801873964428
+  Ds3_2860=>bls_inL:4,S:5_real: 0.23980012704560144
+  Ds3_2860=>bls_inL:4,S:5_imag: 0.11314045358081483
+  D_s_2317=>gDK: 0.20288405295191994
+  D_s_2317=>bls_inL:0,S:1_real: -2.393385379176381
+  D_s_2317=>bls_inL:0,S:1_imag: -4.628377010818826
+DKmatrix=>bls_inL:2,S:3_imag:
+  DKmatrix=>channels=>chanel1=>bg: -2.4941368568175192e-08
+  DKmatrix=>channels=>chanel2=>bg: 1.7393012300168122e-06
+  DKmatrix=>channels=>chanel3=>bg: -0.12261016116677181
+  DKmatrix=>alphas=>a1_real: 0.11528404820266563
+  DKmatrix=>alphas=>a1_imag: -0.06667675410163935
+  DKmatrix=>alphas=>a2_real: -0.038813906326615286
+  DKmatrix=>alphas=>a2_imag: -0.0702673510997706
+  DKmatrix=>resonances=>pole1=>pole mass: -0.2095629973072175
+  DKmatrix=>resonances=>pole1=>g=>g1: -0.0336581176556237
+  DKmatrix=>resonances=>pole1=>g=>g2: 2.9789040198683153e-05
+  DKmatrix=>resonances=>pole1=>g=>g3: -0.33565634206235384
+  DKmatrix=>resonances=>pole2=>pole mass: 0.05260346402144247
+  DKmatrix=>resonances=>pole2=>g=>g1: 0.028697135720723053
+  DKmatrix=>resonances=>pole2=>g=>g2: -0.00014262243541624455
+  DKmatrix=>resonances=>pole2=>g=>g3: 1.3162366034700956
+  DKmatrix=>bls_inL:2,S:1_real: 0.008055631619770852
+  DKmatrix=>bls_inL:2,S:1_imag: 0.0013184803195229289
+  DKmatrix=>bls_inL:2,S:3_real: -0.02133954911647853
+  DKmatrix=>bls_inL:2,S:3_imag: 0.023648020649102243
+  xi_c_2791=>bls_inL:0,S:1_real: -1.234871053112078
+  xi_c_2791=>bls_inL:0,S:1_imag: 0.10598172748745034
+  Ds3_2860=>bls_inL:4,S:5_real: -0.17613619193133662
+  Ds3_2860=>bls_inL:4,S:5_imag: -0.13497530961785975
+  D_s_2317=>gDK: -0.17213103618282488
+  D_s_2317=>bls_inL:0,S:1_real: 1.835477210699581
+  D_s_2317=>bls_inL:0,S:1_imag: 4.387963571441846
+xi_c_2791=>bls_inL:0,S:1_real:
+  DKmatrix=>channels=>chanel1=>bg: 6.617096395006155e-07
+  DKmatrix=>channels=>chanel2=>bg: -0.00011225232784687112
+  DKmatrix=>channels=>chanel3=>bg: 8.423929299706046
+  DKmatrix=>alphas=>a1_real: -7.931382184837414
+  DKmatrix=>alphas=>a1_imag: 4.535062110841527
+  DKmatrix=>alphas=>a2_real: 2.6019873521478165
+  DKmatrix=>alphas=>a2_imag: 4.809897921811114
+  DKmatrix=>resonances=>pole1=>pole mass: 14.312263795639995
+  DKmatrix=>resonances=>pole1=>g=>g1: 2.256993346074874
+  DKmatrix=>resonances=>pole1=>g=>g2: -0.0020836277633671007
+  DKmatrix=>resonances=>pole1=>g=>g3: 22.32612987447166
+  DKmatrix=>resonances=>pole2=>pole mass: -3.71400943036765
+  DKmatrix=>resonances=>pole2=>g=>g1: -1.9050852830169147
+  DKmatrix=>resonances=>pole2=>g=>g2: 0.008724307783957693
+  DKmatrix=>resonances=>pole2=>g=>g3: -92.44625387830509
+  DKmatrix=>bls_inL:2,S:1_real: -0.4444408030215231
+  DKmatrix=>bls_inL:2,S:1_imag: -0.2203285679187905
+  DKmatrix=>bls_inL:2,S:3_real: 1.4187226137968043
+  DKmatrix=>bls_inL:2,S:3_imag: -1.234871053112078
+  xi_c_2791=>bls_inL:0,S:1_real: 205.44806511112967
+  xi_c_2791=>bls_inL:0,S:1_imag: 6.097909035304271
+  Ds3_2860=>bls_inL:4,S:5_real: 13.005104252475713
+  Ds3_2860=>bls_inL:4,S:5_imag: 10.165663452743484
+  D_s_2317=>gDK: 13.627262505591501
+  D_s_2317=>bls_inL:0,S:1_real: -159.8608329330151
+  D_s_2317=>bls_inL:0,S:1_imag: -309.92125178060957
+xi_c_2791=>bls_inL:0,S:1_imag:
+  DKmatrix=>channels=>chanel1=>bg: 1.0239029307682812e-06
+  DKmatrix=>channels=>chanel2=>bg: -2.0371218180497955e-07
+  DKmatrix=>channels=>chanel3=>bg: -0.5229975600010282
+  DKmatrix=>alphas=>a1_real: 0.4504370984518528
+  DKmatrix=>alphas=>a1_imag: -0.2467850118603683
+  DKmatrix=>alphas=>a2_real: -0.11088244619702857
+  DKmatrix=>alphas=>a2_imag: -0.3070063310730589
+  DKmatrix=>resonances=>pole1=>pole mass: -0.811114502955196
+  DKmatrix=>resonances=>pole1=>g=>g1: -0.13367534755210542
+  DKmatrix=>resonances=>pole1=>g=>g2: -3.931936205825897e-05
+  DKmatrix=>resonances=>pole1=>g=>g3: 0.06675400983834566
+  DKmatrix=>resonances=>pole2=>pole mass: 0.3453037238881229
+  DKmatrix=>resonances=>pole2=>g=>g1: 0.1058925853386893
+  DKmatrix=>resonances=>pole2=>g=>g2: 1.0203395159478443e-05
+  DKmatrix=>resonances=>pole2=>g=>g3: 5.948783226636653
+  DKmatrix=>bls_inL:2,S:1_real: 0.013370405619549375
+  DKmatrix=>bls_inL:2,S:1_imag: 0.07045761432224695
+  DKmatrix=>bls_inL:2,S:3_real: -0.14947801873964428
+  DKmatrix=>bls_inL:2,S:3_imag: 0.10598172748745034
+  xi_c_2791=>bls_inL:0,S:1_real: 6.097909035304271
+  xi_c_2791=>bls_inL:0,S:1_imag: 25.43076855558906
+  Ds3_2860=>bls_inL:4,S:5_real: -1.9419596795203444
+  Ds3_2860=>bls_inL:4,S:5_imag: 0.010431877179956629
+  D_s_2317=>gDK: -0.7454652145648993
+  D_s_2317=>bls_inL:0,S:1_real: 9.61292617927954
+  D_s_2317=>bls_inL:0,S:1_imag: 9.348928795636052
+Ds3_2860=>bls_inL:4,S:5_real:
+  DKmatrix=>channels=>chanel1=>bg: 6.130722400049434e-08
+  DKmatrix=>channels=>chanel2=>bg: -4.0507256256212597e-05
+  DKmatrix=>channels=>chanel3=>bg: 1.2466951139411002
+  DKmatrix=>alphas=>a1_real: -1.115454507939363
+  DKmatrix=>alphas=>a1_imag: 0.663529531582962
+  DKmatrix=>alphas=>a2_real: 0.33793951654950205
+  DKmatrix=>alphas=>a2_imag: 0.6170237658787413
+  DKmatrix=>resonances=>pole1=>pole mass: 2.0817205244591555
+  DKmatrix=>resonances=>pole1=>g=>g1: 0.35212592636144163
+  DKmatrix=>resonances=>pole1=>g=>g2: -0.000548604118482181
+  DKmatrix=>resonances=>pole1=>g=>g3: 2.121260689136939
+  DKmatrix=>resonances=>pole2=>pole mass: -0.5122977088945225
+  DKmatrix=>resonances=>pole2=>g=>g1: -0.3037143812141178
+  DKmatrix=>resonances=>pole2=>g=>g2: 0.0040211269559070634
+  DKmatrix=>resonances=>pole2=>g=>g3: -12.815536877348388
+  DKmatrix=>bls_inL:2,S:1_real: -0.05819580319482441
+  DKmatrix=>bls_inL:2,S:1_imag: -0.03563986968095913
+  DKmatrix=>bls_inL:2,S:3_real: 0.23980012704560144
+  DKmatrix=>bls_inL:2,S:3_imag: -0.17613619193133662
+  xi_c_2791=>bls_inL:0,S:1_real: 13.005104252475713
+  xi_c_2791=>bls_inL:0,S:1_imag: -1.9419596795203444
+  Ds3_2860=>bls_inL:4,S:5_real: 10.505130159845983
+  Ds3_2860=>bls_inL:4,S:5_imag: 2.70530735191123
+  D_s_2317=>gDK: 2.0786642584151345
+  D_s_2317=>bls_inL:0,S:1_real: -25.669175683111742
+  D_s_2317=>bls_inL:0,S:1_imag: -45.26955756708863
+Ds3_2860=>bls_inL:4,S:5_imag:
+  DKmatrix=>channels=>chanel1=>bg: 1.4114462202095321e-06
+  DKmatrix=>channels=>chanel2=>bg: -2.727156946338475e-05
+  DKmatrix=>channels=>chanel3=>bg: 1.0358851340721906
+  DKmatrix=>alphas=>a1_real: -0.9176930411762046
+  DKmatrix=>alphas=>a1_imag: 0.5990080595305308
+  DKmatrix=>alphas=>a2_real: 0.28451536713800346
+  DKmatrix=>alphas=>a2_imag: 0.5863280335017987
+  DKmatrix=>resonances=>pole1=>pole mass: 1.8817944940281488
+  DKmatrix=>resonances=>pole1=>g=>g1: 0.28165343060773523
+  DKmatrix=>resonances=>pole1=>g=>g2: -0.0009208855233198296
+  DKmatrix=>resonances=>pole1=>g=>g3: 2.780751366972859
+  DKmatrix=>resonances=>pole2=>pole mass: -0.5743747498462087
+  DKmatrix=>resonances=>pole2=>g=>g1: -0.2513808767070067
+  DKmatrix=>resonances=>pole2=>g=>g2: 0.0012568632418484243
+  DKmatrix=>resonances=>pole2=>g=>g3: -9.456241357469937
+  DKmatrix=>bls_inL:2,S:1_real: -0.04349293136886751
+  DKmatrix=>bls_inL:2,S:1_imag: 0.012719613915499958
+  DKmatrix=>bls_inL:2,S:3_real: 0.11314045358081483
+  DKmatrix=>bls_inL:2,S:3_imag: -0.13497530961785975
+  xi_c_2791=>bls_inL:0,S:1_real: 10.165663452743484
+  xi_c_2791=>bls_inL:0,S:1_imag: 0.010431877179956629
+  Ds3_2860=>bls_inL:4,S:5_real: 2.70530735191123
+  Ds3_2860=>bls_inL:4,S:5_imag: 8.256011396924599
+  D_s_2317=>gDK: 1.6186046388993238
+  D_s_2317=>bls_inL:0,S:1_real: -16.835879518279096
+  D_s_2317=>bls_inL:0,S:1_imag: -41.4671176419823
+D_s_2317=>gDK:
+  DKmatrix=>channels=>chanel1=>bg: 2.446900697828956e-07
+  DKmatrix=>channels=>chanel2=>bg: -1.7323666324143336e-05
+  DKmatrix=>channels=>chanel3=>bg: 1.2828693336687544
+  DKmatrix=>alphas=>a1_real: -1.210773725834712
+  DKmatrix=>alphas=>a1_imag: 0.6986392110998986
+  DKmatrix=>alphas=>a2_real: 0.4055979782015506
+  DKmatrix=>alphas=>a2_imag: 0.7428023636719028
+  DKmatrix=>resonances=>pole1=>pole mass: 2.1695391440156366
+  DKmatrix=>resonances=>pole1=>g=>g1: 0.35488621068577486
+  DKmatrix=>resonances=>pole1=>g=>g2: -0.0003087657430772652
+  DKmatrix=>resonances=>pole1=>g=>g3: 3.5716256636394754
+  DKmatrix=>resonances=>pole2=>pole mass: -0.5444846307392494
+  DKmatrix=>resonances=>pole2=>g=>g1: -0.29990879104535006
+  DKmatrix=>resonances=>pole2=>g=>g2: 0.0013796548268796079
+  DKmatrix=>resonances=>pole2=>g=>g3: -13.694809445919436
+  DKmatrix=>bls_inL:2,S:1_real: -0.06067215192191647
+  DKmatrix=>bls_inL:2,S:1_imag: -0.0414268455833509
+  DKmatrix=>bls_inL:2,S:3_real: 0.20288405295191994
+  DKmatrix=>bls_inL:2,S:3_imag: -0.17213103618282488
+  xi_c_2791=>bls_inL:0,S:1_real: 13.627262505591501
+  xi_c_2791=>bls_inL:0,S:1_imag: -0.7454652145648993
+  Ds3_2860=>bls_inL:4,S:5_real: 2.0786642584151345
+  Ds3_2860=>bls_inL:4,S:5_imag: 1.6186046388993238
+  D_s_2317=>gDK: 5456.051937431967
+  D_s_2317=>bls_inL:0,S:1_real: -16.21220440224203
+  D_s_2317=>bls_inL:0,S:1_imag: -45.78300181905749
+D_s_2317=>bls_inL:0,S:1_real:
+  DKmatrix=>channels=>chanel1=>bg: -2.8225580415283394e-06
+  DKmatrix=>channels=>chanel2=>bg: 0.00019957629201457978
+  DKmatrix=>channels=>chanel3=>bg: -14.341111210134985
+  DKmatrix=>alphas=>a1_real: 13.457162362061789
+  DKmatrix=>alphas=>a1_imag: -7.802021684583198
+  DKmatrix=>alphas=>a2_real: -4.386499304751424
+  DKmatrix=>alphas=>a2_imag: -8.295418725467606
+  DKmatrix=>resonances=>pole1=>pole mass: -24.07065775281518
+  DKmatrix=>resonances=>pole1=>g=>g1: -3.982084834013459
+  DKmatrix=>resonances=>pole1=>g=>g2: 0.003131550988736244
+  DKmatrix=>resonances=>pole1=>g=>g3: -37.91503328723494
+  DKmatrix=>resonances=>pole2=>pole mass: 6.246385379294664
+  DKmatrix=>resonances=>pole2=>g=>g1: 3.344006446635149
+  DKmatrix=>resonances=>pole2=>g=>g2: -0.017105379257750596
+  DKmatrix=>resonances=>pole2=>g=>g3: 152.33439605536572
+  DKmatrix=>bls_inL:2,S:1_real: 0.6569315191807786
+  DKmatrix=>bls_inL:2,S:1_imag: 0.5772057518984788
+  DKmatrix=>bls_inL:2,S:3_real: -2.393385379176381
+  DKmatrix=>bls_inL:2,S:3_imag: 1.835477210699581
+  xi_c_2791=>bls_inL:0,S:1_real: -159.8608329330151
+  xi_c_2791=>bls_inL:0,S:1_imag: 9.61292617927954
+  Ds3_2860=>bls_inL:4,S:5_real: -25.669175683111742
+  Ds3_2860=>bls_inL:4,S:5_imag: -16.835879518279096
+  D_s_2317=>gDK: -16.21220440224203
+  D_s_2317=>bls_inL:0,S:1_real: 368.22230346470224
+  D_s_2317=>bls_inL:0,S:1_imag: 532.694278706861
+D_s_2317=>bls_inL:0,S:1_imag:
+  DKmatrix=>channels=>chanel1=>bg: -6.9073001730322275e-06
+  DKmatrix=>channels=>chanel2=>bg: 0.00042262426759405615
+  DKmatrix=>channels=>chanel3=>bg: -30.780200078422478
+  DKmatrix=>alphas=>a1_real: 29.21440771717098
+  DKmatrix=>alphas=>a1_imag: -16.759441360216076
+  DKmatrix=>alphas=>a2_real: -9.970942579919518
+  DKmatrix=>alphas=>a2_imag: -17.644550870980588
+  DKmatrix=>resonances=>pole1=>pole mass: -53.20129793394356
+  DKmatrix=>resonances=>pole1=>g=>g1: -8.42516232248269
+  DKmatrix=>resonances=>pole1=>g=>g2: 0.007737160470484741
+  DKmatrix=>resonances=>pole1=>g=>g3: -91.22430903097747
+  DKmatrix=>resonances=>pole2=>pole mass: 13.032956329825979
+  DKmatrix=>resonances=>pole2=>g=>g1: 7.2279048849202905
+  DKmatrix=>resonances=>pole2=>g=>g2: -0.03314645861841827
+  DKmatrix=>resonances=>pole2=>g=>g3: 330.8917787533502
+  DKmatrix=>bls_inL:2,S:1_real: 1.47093570278702
+  DKmatrix=>bls_inL:2,S:1_imag: 0.57201906777531
+  DKmatrix=>bls_inL:2,S:3_real: -4.628377010818826
+  DKmatrix=>bls_inL:2,S:3_imag: 4.387963571441846
+  xi_c_2791=>bls_inL:0,S:1_real: -309.92125178060957
+  xi_c_2791=>bls_inL:0,S:1_imag: 9.348928795636052
+  Ds3_2860=>bls_inL:4,S:5_real: -45.26955756708863
+  Ds3_2860=>bls_inL:4,S:5_imag: -41.4671176419823
+  D_s_2317=>gDK: -45.78300181905749
+  D_s_2317=>bls_inL:0,S:1_real: 532.694278706861
+  D_s_2317=>bls_inL:0,S:1_imag: 1250.643685179857

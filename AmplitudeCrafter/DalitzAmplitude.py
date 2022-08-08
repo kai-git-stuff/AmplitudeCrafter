@@ -1,5 +1,6 @@
 from jitter.amplitudes.dalitz_plot_function import DalitzDecay
-from AmplitudeCrafter.loading import write
+import numpy as np
+from AmplitudeCrafter.loading import load, write
 from AmplitudeCrafter.ParticleLibrary import particle
 from jitter.phasespace.DalitzPhasespace import DalitzPhaseSpace
 from AmplitudeCrafter.locals import config_dir
@@ -218,6 +219,18 @@ class DalitzAmplitude:
         param_names = [k for k,p in self.mapping_dict.items() if is_free(p)]
         # translate values with _complex in to imaginary and real part
         return needed_parameter_names(param_names)
+
+    def get_cov(self,f):
+        if not self.loaded:
+            raise ValueError("Covariance can only be loaded after Resoances have been loaded!")
+        cov_dict = load(f)
+        p_names = self.get_arg_names()
+        n = len(p_names)
+        cov_mat = np.empty((n,n))
+        for i,p1 in enumerate(p_names):
+            for j,p2 in enumerate(p_names):
+                cov_mat[i,j] = cov_dict[p1][p2]
+        return cov_mat
 
     def get_args(self,numeric=False):
         from AmplitudeCrafter.FunctionConstructor import map_arguments
