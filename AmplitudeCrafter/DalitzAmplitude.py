@@ -72,8 +72,6 @@ class DalitzAmplitude:
                 check_bls(self.p0,pk,pR,res.bls_in,False)
                 check_bls(pR,p1,p2,res.bls_out,True)
 
-
-
     def add_resonances(self,f=config_dir + "decay_example.yml"):
         if not self.loaded:
             raise ValueError("Can only add resonances if a base set is loaded!")
@@ -237,6 +235,16 @@ class DalitzAmplitude:
         needed_param_names = self.get_arg_names()
         mapped_args = map_arguments(needed_param_names,self.mapping_dict,numeric=numeric)
         return [value for name, value in zip(needed_param_names,mapped_args)]
+
+    def get_args_from_yml(self,file,numeric=False):
+        from AmplitudeCrafter.FunctionConstructor import map_arguments
+        helperAmplitude = DalitzAmplitude(self.p0,*self.particles)
+        helperAmplitude.load_resonances(file)
+        own_param_names = self.get_arg_names()
+        if set(own_param_names) == set(helperAmplitude.get_arg_names()):
+            raise ValueError(f"File {file} does not contain all needed arguments to represent the amplitude!")
+        mapped_args = map_arguments(own_param_names,helperAmplitude.mapping_dict,numeric=numeric)
+        return [value for name, value in zip(own_param_names,mapped_args)]
 
 
 
