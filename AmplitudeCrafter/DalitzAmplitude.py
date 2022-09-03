@@ -241,7 +241,11 @@ class DalitzAmplitude:
         helperAmplitude = DalitzAmplitude(self.p0,*self.particles)
         helperAmplitude.load_resonances(file)
         own_param_names = self.get_arg_names()
-        if set(own_param_names) == set(helperAmplitude.get_arg_names()):
+        if not(set(own_param_names) == set(helperAmplitude.get_arg_names())):
+            print("OWN")
+            print(set(own_param_names))
+            print(f"{file}")
+            print(set(helperAmplitude.get_arg_names()))
             raise ValueError(f"File {file} does not contain all needed arguments to represent the amplitude!")
         mapped_args = map_arguments(own_param_names,helperAmplitude.mapping_dict,numeric=numeric)
         return [value for name, value in zip(own_param_names,mapped_args)]
