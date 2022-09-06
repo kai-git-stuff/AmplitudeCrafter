@@ -4,7 +4,7 @@ from AmplitudeCrafter.loading import load, write
 from AmplitudeCrafter.ParticleLibrary import particle
 from jitter.phasespace.DalitzPhasespace import DalitzPhaseSpace
 from AmplitudeCrafter.locals import config_dir
-from AmplitudeCrafter.Resonances import check_bls, load_resonances, is_free, needed_parameter_names, check_if_wanted
+from AmplitudeCrafter.Resonances import check_bls, flatten, load_resonances, is_free, needed_parameter_names, check_if_wanted
 from AmplitudeCrafter.FunctionConstructor import construct_function
 from jitter.fitting import FitParameter
 from jitter.kinematics import two_body_momentum
@@ -40,6 +40,10 @@ class DalitzAmplitude:
     def saving_name(self):
         return "+".join(self.loaded_files)
     
+    def get_bls_by_resonance(self,res):
+        resonances = {i:[r for r in self.resonances if r.name == res] for i in [1,2,3]}
+        return flatten(self.get_bls_in(resonances)), flatten(self.get_bls_out(resonances))
+
     def add_file(self,f):
         self.loaded_files.append(f.replace(".yml","").replace(".yaml","").split("/")[-1])
 
