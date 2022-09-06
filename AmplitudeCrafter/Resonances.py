@@ -186,10 +186,12 @@ def load_resonances(f:str):
     return resonances, global_mapping_dict
 
 def get_val(arg,mapping_dict,numeric=True):
-    
     if "_complex" in arg:
         r, i = arg.replace("_complex","_real"), arg.replace("_complex","_imag")
-        return get_val(r,mapping_dict) + 1j * get_val(i,mapping_dict)
+        if numeric:
+            return get_val(r,mapping_dict) + 1j * get_val(i,mapping_dict)
+        else:
+            return get_val(r,mapping_dict,numeric=False) , get_val(i,mapping_dict,numeric=False)
     val = mapping_dict[arg]
     if isinstance(val,FitParameter) and numeric:
         val = val()
@@ -342,7 +344,7 @@ class Resonance:
 
     def __repr__(self):
         M0 = self.M0(*map_arguments(self.args,self.mapping_dict))
-        string = f"{self.type} - Resonance(M={M0}, S={self.spin},P={self.parity}) \n{self.arguments}\n{self.bls_in} {self.bls_out}"
+        string = f"{self.type}:{self.name} - Resonance(M={M0}, S={self.spin},P={self.parity}) \n{self.arguments}\n{self.bls_in} {self.bls_out}"
         return string
 
 if __name__=="__main__":

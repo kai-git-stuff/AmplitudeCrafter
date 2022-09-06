@@ -40,9 +40,10 @@ class DalitzAmplitude:
     def saving_name(self):
         return "+".join(self.loaded_files)
     
-    def get_bls_by_resonance(self,res):
-        resonances = {i:[r for r in self.resonances[i] if r.name == res] for i in [1,2,3]}
-        return flatten(self.get_bls_in(resonances)), flatten(self.get_bls_out(resonances))
+    def get_bls_flat(self,res):
+        bls_in = flatten(self.get_bls_in([res]))
+        bls_out = flatten(self.get_bls_out([res]))
+        return bls_in, bls_out
 
     def add_file(self,f):
         self.loaded_files.append(f.replace(".yml","").replace(".yaml","").split("/")[-1])
@@ -135,13 +136,16 @@ class DalitzAmplitude:
     def get_resonance_targs(self,resonances=None):
         return [[r.arguments for r in self.resonances[i] if check_if_wanted(r.name,resonances)]  for i in [1,2,3]]
     
-    def dumpd(self,parameters,fit_result=None):
+    def dumpd(self,parameters,fit_result=None,mapping_dict=None):
         if not self.loaded:
             raise ValueError("Load Resonance config first, before saving!")
         dtc = {}
-        mapping_dict = self.mapping_dict.copy()
-        for param,name in zip(parameters,self.get_arg_names()):
-            mapping_dict[name] = param
+        dtc = {}
+        # if we dont have a mapping dict, we can load parameters into the dict
+        if mapping_dict is None:
+            mapping_dict = self.mapping_dict.copy()
+            for param,name in zip(parameters,self.get_arg_names()):
+                mapping_dict[name] = param
         for i, resonances in self.resonances.items():
             for res in resonances:
                 dtc[res.name] = res.dumpd(mapping_dict)
