@@ -41,7 +41,7 @@ class DalitzAmplitude:
         return "+".join(self.loaded_files)
     
     def get_bls_by_resonance(self,res):
-        resonances = {i:[r for r in self.resonances if r.name == res] for i in [1,2,3]}
+        resonances = {i:[r for r in self.resonances[i] if r.name == res] for i in [1,2,3]}
         return flatten(self.get_bls_in(resonances)), flatten(self.get_bls_out(resonances))
 
     def add_file(self,f):
