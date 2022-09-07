@@ -146,6 +146,8 @@ class DalitzAmplitude:
             mapping_dict = self.mapping_dict.copy()
             for param,name in zip(parameters,self.get_arg_names()):
                 mapping_dict[name] = param
+        else:
+            mapping_dict = {k:v() if isinstance(v,FitParameter) else v for k,v in mapping_dict.items()}
         for i, resonances in self.resonances.items():
             for res in resonances:
                 dtc[res.name] = res.dumpd(mapping_dict)
@@ -153,8 +155,8 @@ class DalitzAmplitude:
             dtc["fit_result"] = fit_result
         return dtc
 
-    def dump(self,parameters,fname,fit_result=None):
-        write(self.dumpd(parameters,fit_result),fname)
+    def dump(self,parameters,fname,fit_result=None,mapping_dict=None):
+        write(self.dumpd(parameters,fit_result,mapping_dict=mapping_dict),fname)
 
     def get_amplitude_function(self,smp,resonances = None, total_absolute=True):
         # resonances parameter designed to get run systematic studies later
