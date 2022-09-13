@@ -4,7 +4,8 @@ from AmplitudeCrafter.loading import load, write
 from jitter.fitting import FitParameter
 import importlib
 from AmplitudeCrafter.ParticleLibrary import particle
-
+__MINFP__ = -6000000
+__MAXFP__ = 6000000
 def is_free(p):
     if isinstance(p,FitParameter):
         return not p.fixed
@@ -64,7 +65,7 @@ def get_FitParameter(name,value):
 def analyse_value(value,name,dtc,lst):
     if not isinstance(value,str):
         lst.append(name)
-        dtc[name] = FitParameter(name,value,-600,600,0.01)
+        dtc[name] = FitParameter(name,value,-__MINFP__,__MAXFP__,0.01)
         return True
     if "from" in value and "to" in value:
         lst.append(name)
@@ -90,8 +91,8 @@ def analyse_value(value,name,dtc,lst):
         value = value.replace("complex(","").replace(")","")
         v1,v2 = [float(v) for v in value.split(",") ]
         n1, n2 = name + "_real", name + "_imag"
-        dtc[n1] = FitParameter(n1,v1,-600,600,0.01)
-        dtc[n2] = FitParameter(n2,v2,-600,600,0.01)
+        dtc[n1] = FitParameter(n1,v1,-__MINFP__,__MAXFP__,0.01)
+        dtc[n2] = FitParameter(n2,v2,-__MINFP__,__MAXFP__,0.01)
 
         lst.append(name+"_complex")
         return True
