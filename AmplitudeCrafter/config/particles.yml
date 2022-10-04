@@ -41,3 +41,9 @@ Pi:
   spin: 0
   parity: -1
   type: meson
+
+Bs:
+  mass: 5368.0
+  spin: 0
+  parity: -1
+  type: meson
