@@ -4,8 +4,8 @@ from AmplitudeCrafter.loading import load, write
 from jitter.fitting import FitParameter
 import importlib
 from AmplitudeCrafter.ParticleLibrary import particle
-__MINFP__ = -6000000
-__MAXFP__ = 6000000
+__MINFP__ = -60000000000
+__MAXFP__ =  60000000000
 def is_free(p):
     if isinstance(p,FitParameter):
         return not p.fixed
