@@ -156,6 +156,7 @@ class DalitzAmplitude:
         return dtc
 
     def dump(self,parameters,fname,fit_result=None,mapping_dict=None):
+        parameters = [float(p) for p in parameters] # to get rid of numpy types and so on
         write(self.dumpd(parameters,fit_result,mapping_dict=mapping_dict),fname)
 
     def get_amplitude_function(self,smp,resonances = None, total_absolute=True):
