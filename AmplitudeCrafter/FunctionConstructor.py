@@ -19,7 +19,7 @@ def run_lineshape(resonance_tuple,args,mapping_dict,bls):
     M0 = M0(*map_arguments(args,mapping_dict))
     return (s,p,hel,lineshape,M0,d,p0)
 
-def construct_function(masses,spins,parities,param_names,params,mapping_dict,resonances,resonance_tuples,bls_in,bls_out,resonance_args,smp,phsp,total_absolute=True):
+def construct_function(masses,spins,parities,param_names,params,mapping_dict,resonances,resonance_tuples,bls_in,bls_out,resonance_args,smp,phsp,total_absolute=True,just_in_time_compile=True):
     mapping_dict_global = mapping_dict
     free_indices = [[not r.fixed() for r in res ] for res in resonances ]
     bls_in_mapped = map_arguments(bls_in,mapping_dict)
@@ -49,7 +49,6 @@ def construct_function(masses,spins,parities,param_names,params,mapping_dict,res
                     resonances_filled[i][j] = run_lineshape(resonance_tuples[i][j],resonance_args[i][j],mapping_dict,bls_out[i][j])
 
     if total_absolute:
-        @jit
         def f(args):
             mapping_dict = fill_args(args,mapping_dict_global)
             bls_in_mapped = map_arguments(bls_in,mapping_dict)
@@ -76,7 +75,8 @@ def construct_function(masses,spins,parities,param_names,params,mapping_dict,res
                 tmp = chain(decay,nu,*lambdas,resonances_filled[2],bls_in_mapped[2],bls_out_mapped[2],3) + chain(decay,nu,*lambdas,resonances_filled[1],bls_in_mapped[1],bls_out_mapped[1],2) + chain(decay,nu,*lambdas,resonances_filled[0],bls_in_mapped[0],bls_out_mapped[0],1)
                 return tmp
             return O(nu,lambdas)
-
+    if just_in_time_compile:
+        f = jit(f)
     return f, start
 
 def construct_function_no_smp(masses,spins,parities,param_names,params,mapping_dict,resonances,
