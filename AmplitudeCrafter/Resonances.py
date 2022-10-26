@@ -54,6 +54,7 @@ def flatten(listoflists):
     return lst
 
 def get_FitParameter(name,value):
+    # first detect possibility for complex
     words = value.split(" ")
     words = [word for word in words if " " not in word]
     frm = float(words[words.index("from") + 1])
@@ -61,33 +62,44 @@ def get_FitParameter(name,value):
     val = float(words[0])
     return FitParameter(name,val,frm,to,0.01)
 
+def check_hit(hit,name,value):
+    if hit:
+        raise ValueError(f"Variable {name} matched multiple cases! \n{name}: {value}")
 
 def analyse_value(value,name,dtc,lst):
+    hit = False
     if not isinstance(value,str):
         lst.append(name)
         dtc[name] = FitParameter(name,value,__MINFP__,__MAXFP__,0.01)
         return True
     if "from" in value and "to" in value:
+        # bounded value gets treated in separate functiuon
         lst.append(name)
         dtc[name] = get_FitParameter(name,value)
-        return True
+        hit =  True
     if "sigma" in value:
+        check_hit(hit,name,value)
+        # sigma is the key for the dalitz variables
         lst.append(value)
         dtc[value] = value
-        return True
+        hit =  True
     if "const" in value:
+        check_hit(hit,name,value)
+        # if we have a constant, we expect
         value = value.replace("const","")
         if "complex" in value:
             dtc[name] = process_complex(value)
             lst.append(name)
-            return True
-        try:
-            dtc[name] = int(value)
-        except ValueError:
-            dtc[name] = float(value)
-        lst.append(name)
-        return True
+            return  True
+        else:
+            try:
+                dtc[name] = int(value)
+            except ValueError:
+                dtc[name] = float(value)
+            lst.append(name)
+            hit =  True
     if "complex" in value:
+        check_hit(hit,name,value)
         value = value.replace("complex(","").replace(")","")
         v1,v2 = [float(v) for v in value.split(",") ]
         n1, n2 = name + "_real", name + "_imag"
@@ -95,15 +107,15 @@ def analyse_value(value,name,dtc,lst):
         dtc[n2] = FitParameter(n2,v2,__MINFP__,__MAXFP__,0.01)
 
         lst.append(name+"_complex")
-        return True
+        hit = True
     if value.strip() == "L":
+        check_hit(hit,name,value)
         print("Angular Momentum Variable detected!")
         dtc[name] = "L"
         dtc["L"] = None # this has to be None for now, as we need to find mistakes (None will somehwere down the line make issues, if it is not properly overwritten)
         lst.append(name)
-        return True
-
-    return False
+        hit = True
+    return hit
 
 def analyze_structure(parameters,parameter_dict,designation=""):
     ret_list = []

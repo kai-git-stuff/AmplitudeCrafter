@@ -140,7 +140,6 @@ class DalitzAmplitude:
         if not self.loaded:
             raise ValueError("Load Resonance config first, before saving!")
         dtc = {}
-        dtc = {}
         # if we dont have a mapping dict, we can load parameters into the dict
         if mapping_dict is None:
             mapping_dict = self.mapping_dict.copy()
