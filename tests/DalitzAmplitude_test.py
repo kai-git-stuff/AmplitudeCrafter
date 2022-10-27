@@ -1,12 +1,15 @@
 from AmplitudeCrafter.DalitzAmplitude import DalitzAmplitude
 from AmplitudeCrafter.ParticleLibrary import particle
 import numpy as np
+import os
 
+dir = os.path.dirname(__file__)
 
-amplitude_file = "/home/kai/LHCb/AmplitudeCrafter/tests/DKmatrix+Xi_c_2791+Ds3_2860+D2300.yml"
-dump_file = "/home/kai/LHCb/AmplitudeCrafter/tests/Xi_1_dump.yml"
-cov_file = "/home/kai/LHCb/AmplitudeCrafter/tests/DKmatrix+Xi_c_2791+Ds3_2860+D2300_cov.yml"
+amplitude_file = os.path.join(dir,"DKmatrix+Xi_c_2791+Ds3_2860+D2300.yml")
+dump_file = os.path.join(dir,"Xi_1_dump.yml")
+cov_file = os.path.join(dir,"DKmatrix+Xi_c_2791+Ds3_2860+D2300_cov.yml")
 
+amplitude_dump = os.path.join(dir,"ampl.npy")
 p0 = particle.get_particle("Lb")
 p1 = particle.get_particle("Lc")
 p2 = particle.get_particle("D0")
@@ -28,9 +31,11 @@ dAmplitude = np.std(amplitudes,axis=0)
 res_non_fix_L = f(start)
 for v,e in zip(res_non_fix_L.flatten(),dAmplitude.flatten()):
     print(v,"+-",e)
-print(dAmplitude.shape)
-print(np.zeros(smp.shape[:-1]))
-
+# print(dAmplitude.shape)
+# print(np.zeros(smp.shape[:-1]))
+ampl = f(start)
+# np.save(amplitude_dump,np.array(ampl))
+print(np.array(ampl) - np.load(amplitude_dump))
 exit(0)
 
 amplitude_file = "/home/kai/LHCb/AmplitudeCrafter/tests/Xi_1_fixedL.yml"
