@@ -4,7 +4,8 @@ from AmplitudeCrafter.loading import load, write
 from jitter.fitting import FitParameter
 import importlib
 from AmplitudeCrafter.ParticleLibrary import particle
-
+__MINFP__ = -60000000000
+__MAXFP__ =  60000000000
 def is_free(p):
     if isinstance(p,FitParameter):
         return not p.fixed
@@ -24,12 +25,15 @@ def check_bls(mother:particle,daughter1:particle,daughter2:particle,bls,parity_c
     minL,minS = min(Ls,key=lambda x: x[0])
     Ls_bls = [L for L,S in bls.keys()]
     Lset = set([L for L,_ in Ls])
+    Sset = set([S for L,S in Ls])
     if min(Ls_bls) != minL:
         raise ValueError(f"""Lowest partial wave {(minL,minS)} not contained in LS couplings {list(bls.keys())}!
         Values {mother} -> {daughter1} {daughter2} 
         Parity{" " if parity_conserved else " not "}conserved!""")
     if not all([L in Lset for L,S in bls.keys()]):
-        raise ValueError(f"Not all couplings possible!")
+        raise ValueError(f"Not all L couplings possible!")
+    if not all([S in Sset for L,S in bls.keys()]):
+        raise ValueError(f"Not all S couplings possible!")
 
 
 def process_complex(value):
@@ -50,6 +54,7 @@ def flatten(listoflists):
     return lst
 
 def get_FitParameter(name,value):
+    # first detect possibility for complex
     words = value.split(" ")
     words = [word for word in words if " " not in word]
     frm = float(words[words.index("from") + 1])
@@ -57,42 +62,60 @@ def get_FitParameter(name,value):
     val = float(words[0])
     return FitParameter(name,val,frm,to,0.01)
 
+def check_hit(hit,name,value):
+    if hit:
+        raise ValueError(f"Variable {name} matched multiple cases! \n{name}: {value}")
 
 def analyse_value(value,name,dtc,lst):
+    hit = False
     if not isinstance(value,str):
         lst.append(name)
-        dtc[name] = FitParameter(name,value,-600,600,0.01)
+        dtc[name] = FitParameter(name,value,__MINFP__,__MAXFP__,0.01)
         return True
     if "from" in value and "to" in value:
+        # bounded value gets treated in separate functiuon
         lst.append(name)
         dtc[name] = get_FitParameter(name,value)
-        return True
+        hit =  True
     if "sigma" in value:
+        check_hit(hit,name,value)
+        # sigma is the key for the dalitz variables
         lst.append(value)
         dtc[value] = value
+        hit =  True
     if "const" in value:
+        check_hit(hit,name,value)
+        # if we have a constant, we expect
         value = value.replace("const","")
         if "complex" in value:
             dtc[name] = process_complex(value)
             lst.append(name)
-            return True
-        try:
-            dtc[name] = int(value)
-        except ValueError:
-            dtc[name] = float(value)
-        lst.append(name)
-        return True
+            return  True
+        else:
+            try:
+                dtc[name] = int(value)
+            except ValueError:
+                dtc[name] = float(value)
+            lst.append(name)
+            hit =  True
     if "complex" in value:
+        check_hit(hit,name,value)
         value = value.replace("complex(","").replace(")","")
         v1,v2 = [float(v) for v in value.split(",") ]
         n1, n2 = name + "_real", name + "_imag"
-        dtc[n1] = FitParameter(n1,v1,-600,600,0.01)
-        dtc[n2] = FitParameter(n2,v2,-600,600,0.01)
+        dtc[n1] = FitParameter(n1,v1,__MINFP__,__MAXFP__,0.01)
+        dtc[n2] = FitParameter(n2,v2,__MINFP__,__MAXFP__,0.01)
 
         lst.append(name+"_complex")
-        return True
-    
-    return False
+        hit = True
+    if value.strip() == "L":
+        check_hit(hit,name,value)
+        print("Angular Momentum Variable detected!")
+        dtc[name] = "L"
+        dtc["L"] = None # this has to be None for now, as we need to find mistakes (None will somehwere down the line make issues, if it is not properly overwritten)
+        lst.append(name)
+        hit = True
+    return hit
 
 def analyze_structure(parameters,parameter_dict,designation=""):
     ret_list = []
@@ -112,12 +135,15 @@ def analyze_structure(parameters,parameter_dict,designation=""):
             ret_dict.update(value_dict)
             continue
 
-        analyse_value(value,new_name,ret_dict,ret_list)
+        if not analyse_value(value,new_name,ret_dict,ret_list):
+            raise ValueError("Can not interprete value %s with name %s!"%(value,name))
     return ret_list,ret_dict
 
 def dump_value(param,name,value,new_name,mapping_dict):
     if not isinstance(value,str):
         param[name] = mapping_dict[new_name]
+    elif value.strip() == "L":
+        param[name] = "L"
     elif "const" in value:
         param[name] = value
     elif "sigma" in name:
@@ -158,10 +184,10 @@ def handle_resonance_config(config_dict:dict,name):
     return params, mapping_dict
 
 def load_resonances(f:str):
+    # load Resonances based on a yml file including multiple resoances
     resonance_dict = load(f)
     if "fit_result" in resonance_dict:
-        del resonance_dict["fit_result"]
-    
+            del resonance_dict["fit_result"]
     global_mapping_dict = {}
     resonances = {1:[],2:[],3:[]}
     for resonance_name, resonance in resonance_dict.items():
@@ -175,10 +201,16 @@ def load_resonances(f:str):
 def get_val(arg,mapping_dict,numeric=True):
     if "_complex" in arg:
         r, i = arg.replace("_complex","_real"), arg.replace("_complex","_imag")
-        return get_val(r,mapping_dict) + 1j * get_val(i,mapping_dict)
+        if numeric:
+            return get_val(r,mapping_dict) + 1j * get_val(i,mapping_dict)
+        else:
+            return get_val(r,mapping_dict,numeric=False) , get_val(i,mapping_dict,numeric=False)
     val = mapping_dict[arg]
     if isinstance(val,FitParameter) and numeric:
         val = val()
+    if val == "L":
+        # TODO: ,aybeset these special charakters in a config somewhere?
+        return mapping_dict["L"]
     return val
 
 def get_fit_parameter(arg,mapping_dict):
@@ -268,6 +300,12 @@ class Resonance:
         self.__bls_in = read_bls(kwargs["partial waves in"],self.mapping_dict,self.name+"=>"+"bls_in")
         self.__bls_out = read_bls(kwargs["partial waves out"],self.mapping_dict,self.name+"=>"+"bls_out")
 
+    @staticmethod
+    def load_resonance(f):
+        resonances, mapping_dict = load_resonances(f)
+        resonance, = [r for k,v in resonances.items() for r in v]
+        return resonance,mapping_dict
+
     def to_particle(self):
         return particle(self.M0(*map_arguments(self.args,self.mapping_dict)),self.spin,self.parity,self.name)
 
@@ -276,6 +314,7 @@ class Resonance:
         dtc = self.kwargs.copy()
         del dtc["args"]
         mapping_dict[self.data_key] = "sigma%s"%self.kwargs["channel"]
+        mapping_dict["L"] = "L"
         dump_in_dict(dtc["expects"],mapping_dict,self.name)
         dtc["partial waves in"] = [{"L":pw["L"],"S":pw["S"], "coupling":dump_bls(self.bls_in[(pw["L"],pw["S"])],mapping_dict,pw["coupling"])} for pw in self.kwargs["partial waves in"]]
         dtc["partial waves out"] = [{"L":pw["L"],"S":pw["S"], "coupling":dump_bls(self.bls_out[(pw["L"],pw["S"])],mapping_dict,pw["coupling"])} for pw in self.kwargs["partial waves out"]]
@@ -318,7 +357,7 @@ class Resonance:
 
     def __repr__(self):
         M0 = self.M0(*map_arguments(self.args,self.mapping_dict))
-        string = f"{self.type} - Resonance(M={M0}, S={self.spin},P={self.parity}) \n{self.arguments}\n{self.bls_in} {self.bls_out}"
+        string = f"{self.type}:{self.name} - Resonance(M={M0}, S={self.spin},P={self.parity}) \n{self.arguments}\n{self.bls_in} {self.bls_out}"
         return string
 
 if __name__=="__main__":

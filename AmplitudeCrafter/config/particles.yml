@@ -23,3 +23,27 @@ Lb:
   spin: 1
   parity: 1
   type: baryon
+
+B:
+  mass: 5279.65
+  spin: 0
+  parity: -1
+  type: meson
+
+Psi2S:
+  mass: 3686.10
+  spin: 2
+  parity: -1
+  type: meson
+
+Pi:
+  mass: 139.57
+  spin: 0
+  parity: -1
+  type: meson
+
+Bs:
+  mass: 5368.0
+  spin: 0
+  parity: -1
+  type: meson

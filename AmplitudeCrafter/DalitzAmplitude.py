@@ -1,10 +1,10 @@
-from unicodedata import numeric
 from jitter.amplitudes.dalitz_plot_function import DalitzDecay
-from AmplitudeCrafter.loading import write
+import numpy as np
+from AmplitudeCrafter.loading import load, write
 from AmplitudeCrafter.ParticleLibrary import particle
 from jitter.phasespace.DalitzPhasespace import DalitzPhaseSpace
 from AmplitudeCrafter.locals import config_dir
-from AmplitudeCrafter.Resonances import check_bls, load_resonances, is_free, needed_parameter_names, check_if_wanted
+from AmplitudeCrafter.Resonances import check_bls, flatten, load_resonances, is_free, needed_parameter_names, check_if_wanted
 from AmplitudeCrafter.FunctionConstructor import construct_function
 from jitter.fitting import FitParameter
 from jitter.kinematics import two_body_momentum
@@ -40,6 +40,11 @@ class DalitzAmplitude:
     def saving_name(self):
         return "+".join(self.loaded_files)
     
+    def get_bls_flat(self,res):
+        bls_in = flatten(self.get_bls_in([res]))
+        bls_out = flatten(self.get_bls_out([res]))
+        return bls_in, bls_out
+
     def add_file(self,f):
         self.loaded_files.append(f.replace(".yml","").replace(".yaml","").split("/")[-1])
 
@@ -71,8 +76,6 @@ class DalitzAmplitude:
                 pR = res.to_particle()
                 check_bls(self.p0,pk,pR,res.bls_in,False)
                 check_bls(pR,p1,p2,res.bls_out,True)
-
-
 
     def add_resonances(self,f=config_dir + "decay_example.yml"):
         if not self.loaded:
@@ -133,13 +136,17 @@ class DalitzAmplitude:
     def get_resonance_targs(self,resonances=None):
         return [[r.arguments for r in self.resonances[i] if check_if_wanted(r.name,resonances)]  for i in [1,2,3]]
     
-    def dumpd(self,parameters,fit_result=None):
+    def dumpd(self,parameters,fit_result=None,mapping_dict=None):
         if not self.loaded:
             raise ValueError("Load Resonance config first, before saving!")
         dtc = {}
-        mapping_dict = self.mapping_dict.copy()
-        for param,name in zip(parameters,self.get_arg_names()):
-            mapping_dict[name] = param
+        # if we dont have a mapping dict, we can load parameters into the dict
+        if mapping_dict is None:
+            mapping_dict = self.mapping_dict.copy()
+            for param,name in zip(parameters,self.get_arg_names()):
+                mapping_dict[name] = param
+        else:
+            mapping_dict = {k:v() if isinstance(v,FitParameter) else v for k,v in mapping_dict.items()}
         for i, resonances in self.resonances.items():
             for res in resonances:
                 dtc[res.name] = res.dumpd(mapping_dict)
@@ -147,10 +154,11 @@ class DalitzAmplitude:
             dtc["fit_result"] = fit_result
         return dtc
 
-    def dump(self,parameters,fname,fit_result=None):
-        write(self.dumpd(parameters,fit_result),fname)
+    def dump(self,parameters,fname,fit_result=None,mapping_dict=None):
+        parameters = [float(p) for p in parameters] # to get rid of numpy types and so on
+        write(self.dumpd(parameters,fit_result,mapping_dict=mapping_dict),fname)
 
-    def get_amplitude_function(self,smp,resonances = None, total_absolute=True):
+    def get_amplitude_function(self,smp,resonances = None, total_absolute=True, just_in_time_compile = True):
         # resonances parameter designed to get run systematic studies later
         # so we can use the same config, but exclude or include specific resonances
         if not self.loaded:
@@ -178,7 +186,7 @@ class DalitzAmplitude:
         mapping_dict["sigma1"] = self.phsp.m2bc(smp)
         resonances = [[r for r in self.resonances[i] if check_if_wanted(r.name,resonances)] for i in [1,2,3]]
         f,start = construct_function(masses,spins,parities,param_names,params,mapping_dict,
-                                resonances,resonance_tuples,bls_in,bls_out,resonance_args,smp,self.phsp,total_absolute)
+                                resonances,resonance_tuples,bls_in,bls_out,resonance_args,smp,self.phsp,total_absolute,just_in_time_compile)
         return f,start
 
     def get_interference_terms(self,smp,resonances1,resonances2):
@@ -220,11 +228,37 @@ class DalitzAmplitude:
         # translate values with _complex in to imaginary and real part
         return needed_parameter_names(param_names)
 
+    def get_cov(self,f):
+        if not self.loaded:
+            raise ValueError("Covariance can only be loaded after Resoances have been loaded!")
+        cov_dict = load(f)
+        p_names = self.get_arg_names()
+        n = len(p_names)
+        cov_mat = np.empty((n,n))
+        for i,p1 in enumerate(p_names):
+            for j,p2 in enumerate(p_names):
+                cov_mat[i,j] = cov_dict[p1][p2]
+        return cov_mat
+
     def get_args(self,numeric=False):
         from AmplitudeCrafter.FunctionConstructor import map_arguments
         needed_param_names = self.get_arg_names()
         mapped_args = map_arguments(needed_param_names,self.mapping_dict,numeric=numeric)
         return [value for name, value in zip(needed_param_names,mapped_args)]
+
+    def get_args_from_yml(self,file,numeric=False):
+        from AmplitudeCrafter.FunctionConstructor import map_arguments
+        helperAmplitude = DalitzAmplitude(self.p0,*self.particles)
+        helperAmplitude.load_resonances(file)
+        own_param_names = self.get_arg_names()
+        if not set(helperAmplitude.get_arg_names()).issubset(set(own_param_names)):
+            print("OWN")
+            print(set(own_param_names))
+            print(f"{file}")
+            print(set(helperAmplitude.get_arg_names()))
+            raise ValueError(f"File {file} does not contain all needed arguments to represent the amplitude!")
+        mapped_args = map_arguments(own_param_names,helperAmplitude.mapping_dict,numeric=numeric)
+        return [value for name, value in zip(own_param_names,mapped_args)]
 
 
 

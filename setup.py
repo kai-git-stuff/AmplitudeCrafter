@@ -9,7 +9,7 @@ config_path = os.path.join(os.path.dirname(__file__), "AmplitudeCrafter/config/"
 # print(data_files)
 setup(
 name = "AmplitudeCrafter",
-    version = "0.0.1",
+    version = "0.0.2",
     author = "Kai Habermann",
     author_email = "kai.habermann@gmx.net",
     description = ("Amplitude Crafter for LHCb using JAX by Google"),
