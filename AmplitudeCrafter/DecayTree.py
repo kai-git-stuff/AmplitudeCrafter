@@ -115,11 +115,13 @@ class DecayTreeNode:
             helicities.append(hel)
         for d in self.daughters:
             if d.stable:
+                # check if daughter decays
+                # if not we dont need to worry any further
                 continue
             
             fd, startd, helicitiesd = d.getHelicityAmplitude()
             fs.append(fd)
-            start_params.extend(startd)
+            start_params.append(startd)
             helicities.append(helicitiesd)
 
         nH = len([a for a in hel for hel in helicities])
@@ -130,10 +132,22 @@ class DecayTreeNode:
 
         def f(*args):
             hel = args[:nH]
-            pars = args[nH:nP]
-            f0 = 0
+            pars = args[nH:nH+nP]
+            f0 = 0.
 
-        return f,start, helicities
+            nHel0 = 0
+            nPar0 = 0
+            for f_,nHel,nPar in zip(fs,indH,indP):
+                # every function has nHel helicity arguments and nPar parameter arguments
+                # we need to correctly sort them
+                nPar1 = nPar0 + nPar
+                nHel1 = nHel0 + nHel
+                p  = pars[nPar0:nPar1]
+                h  = hel[nHel0:nHel1]
+                f0 = f_(*h,*p) * f0
+            return f0
+
+        return f,[a for a in par for par in start_params], [a for a in hel for hel in helicities]
 
 class DecayTree:
     def __init__(self,root):
