@@ -35,6 +35,7 @@ for v,e in zip(res_non_fix_L.flatten(),dAmplitude.flatten()):
 # print(np.zeros(smp.shape[:-1]))
 ampl = f(start)
 # np.save(amplitude_dump,np.array(ampl))
+print(ampl)
 print(np.array(ampl) - np.load(amplitude_dump))
 exit(0)
 

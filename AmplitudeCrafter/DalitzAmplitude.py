@@ -158,7 +158,7 @@ class DalitzAmplitude:
         parameters = [float(p) for p in parameters] # to get rid of numpy types and so on
         write(self.dumpd(parameters,fit_result,mapping_dict=mapping_dict),fname)
 
-    def get_amplitude_function(self,smp,resonances = None, total_absolute=True, just_in_time_compile = True, decay_tree = None):
+    def get_amplitude_function(self,smp,resonances = None, total_absolute=True, just_in_time_compile = True):
         # resonances parameter designed to get run systematic studies later
         # so we can use the same config, but exclude or include specific resonances
 
@@ -197,31 +197,6 @@ class DalitzAmplitude:
         f,start = construct_function(masses,spins,parities,param_names,params,mapping_dict,
                                 resonances,resonance_tuples,bls_in,bls_out,resonance_args,smp,self.phsp,total_absolute,just_in_time_compile)
         
-        if decay_tree is not None and total_absolute:
-            raise ValueError("The toatal_absolute helper can not be used in conjuction with the")
-
-        # if decay_tree is not None and not total_absolute:
-        #     fs = []
-        #     start_parameters = []
-        #     for index, arguments in decay_tree.items():
-        #         p = self.particles[index-1]
-        #         decay, sucess =  p.get_decay()
-        #         if not sucess:
-        #             raise ValueError(f"Particle {p} with index {index} is considered stable!")
-        #         if not isinstance(arguments,dict):
-        #             func, start_params = decay.get_amplitude_function(*arguments)
-        #         else:
-        #             func, start_params = decay.get_amplitude_function(**arguments)
-        #         fs.append(func)
-        #         start_parameters.append(start_params)
-        #     f_old = f
-        #     def f(*args):
-        #         # get the correct parameters to the correct underlying functions
-        #         indices = np.cumsum([0,len(start)] + [len(params) for params in start_parameters])
-        #         v = f_old(*args[indices[0]:indices[1]])
-        #         for f_, i0,i1 in zip(fs, indices[1:], indices[2:]):
-        #             v = v * f_(*args[i0:i1])
-        #     start = start + [p for params in start_parameters for p in params]
         return f,start
 
     def get_interference_terms(self,smp,resonances1,resonances2):

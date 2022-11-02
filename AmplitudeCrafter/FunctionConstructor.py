@@ -65,11 +65,11 @@ def construct_function(masses,spins,parities,param_names,params,mapping_dict,res
                             ) for ld in sp.direction_options(decay["sd"]))
             return ampl
     else:
-        def f(args,nu,lambdas):
+        def f(args,nu,*lambdas):
             mapping_dict = fill_args(args,mapping_dict_global)
             bls_in_mapped = map_arguments(bls_in,mapping_dict)
             bls_out_mapped = map_arguments(bls_out,mapping_dict)
-            update(mapping_dict)
+            update(mapping_dict,bls_out_mapped)
 
             def O(nu,lambdas):       
                 tmp = chain(decay,nu,*lambdas,resonances_filled[2],bls_in_mapped[2],bls_out_mapped[2],3) + chain(decay,nu,*lambdas,resonances_filled[1],bls_in_mapped[1],bls_out_mapped[1],2) + chain(decay,nu,*lambdas,resonances_filled[0],bls_in_mapped[0],bls_out_mapped[0],1)

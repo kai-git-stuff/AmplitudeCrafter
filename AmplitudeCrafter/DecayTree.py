@@ -41,7 +41,7 @@ class DecayTreeNode:
 
     @property
     def p(self):
-        if isinstance(self.__p,callable):
+        if callable(self.__p):
             return self.__p()
         return self.__p
 
@@ -56,10 +56,8 @@ class DecayTreeNode:
         self.__p = lambda : sum(n.p for n in nodes)
         self.__daughters = nodes
         if len(nodes) == 2:
-            # print("TwoBodyDecay")
             self.__decay = TwoBodyDecay(self.particle,*[n.particle for n in nodes])
         elif len(nodes) == 3:
-            # print("DalitzDecay")
             self.__decay = DalitzAmplitude(self.particle,*[n.particle for n in nodes])
         else:
             raise ValueError(f"Only tow and three body decays allowed! {nodes}\n {len(nodes)}")
@@ -83,7 +81,11 @@ class DecayTreeNode:
     def __repr__(self):
         return self.name + " " + str(self.particle)
 
-    
+    def load_resonances(self,f):
+        if len(self.daughters) != 3:
+            raise NotImplementedError("Only resonances for Dalitz Decays!")
+        self.decay.load_resonances(f)
+
     def getHelicityAngles(self,n):
         """
         gets the helicity angles for the decay n -> ...
@@ -109,7 +111,17 @@ class DecayTreeNode:
             theta = helicityTheta(self.p, *[d.p for d in self.daughters])
             phi = 0.
             f, start = self.decay.get_amplitude_function(theta,phi, total_absolute=False, just_in_time_compile = False)
-            hel = self.daughters
+            hel = [self] + list(self.daughters)
+            fs.append(f)
+            start_params.append(start)
+            helicities.append(hel)
+
+        if len(self.daughters) == 3 :
+            s1 = mass(self.daughters[1].p + self.daughters[2].p)**2
+            s3 = mass(self.daughters[0].p + self.daughters[1].p)**2
+            smp = jnp.stack([jnp.array(s3),jnp.array(s1)],axis=1)
+            f, start = self.decay.get_amplitude_function(smp,total_absolute=False, just_in_time_compile = False)
+            hel = [self] + list(self.daughters)
             fs.append(f)
             start_params.append(start)
             helicities.append(hel)
@@ -124,17 +136,14 @@ class DecayTreeNode:
             start_params.append(startd)
             helicities.append(helicitiesd)
 
-        nH = len([a for a in hel for hel in helicities])
-        nP = len([a for a in par for par in start_params])
+        nH = len([a for hel in helicities for a in hel ])
+        nP = len([a for par in start_params for a in par ])
 
         indH = [len(hel) for hel in helicities]
         indP = [len(par) for par in start_params]
 
-        def f(*args):
-            hel = args[:nH]
-            pars = args[nH:nH+nP]
-            f0 = 0.
-
+        def f(args,*helicities):
+            f0 = None
             nHel0 = 0
             nPar0 = 0
             for f_,nHel,nPar in zip(fs,indH,indP):
@@ -142,12 +151,15 @@ class DecayTreeNode:
                 # we need to correctly sort them
                 nPar1 = nPar0 + nPar
                 nHel1 = nHel0 + nHel
-                p  = pars[nPar0:nPar1]
-                h  = hel[nHel0:nHel1]
-                f0 = f_(*h,*p) * f0
+                p  = args[nPar0:nPar1]
+                h  = helicities[nHel0:nHel1]
+                if f0 is None:
+                    f0 = f_(p,*h)
+                else:
+                    f0 = f_(p,*h) * f0
             return f0
 
-        return f,[a for a in par for par in start_params], [a for a in hel for hel in helicities]
+        return f,[a for par in start_params for a in par ], [a for hel in helicities for a in hel ]
 
 class DecayTree:
     def __init__(self,root):
@@ -158,15 +170,12 @@ class DecayTree:
             yield a
     
     def getHelicityAmplitude(self):
-        return self.root.getHelicityAmplitude()
+        f, args, hel = self.root.getHelicityAmplitude()
+        return f, args, [self.root] + hel
 
     def draw(self):
-        old_l = 0
         for n,l in self.traverse():
             prefix =  "    "*l + PIPE
-            # if old_l != l:
-            #     prefix = "   "*(l) + ELBOW
-            old_l = l
             print( prefix)
             mid = "" if l == 0 else TEE
             print("    "*l + mid + " " + str(n))
@@ -175,32 +184,4 @@ class DecayTree:
 
 
 if __name__ == "__main__":
-
-    a = DecayTreeNode("A",particle.get_particle("Lb"))
-    b = DecayTreeNode("B",particle.get_particle("D0"))
-    c = DecayTreeNode("C",particle.get_particle("Lc"))
-    d = DecayTreeNode("D",particle.get_particle("K"))
-    c1 = DecayTreeNode("C1",particle.get_particle("p"))
-    c2 = DecayTreeNode("C2",particle.get_particle("K"))
-    c3 = DecayTreeNode("C3",particle.get_particle("Pi"))
-
-    b1 = DecayTreeNode("B1",particle.get_particle("K"))
-    b2 = DecayTreeNode("B2",particle.get_particle("Pi"))
-
-    a.setDecay(b,c,d)
-    b.setDecay(b1,b2)
-
-    c.setDecay(c1,c2,c3)
-    c1.setP(np.array([100.,7,1,2][::-1],dtype=np.float64))
-    c2.setP(np.array([100.,-7,-1,-2][::-1],dtype=np.float64))
-    c3.setP(np.array([100.,7,1,2][::-1],dtype=np.float64))
-
-    tree = DecayTree(a)
-    tree.draw()
-    exit(0)
-    P1 = np.array([3.,1.,0,0][::-1],dtype=np.float64)
-    P2 = np.array([100.,7,1,2][::-1],dtype=np.float64)
-    print(P2)
-    print(boost_to_rest(P2,P1))
-    print(mass(P2))
-    print(mass(boost_to_rest(P2,P1)))
+    pass
