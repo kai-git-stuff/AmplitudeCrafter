@@ -2,7 +2,9 @@ from AmplitudeCrafter.DalitzAmplitude import DalitzAmplitude
 from AmplitudeCrafter.ParticleLibrary import particle
 import numpy as np
 import os
+from jax.config import config
 
+config.update("jax_enable_x64", True)
 dir = os.path.dirname(__file__)
 
 amplitude_file = os.path.join(dir,"DKmatrix+Xi_c_2791+Ds3_2860+D2300.yml")
@@ -34,9 +36,10 @@ for v,e in zip(res_non_fix_L.flatten(),dAmplitude.flatten()):
 # print(dAmplitude.shape)
 # print(np.zeros(smp.shape[:-1]))
 ampl = f(start)
-# np.save(amplitude_dump,np.array(ampl))
+# 
 print(ampl)
 print(np.array(ampl) - np.load(amplitude_dump))
+# np.save(amplitude_dump,np.array(ampl))
 exit(0)
 
 amplitude_file = "/home/kai/LHCb/AmplitudeCrafter/tests/Xi_1_fixedL.yml"
