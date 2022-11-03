@@ -141,7 +141,8 @@ class DecayTreeNode:
 
         indH = [len(hel) for hel in helicities]
         indP = [len(par) for par in start_params]
-
+        # TODO: organize helicities into dicts
+        
         def f(args,*helicities):
             f0 = None
             nHel0 = 0
