@@ -42,6 +42,7 @@ tree = DecayTree(a)
 tree.draw()
 
 f, start, helicities = tree.getHelicityAmplitude()
+print(helicities)
 hels = [[-1,1,0,0],
         [1,1,0,0],
         [-1,-1,0,0],

@@ -3,7 +3,7 @@ import numpy as np
 from jax import numpy as jnp
 from AmplitudeCrafter.ParticleLibrary import particle
 from AmplitudeCrafter.TwoBodyDecay import TwoBodyDecay
-from jitter.kinematics import cos_helicity_angle, boost_to_rest, mass
+from jitter.kinematics import cos_helicity_angle, boost_to_rest, mass, perpendicular_unit_vector, spatial_components, scalar_product
 from AmplitudeCrafter.DalitzAmplitude import DalitzAmplitude
 
 """
@@ -24,11 +24,15 @@ def helicityTheta(p_Parent, P_1, P_2):
 
     return jnp.arccos(cos_helicity_angle(P_1_boosted,P_2_boosted))
 
+def decay_plane_vector(P_1, P_2):
+
+    return perpendicular_unit_vector(spatial_components(P_1), spatial_components(P_2))
 
 class DecayTreeNode:
     def __init__(self, name,part):
         self.name= name
         self.particle = part
+        self.__partent = None
         self.__decay = None
         self.__p = None
         self.__daughters = None
@@ -51,10 +55,22 @@ class DecayTreeNode:
             return []
         else:
             return self.__daughters
+    
+    @property
+    def parent(self):
+        return self.__partent
+
+    @parent.setter
+    def parent(self,p):
+        if not self in p.daughters:
+            raise ValueError()
+        self.__partent = p
 
     def setDecay(self,*nodes ):    #: list[DecayTreeNode]
         self.__p = lambda : sum(n.p for n in nodes)
         self.__daughters = nodes
+        for n in nodes:
+            n.parent = self
         if len(nodes) == 2:
             self.__decay = TwoBodyDecay(self.particle,*[n.particle for n in nodes])
         elif len(nodes) == 3:
@@ -100,6 +116,15 @@ class DecayTreeNode:
             raise ValueError(f"Helicity angles only defined for two- body decay not {len(n.daughters)} - body decay")
         
         theta = helicityTheta(self.p, n.daughters[0].p, n.daughters[1].p)
+
+        phi = 0.
+
+        if self.parent is not None:
+            # the plane is defined by only 2 of the angles
+            phi = jnp.arcos(scalar_product(decay_plane_vector(self.parent.p.daughters[0].p, self.parent.p.daughters[1].p), 
+                    decay_plane_vector(n.daughters[0].p, n.daughters[1].p)))
+        return theta, phi
+            
         
     def getHelicityAmplitude(self):
         if self.decay is None:
@@ -139,28 +164,31 @@ class DecayTreeNode:
         nH = len([a for hel in helicities for a in hel ])
         nP = len([a for par in start_params for a in par ])
 
-        indH = [len(hel) for hel in helicities]
+        # indH = [len(hel) for hel in helicities]
         indP = [len(par) for par in start_params]
         # TODO: organize helicities into dicts
-        
-        def f(args,*helicities):
+
+        # would wanna use a set, but those are not ordered
+        # a dict with no values will do the same
+        helicy_names = {a.name:None for hel in helicities for a in hel }
+
+        def f(args,*hel):
             f0 = None
-            nHel0 = 0
             nPar0 = 0
-            for f_,nHel,nPar in zip(fs,indH,indP):
+            helicity_dict = {name:h for name,h in zip(helicy_names,hel)}
+            for f_,nPar, H in zip(fs,indP,helicities):
                 # every function has nHel helicity arguments and nPar parameter arguments
                 # we need to correctly sort them
                 nPar1 = nPar0 + nPar
-                nHel1 = nHel0 + nHel
                 p  = args[nPar0:nPar1]
-                h  = helicities[nHel0:nHel1]
+                h = [helicity_dict[node.name] for node in H]
                 if f0 is None:
                     f0 = f_(p,*h)
                 else:
                     f0 = f_(p,*h) * f0
             return f0
 
-        return f,[a for par in start_params for a in par ], [a for hel in helicities for a in hel ]
+        return f,[ a for par in start_params for a in par ], [ a for a in helicy_names ]
 
 class DecayTree:
     def __init__(self,root):
@@ -172,7 +200,7 @@ class DecayTree:
     
     def getHelicityAmplitude(self):
         f, args, hel = self.root.getHelicityAmplitude()
-        return f, args, [self.root] + hel
+        return f, args, hel
 
     def draw(self):
         for n,l in self.traverse():
@@ -180,9 +208,6 @@ class DecayTree:
             print( prefix)
             mid = "" if l == 0 else TEE
             print("    "*l + mid + " " + str(n))
-            
-
-
 
 if __name__ == "__main__":
     pass
