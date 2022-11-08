@@ -19,7 +19,7 @@ def run_lineshape(resonance_tuple,args,mapping_dict,bls):
     M0 = M0(*map_arguments(args,mapping_dict))
     return (s,p,hel,lineshape,M0,d,p0)
 
-def construct_function(masses,spins,parities,param_names,params,mapping_dict,resonances,resonance_tuples,bls_in,bls_out,resonance_args,smp,phsp,total_absolute=True,just_in_time_compile=True):
+def construct_function(masses,spins,parities,param_names,params,mapping_dict,resonances,resonance_tuples,bls_in,bls_out,resonance_args,smp,phsp,total_absolute=True,just_in_time_compile=True, numericArgs=True):
     mapping_dict_global = mapping_dict
     free_indices = [[not r.fixed() for r in res ] for res in resonances ]
     bls_in_mapped = map_arguments(bls_in,mapping_dict)
@@ -30,7 +30,7 @@ def construct_function(masses,spins,parities,param_names,params,mapping_dict,res
     
     needed_param_names = needed_parameter_names(param_names)
     # we need to translate all _complex values into real and imaginary
-    start = map_arguments(needed_param_names,mapping_dict)
+    start = map_arguments(needed_param_names,mapping_dict,numeric=numericArgs)
 
     def fill_args(args,mapping_dict):
         if len(args) == 1:

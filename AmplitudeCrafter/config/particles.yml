@@ -53,3 +53,9 @@ p:
   spin: 1
   parity: 1
   type: baryon
+
+mu:
+  mass: 105.658
+  spin: 1
+  parity: 1
+  type: lepton

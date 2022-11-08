@@ -11,7 +11,7 @@ class TwoBodyDecay:
     def build_decay():
         pass
     
-    def get_amplitude_function(self,theta,phi, total_absolute=False, just_in_time_compile = True, decay_tree = None):
+    def get_amplitude_function(self,theta,phi, total_absolute=False, just_in_time_compile = True, decay_tree = None, numericArgs=False):
 
         D = {
                 (l0,l1,l2): wigner_capital_d(phi, theta, 0, self.p0.spin, l0, l1-l2)
@@ -19,9 +19,9 @@ class TwoBodyDecay:
                                                             self.particles[0].spin,
                                                             self.particles[1].spin)
             }
-
-        def f(l0,l1,l2):
+        # print(D)
+        def f(params,l0,l1,l2):
             return (self.p0.spin + 1)**0.5 * D[(l0,l1,l2)]
         
 
-        return f
+        return f, []

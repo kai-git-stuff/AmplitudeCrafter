@@ -158,7 +158,7 @@ class DalitzAmplitude:
         parameters = [float(p) for p in parameters] # to get rid of numpy types and so on
         write(self.dumpd(parameters,fit_result,mapping_dict=mapping_dict),fname)
 
-    def get_amplitude_function(self,smp,resonances = None, total_absolute=True, just_in_time_compile = True):
+    def get_amplitude_function(self,smp,resonances = None, total_absolute=True, just_in_time_compile = True, numericArgs=True):
         # resonances parameter designed to get run systematic studies later
         # so we can use the same config, but exclude or include specific resonances
 
@@ -195,7 +195,7 @@ class DalitzAmplitude:
         mapping_dict["sigma1"] = self.phsp.m2bc(smp)
         resonances = [[r for r in self.resonances[i] if check_if_wanted(r.name,resonances)] for i in [1,2,3]]
         f,start = construct_function(masses,spins,parities,param_names,params,mapping_dict,
-                                resonances,resonance_tuples,bls_in,bls_out,resonance_args,smp,self.phsp,total_absolute,just_in_time_compile)
+                                resonances,resonance_tuples,bls_in,bls_out,resonance_args,smp,self.phsp,total_absolute,just_in_time_compile, numericArgs = numericArgs)
         
         return f,start
 

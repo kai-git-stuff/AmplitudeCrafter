@@ -48,6 +48,27 @@ class DecayTreeNode:
         if callable(self.__p):
             return self.__p()
         return self.__p
+    
+    @property
+    def smp(self):
+        if len(self.daughters) != 3:
+            raise NotImplementedError("Dalitz Sample only available for three-body decays!")
+        s1 = mass(self.daughters[1].p + self.daughters[2].p)**2
+        s3 = mass(self.daughters[0].p + self.daughters[1].p)**2
+        return jnp.stack([jnp.array(s3),jnp.array(s1)],axis=1)
+
+    @property
+    def theta(self):
+        if len(self.daughters) != 2:
+            raise NotImplementedError("Theta only available for two-body decays!")
+        theta, phi = self.getHelicityAngles()
+        return theta
+    @property
+    def phi(self):
+        if len(self.daughters) != 2:
+            raise NotImplementedError("Theta only available for two-body decays!")
+        theta, phi = self.getHelicityAngles()
+        return phi
 
     @property
     def daughters(self):
@@ -78,7 +99,6 @@ class DecayTreeNode:
         else:
             raise ValueError(f"Only tow and three body decays allowed! {nodes}\n {len(nodes)}")
         
-
     @property
     def decay(self):
         return self.__decay
@@ -102,7 +122,7 @@ class DecayTreeNode:
             raise NotImplementedError("Only resonances for Dalitz Decays!")
         self.decay.load_resonances(f)
 
-    def getHelicityAngles(self,n):
+    def getHelicityAngles(self):
         """
         gets the helicity angles for the decay n -> ...
 
@@ -112,19 +132,29 @@ class DecayTreeNode:
 
         """
 
-        if len(n.daughters) != 2:
-            raise ValueError(f"Helicity angles only defined for two- body decay not {len(n.daughters)} - body decay")
+        if len(self.daughters) != 2:
+            raise ValueError(f"Helicity angles only defined for two- body decay not {len(self.daughters)} - body decay")
         
-        theta = helicityTheta(self.p, n.daughters[0].p, n.daughters[1].p)
+        theta = helicityTheta(self.p, self.daughters[0].p, self.daughters[1].p)
 
         phi = 0.
 
         if self.parent is not None:
             # the plane is defined by only 2 of the angles
-            phi = jnp.arcos(scalar_product(decay_plane_vector(self.parent.p.daughters[0].p, self.parent.p.daughters[1].p), 
-                    decay_plane_vector(n.daughters[0].p, n.daughters[1].p)))
+            phi = jnp.arccos(scalar_product(decay_plane_vector(self.parent.daughters[0].p, self.parent.daughters[1].p), 
+                    decay_plane_vector(self.daughters[0].p, self.daughters[1].p)))
+        # print("THETA")
+        # print( np.isfinite(theta).all())
+        # print("phi")
+        # print(np.isfinite(phi).all())
         return theta, phi
             
+    def filter(self,mask):
+        if len(self.daughters) == 3:
+            return self.decay.phsp.inside(self.smp)
+        if len(self.daughters) == 2:
+            return ( jnp.isfinite(self.theta) ) & ( jnp.isfinite(self.phi) )
+        return mask
         
     def getHelicityAmplitude(self):
         if self.decay is None:
@@ -133,19 +163,18 @@ class DecayTreeNode:
         start_params = []
         helicities = []
         if len(self.daughters) == 2 :
-            theta = helicityTheta(self.p, *[d.p for d in self.daughters])
-            phi = 0.
-            f, start = self.decay.get_amplitude_function(theta,phi, total_absolute=False, just_in_time_compile = False)
+            # theta = helicityTheta(self.p, *[d.p for d in self.daughters])
+            # phi = 0.
+            theta, phi = self.getHelicityAngles()
+            f, start = self.decay.get_amplitude_function(theta,phi, total_absolute=False, just_in_time_compile = False,numericArgs=False)
             hel = [self] + list(self.daughters)
             fs.append(f)
             start_params.append(start)
             helicities.append(hel)
 
         if len(self.daughters) == 3 :
-            s1 = mass(self.daughters[1].p + self.daughters[2].p)**2
-            s3 = mass(self.daughters[0].p + self.daughters[1].p)**2
-            smp = jnp.stack([jnp.array(s3),jnp.array(s1)],axis=1)
-            f, start = self.decay.get_amplitude_function(smp,total_absolute=False, just_in_time_compile = False)
+            smp = self.smp
+            f, start = self.decay.get_amplitude_function(smp,total_absolute=False, just_in_time_compile = False, numericArgs=False)
             hel = [self] + list(self.daughters)
             fs.append(f)
             start_params.append(start)
@@ -170,7 +199,7 @@ class DecayTreeNode:
 
         # would wanna use a set, but those are not ordered
         # a dict with no values will do the same
-        helicy_names = {a.name:None for hel in helicities for a in hel }
+        helicy_names = {a.name:a for hel in helicities for a in hel }
 
         def f(args,*hel):
             f0 = None
@@ -188,7 +217,7 @@ class DecayTreeNode:
                     f0 = f_(p,*h) * f0
             return f0
 
-        return f,[ a for par in start_params for a in par ], [ a for a in helicy_names ]
+        return f,[ a for par in start_params for a in par ], [ helicy_names[a] for a in helicy_names ]
 
 class DecayTree:
     def __init__(self,root):
@@ -209,5 +238,12 @@ class DecayTree:
             mid = "" if l == 0 else TEE
             print("    "*l + mid + " " + str(n))
 
+    def filter(self,var):
+        mask = self.root.filter(None)
+        if mask is None:
+            raise ValueError(f"Root {self.root} is stable")
+        for n,l in self.traverse():
+            mask = mask & n.filter(mask)
+        return var[mask]
 if __name__ == "__main__":
     pass
