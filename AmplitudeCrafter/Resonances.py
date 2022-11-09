@@ -110,7 +110,7 @@ def analyse_value(value,name,dtc,lst):
         hit = True
     if value.strip() == "L":
         check_hit(hit,name,value)
-        print("Angular Momentum Variable detected!")
+        # print("Angular Momentum Variable detected!")
         dtc[name] = "L"
         dtc["L"] = None # this has to be None for now, as we need to find mistakes (None will somehwere down the line make issues, if it is not properly overwritten)
         lst.append(name)
