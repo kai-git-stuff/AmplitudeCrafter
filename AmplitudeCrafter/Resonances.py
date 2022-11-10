@@ -259,7 +259,7 @@ def read_bls(bls_dicts,mapping_dict,name):
 
 def dump_bls(b,mapping_dict,coupling):
     if not isinstance(coupling,str):
-        return float(coupling)
+        return float(get_val(b,mapping_dict))
     if "const" in coupling:
         return coupling
     val = get_val(b,mapping_dict)
