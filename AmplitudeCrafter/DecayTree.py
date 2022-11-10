@@ -156,13 +156,15 @@ class DecayTreeNode:
             return ( jnp.isfinite(self.theta) ) & ( jnp.isfinite(self.phi) )
         return mask
         
-    def getHelicityAmplitude(self):
+    def getHelicityAmplitude(self,resonances=None):
         if self.decay is None:
             return None, None, None
         fs = []
         start_params = []
         helicities = []
         if len(self.daughters) == 2 :
+            if resonances is not None:
+                raise NotImplementedError("You cant have resonances in two body decay!")
             # theta = helicityTheta(self.p, *[d.p for d in self.daughters])
             # phi = 0.
             theta, phi = self.getHelicityAngles()
@@ -174,7 +176,7 @@ class DecayTreeNode:
 
         if len(self.daughters) == 3 :
             smp = self.smp
-            f, start = self.decay.get_amplitude_function(smp,total_absolute=False, just_in_time_compile = False, numericArgs=False)
+            f, start = self.decay.get_amplitude_function(smp,total_absolute=False, just_in_time_compile = False, numericArgs=False,resonances=resonances)
             hel = [self] + list(self.daughters)
             fs.append(f)
             start_params.append(start)
@@ -227,8 +229,8 @@ class DecayTree:
         for a in self.root.traverse():
             yield a
     
-    def getHelicityAmplitude(self):
-        f, args, hel = self.root.getHelicityAmplitude()
+    def getHelicityAmplitude(self,resonances = None):
+        f, args, hel = self.root.getHelicityAmplitude(resonances=resonances)
         return f, args, hel
 
     def draw(self):
