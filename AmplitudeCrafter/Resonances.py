@@ -60,7 +60,7 @@ def get_FitParameter(name,value):
     frm = float(words[words.index("from") + 1])
     to = float(words[words.index("to") + 1])
     val = float(words[0])
-    return FitParameter(name,val,frm,to,0.01)
+    return FitParameter(name,val,frm,to,0.0001)
 
 def check_hit(hit,name,value):
     if hit:
