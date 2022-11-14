@@ -72,7 +72,14 @@ def analyse_value(value,name,dtc,lst):
         lst.append(name)
         dtc[name] = FitParameter(name,value,__MINFP__,__MAXFP__,0.01)
         return True
-    if "from" in value and "to" in value:
+    try:
+        val = float(value)
+        lst.append(name)
+        dtc[name] = FitParameter(name,val,__MINFP__,__MAXFP__,0.01)
+        return True
+    except:
+        pass
+    if "from" in value and "to" in value and not "complex" in value:
         # bounded value gets treated in separate functiuon
         lst.append(name)
         dtc[name] = get_FitParameter(name,value)
@@ -83,31 +90,33 @@ def analyse_value(value,name,dtc,lst):
         lst.append(value)
         dtc[value] = value
         hit =  True
-    if "const" in value:
+    if "complex" in value:
         check_hit(hit,name,value)
-        # if we have a constant, we expect
-        value = value.replace("const","")
-        if "complex" in value:
+        if "const" in value.split(")")[-1]:
+            value = value.replace("const","")
             dtc[name] = process_complex(value)
             lst.append(name)
             return  True
-        else:
-            try:
-                dtc[name] = int(value)
-            except ValueError:
-                dtc[name] = float(value)
-            lst.append(name)
-            hit =  True
-    if "complex" in value:
-        check_hit(hit,name,value)
         value = value.replace("complex(","").replace(")","")
-        v1,v2 = [float(v) for v in value.split(",") ]
+        v1,v2 =value.split(",") 
         n1, n2 = name + "_real", name + "_imag"
-        dtc[n1] = FitParameter(n1,v1,__MINFP__,__MAXFP__,0.01)
-        dtc[n2] = FitParameter(n2,v2,__MINFP__,__MAXFP__,0.01)
-
+        # send a dummy list, because we append ourselfes here
+        analyse_value(v1,n1,dtc,list())
+        analyse_value(v2,n2,dtc,list())
+        # dtc[n1] = FitParameter(n1,v1,__MINFP__,__MAXFP__,0.01)
+        # dtc[n2] = FitParameter(n2,v2,__MINFP__,__MAXFP__,0.01)
         lst.append(name+"_complex")
-        hit = True
+        return True
+    if "const" in value:
+        check_hit(hit,name,value)
+        # if we have a constant, we expect
+        value = value.replace("const","")            
+        try:
+            dtc[name] = int(value)
+        except ValueError:
+            dtc[name] = float(value)
+        lst.append(name)
+        hit =  True
     if value.strip() == "L":
         check_hit(hit,name,value)
         # print("Angular Momentum Variable detected!")

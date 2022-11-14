@@ -19,6 +19,9 @@ p3 = particle.get_particle("K")
 
 amplitude = DalitzAmplitude(p0,p1,p2,p3)
 amplitude.load_resonances(amplitude_file)
+for k , v in amplitude.mapping_dict.items():
+    print(k,v)
+exit(0)
 smp = amplitude.phsp.rectangular_grid_sample(10,10)
 f, start = amplitude.get_amplitude_function(smp)
 # print(amplitude.mapping_dict)
