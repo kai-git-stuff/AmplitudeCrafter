@@ -3,7 +3,7 @@ import numpy as np
 from jax import numpy as jnp
 from AmplitudeCrafter.ParticleLibrary import particle
 from AmplitudeCrafter.TwoBodyDecay import TwoBodyDecay
-from jitter.kinematics import cos_helicity_angle, boost_to_rest, mass, perpendicular_unit_vector, spatial_components, scalar_product
+from jitter.kinematics import cos_helicity_angle, boost_to_rest, mass, perpendicular_unit_vector, spatial_components, scalar_product, azimuthal_4body_angle
 from AmplitudeCrafter.DalitzAmplitude import DalitzAmplitude
 
 """
@@ -135,14 +135,14 @@ class DecayTreeNode:
         if len(self.daughters) != 2:
             raise ValueError(f"Helicity angles only defined for two- body decay not {len(self.daughters)} - body decay")
         
-        theta = helicityTheta(self.p, self.daughters[0].p, self.daughters[1].p)
+        theta = helicityTheta(self.parent.p, self.daughters[0].p, self.daughters[1].p)
 
-        phi = 0.
+        phi = azimuthal_4body_angle(self.parent.daughters[0].p, self.parent.daughters[1].p,self.daughters[0].p, self.daughters[1].p)
 
-        if self.parent is not None:
-            # the plane is defined by only 2 of the angles
-            phi = jnp.arccos(scalar_product(decay_plane_vector(self.parent.daughters[0].p, self.parent.daughters[1].p), 
-                    decay_plane_vector(self.daughters[0].p, self.daughters[1].p)))
+        # if self.parent is not None:
+        #     # the plane is defined by only 2 of the angles
+        #     phi = jnp.arccos(scalar_product(decay_plane_vector(self.parent.daughters[0].p, self.parent.daughters[1].p), 
+        #             decay_plane_vector(self.daughters[0].p, self.daughters[1].p)))
         # print("THETA")
         # print( np.isfinite(theta).all())
         # print("phi")
@@ -197,8 +197,8 @@ class DecayTreeNode:
 
         # indH = [len(hel) for hel in helicities]
         indP = [len(par) for par in start_params]
-        # TODO: organize helicities into dicts
-
+        print(indP)
+        print(start_params)
         # would wanna use a set, but those are not ordered
         # a dict with no values will do the same
         helicy_names = {a.name:a for hel in helicities for a in hel }
@@ -212,6 +212,8 @@ class DecayTreeNode:
                 # we need to correctly sort them
                 nPar1 = nPar0 + nPar
                 p  = args[nPar0:nPar1]
+                nPar0 = nPar1
+
                 h = [helicity_dict[node.name] for node in H]
                 if f0 is None:
                     f0 = f_(p,*h)

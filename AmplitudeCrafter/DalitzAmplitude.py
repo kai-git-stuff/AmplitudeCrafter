@@ -86,10 +86,10 @@ class DalitzAmplitude:
             self.resonances[k].extend(v)
         self.add_file(f)
         self.__mapping_dict.update(mapping_dict)
-        masses= {1:(self.mb,self.mc),2:(self.ma,self.mc),3:(self.ma,self.mb)}
-        for channel,resonances_channel in self.resonances.items():
-            for resonance in resonances_channel:
-                resonance.p0 = two_body_momentum(self.md,*masses[channel])
+        # masses= {1:(self.mb,self.mc),2:(self.ma,self.mc),3:(self.ma,self.mb)}
+        # for channel,resonances_channel in self.resonances.items():
+        #     for resonance in resonances_channel:
+        #         resonance.p0 = two_body_momentum(self.md,*masses[channel])
         self.check_bls()
         self.__loaded = True
 

@@ -56,7 +56,7 @@ def flatten(listoflists):
 def get_FitParameter(name,value):
     # first detect possibility for complex
     words = value.split(" ")
-    words = [word for word in words if " " not in word]
+    words = [word for word in words if " " not in word and len(word) > 0]
     frm = float(words[words.index("from") + 1])
     to = float(words[words.index("to") + 1])
     val = float(words[0])
