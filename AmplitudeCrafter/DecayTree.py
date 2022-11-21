@@ -137,16 +137,11 @@ class DecayTreeNode:
         
         theta = helicityTheta(self.parent.p, self.daughters[0].p, self.daughters[1].p)
 
-        phi = azimuthal_4body_angle(self.parent.daughters[0].p, self.parent.daughters[1].p,self.daughters[0].p, self.daughters[1].p)
+        ind = self.parent.daughters.index(self)
+        i,j = [ a for a in [0,1,2] if a != ind]
 
-        # if self.parent is not None:
-        #     # the plane is defined by only 2 of the angles
-        #     phi = jnp.arccos(scalar_product(decay_plane_vector(self.parent.daughters[0].p, self.parent.daughters[1].p), 
-        #             decay_plane_vector(self.daughters[0].p, self.daughters[1].p)))
-        # print("THETA")
-        # print( np.isfinite(theta).all())
-        # print("phi")
-        # print(np.isfinite(phi).all())
+        phi = azimuthal_4body_angle(self.parent.daughters[i].p, self.parent.daughters[j].p,self.daughters[0].p, self.daughters[1].p)
+
         return theta, phi
             
     def filter(self,mask):
