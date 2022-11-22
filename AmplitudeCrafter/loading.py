@@ -6,6 +6,7 @@ def load(f:str):
             res = yaml.safe_load(stream)
         except yaml.YAMLError as exc:
             print(exc)
+            raise ValueError("The provided yml file could not be read! Read the error printed above for more information")
     return res
 
 def write(dtc,f:str):
