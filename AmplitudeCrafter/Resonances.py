@@ -192,14 +192,28 @@ def handle_resonance_config(config_dict:dict,name):
 
     return params, mapping_dict
 
+def check_resonance_dict(resonance_dict):
+    needed_keys = [
+        "expects",
+        "partial waves in",
+        "partial waves out",
+        "func",
+        "M0",
+        "d",
+        "parity",
+        "spin"
+    ]
+    return all([k in resonance_dict.keys() for k in needed_keys])
+
 def load_resonances(f:str):
     # load Resonances based on a yml file including multiple resoances
     resonance_dict = load(f)
-    if "fit_result" in resonance_dict:
-            del resonance_dict["fit_result"]
     global_mapping_dict = {}
     resonances = {1:[],2:[],3:[]}
     for resonance_name, resonance in resonance_dict.items():
+        if not check_resonance_dict(resonance):
+            print(f"Field with name {resonance_name} could not be interpreted as resonance!")
+            continue
         params, mapping_dict = handle_resonance_config(resonance,resonance_name)
         resonance["args"] = params
         r = Resonance(resonance,mapping_dict,resonance_name)

@@ -40,15 +40,15 @@ class DecayTreeNode:
     def setP(self, p):
         if not p.shape[-1] == 4:
             raise ValueError("U stupid?")
-
-        self.__p = p
+        if not callable(self.__p): 
+            self.__p = p
 
     @property
     def p(self):
         if callable(self.__p):
             return self.__p()
         return self.__p
-    
+
     @property
     def smp(self):
         if len(self.daughters) != 3:
@@ -243,8 +243,14 @@ class DecayTree:
             mask = mask & n.filter(mask)
         return var[mask]
     
-    def phaseSpaceSample(self,size):
-        pass
+    def self_filter(self):
+        mask = self.root.filter(None)
+        if mask is None:
+            raise ValueError(f"Root {self.root} is stable")
+        for node, l in self.traverse():
+            mask = mask & node.filter(mask)
+        for node, l in self.traverse():
+            node.setP(node.p[mask])
 
 
 
