@@ -134,7 +134,7 @@ class DecayTreeNode:
 
         if len(self.daughters) != 2 and len(self.parent.daughters) != 3:
             raise ValueError(f"Helicity angles only defined for two- body decay not {len(self.daughters)} - body decay")
-        
+
         theta = helicityTheta(self.parent.p, self.daughters[0].p, self.daughters[1].p)
 
         ind = self.parent.daughters.index(self)
@@ -145,7 +145,7 @@ class DecayTreeNode:
         p2 = boost_to_rest(self.daughters[0].p,self.parent.p)
         p3 = boost_to_rest(self.daughters[1].p,self.parent.p)
 
-        phi = azimuthal_4body_angle(p2, p3, p0, p1)
+        phi = azimuthal_4body_angle(p0, p1, p2, p3)
 
         return theta, phi
             
