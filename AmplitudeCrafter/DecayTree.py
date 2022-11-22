@@ -165,8 +165,6 @@ class DecayTreeNode:
         if len(self.daughters) == 2 :
             if resonances is not None:
                 raise NotImplementedError("You cant have resonances in two body decay!")
-            # theta = helicityTheta(self.p, *[d.p for d in self.daughters])
-            # phi = 0.
             theta, phi = self.getHelicityAngles()
             f, start = self.decay.get_amplitude_function(theta,phi, total_absolute=False, just_in_time_compile = False,numericArgs=False)
             hel = [self] + list(self.daughters)
@@ -186,16 +184,11 @@ class DecayTreeNode:
                 # check if daughter decays
                 # if not we dont need to worry any further
                 continue
-            
+            # recursive generation of full amplitude
             fd, startd, helicitiesd = d.getHelicityAmplitude()
             fs.append(fd)
             start_params.append(startd)
             helicities.append(helicitiesd)
-
-        nH = len([a for hel in helicities for a in hel ])
-        nP = len([a for par in start_params for a in par ])
-
-        # indH = [len(hel) for hel in helicities]
         indP = [len(par) for par in start_params]
         print(indP)
         print(start_params)
@@ -249,5 +242,11 @@ class DecayTree:
         for n,l in self.traverse():
             mask = mask & n.filter(mask)
         return var[mask]
+    
+    def phaseSpaceSample(self,size):
+        pass
+
+
+
 if __name__ == "__main__":
     pass

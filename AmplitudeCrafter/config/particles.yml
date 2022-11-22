@@ -59,3 +59,9 @@ mu:
   spin: 1
   parity: 1
   type: lepton
+
+JPsi:
+  mass: 3096.0
+  spin: 2
+  parity: -1
+  type: meson
