@@ -31,10 +31,13 @@ def check_bls(mother:particle,daughter1:particle,daughter2:particle,bls,parity_c
         Values {mother} -> {daughter1} {daughter2} 
         Parity{" " if parity_conserved else " not "}conserved!""")
     if not all([L in Lset for L,S in bls.keys()]):
-        raise ValueError(f"Not all L couplings possible!")
+        string = "; ".join([str(L) for L,S in bls.keys() if not S in Lset])
+        raise ValueError(f"""Not all L couplings possible! {string} 
+                        For decay {mother} -> {daughter1} {daughter2}""")
     if not all([S in Sset for L,S in bls.keys()]):
-        raise ValueError(f"Not all S couplings possible!")
-
+        string = "; ".join([str(S) for L,S in bls.keys() if not S in Sset])
+        raise ValueError(f"""Not all S couplings possible! {string} 
+                        For decay {mother} -> {daughter1} {daughter2}""")
 
 def process_complex(value):
     value = value.replace("complex","")

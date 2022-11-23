@@ -41,7 +41,7 @@ DKmatrix:
       - mKanon: 493.677 const
       - mD_1_0_2420: 2420.0 const
   - alphas:
-    - a1: complex(-20.508833773831405,-33.43855011158661)
+    - a1: complex(-20.508833773831405 from -40 to 40,-33.43855011158661 const)
     - a2: complex(-8.247816343917291,47.273560172458865)
   - resonances:
     - pole1:
@@ -100,6 +100,8 @@ D_s_2317:
   - mK: 493.677 const
   - mD: 1864.84 const
   - mPi: 139.5703 const
+  - meson_radius: 0.0015 const
+  - l_orbit: 0 const
   partial waves in:
   - L: 0
     S: 1
