@@ -262,7 +262,7 @@ class DalitzAmplitude:
         helperAmplitude.load_resonances(file)
         own_param_names = self.get_arg_names()
         if not set(helperAmplitude.get_arg_names()).issubset(set(own_param_names)):
-            print("OWN")
+            print("Own: ")
             print(set(own_param_names))
             print(f"{file}")
             print(set(helperAmplitude.get_arg_names()))

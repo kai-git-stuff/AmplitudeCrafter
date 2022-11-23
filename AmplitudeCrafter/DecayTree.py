@@ -190,8 +190,8 @@ class DecayTreeNode:
             start_params.append(startd)
             helicities.append(helicitiesd)
         indP = [len(par) for par in start_params]
-        print(indP)
-        print(start_params)
+        # print(indP)
+        # print(start_params)
         # would wanna use a set, but those are not ordered
         # a dict with no values will do the same
         helicy_names = {a.name:a for hel in helicities for a in hel }
