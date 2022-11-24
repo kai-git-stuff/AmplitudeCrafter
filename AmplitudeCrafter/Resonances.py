@@ -303,6 +303,7 @@ class Resonance:
         self.type = kwargs["type"]
         self.spin = kwargs["spin"]
         self.parity = kwargs["parity"]
+        self.channel = kwargs["channel"]
         self.name = name
 
         
