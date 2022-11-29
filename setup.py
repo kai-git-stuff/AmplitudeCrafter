@@ -17,6 +17,16 @@ name = "AmplitudeCrafter",
     license = "",
     keywords = "",
     url = "",
+    install_requires=[
+    'jaxlib',
+    'jax',
+    'scipy',
+    'numpy',
+    'pandas',
+    'jax',
+    'sympy',
+    'pyaml'
+    ],
     packages=find_packages(),
     long_description=read('README.md'),
     classifiers=[
