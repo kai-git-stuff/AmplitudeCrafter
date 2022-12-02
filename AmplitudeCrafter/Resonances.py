@@ -6,6 +6,7 @@ import importlib
 from AmplitudeCrafter.ParticleLibrary import particle
 __MINFP__ = -60000000000
 __MAXFP__ =  60000000000
+__SWAVE_BKG__ = "swave_bkg"
 def is_free(p):
     if isinstance(p,FitParameter):
         return not p.fixed
@@ -192,7 +193,6 @@ def handle_resonance_config(config_dict:dict,name):
     parameter_dict["type"] = config_dict["func"].split(".")[-1]
     parameter_dict["func"] = config_dict["func"]
     params, mapping_dict = analyze_structure(config_dict["expects"],parameter_dict,name)
-
     return params, mapping_dict
 
 def check_resonance_dict(resonance_dict):
@@ -202,7 +202,6 @@ def check_resonance_dict(resonance_dict):
         "partial waves out",
         "func",
         "M0",
-        "d",
         "parity",
         "spin"
     ]
@@ -213,16 +212,22 @@ def load_resonances(f:str):
     resonance_dict = load(f)
     global_mapping_dict = {}
     resonances = {1:[],2:[],3:[]}
+    bkg = None
     for resonance_name, resonance in resonance_dict.items():
-        if not check_resonance_dict(resonance):
+        if not check_resonance_dict(resonance) and resonance_name.lower().strip() != __SWAVE_BKG__:
             print(f"Field with name {resonance_name} could not be interpreted as resonance!")
             continue
+        if resonance_name.lower().strip() == __SWAVE_BKG__:
+            params, mapping_dict = analyze_structure(resonance["expects"],{},__SWAVE_BKG__)
+            bkg = (params, mapping_dict)
+            global_mapping_dict.update(r.mapping_dict)
+
         params, mapping_dict = handle_resonance_config(resonance,resonance_name)
         resonance["args"] = params
         r = Resonance(resonance,mapping_dict,resonance_name)
         resonances[resonance["channel"]].append(r)
         global_mapping_dict.update(r.mapping_dict)
-    return resonances, global_mapping_dict
+    return resonances, global_mapping_dict, bkg
 
 def get_val(arg,mapping_dict,numeric=True):
     if "_complex" in arg:
@@ -262,7 +267,8 @@ def needed_parameter_names(param_names):
 
 def map_arguments(args,mapping_dict,numeric = True):
     if isinstance(args,list):
-        return [map_arguments(l,mapping_dict,numeric) for l in args]
+        # tuple is simply better here, as it is hashable and jax likes this
+        return tuple([map_arguments(l,mapping_dict,numeric) for l in args])
     if isinstance(args,dict):
         return {k:map_arguments(v,mapping_dict,numeric) for k,v in args.items()}
 
@@ -314,7 +320,7 @@ class Resonance:
         else:
             self.__M0 = float(kwargs["M0"])
         
-        self.d = kwargs["d"]
+        self.d = kwargs.get("d",None)
         self.p0 = None # todo two_body_breakup Momentum based on data and stuff
 
         self.args = kwargs["args"]
@@ -331,9 +337,9 @@ class Resonance:
 
     @staticmethod
     def load_resonance(f):
-        resonances, mapping_dict = load_resonances(f)
+        resonances, mapping_dict, bkg = load_resonances(f)
         resonance, = [r for k,v in resonances.items() for r in v]
-        return resonance,mapping_dict
+        return resonance,mapping_dict, bkg
 
     def to_particle(self):
         return particle(self.M0(*map_arguments(self.args,self.mapping_dict)),self.spin,self.parity,self.name)
@@ -391,7 +397,7 @@ class Resonance:
 
 if __name__=="__main__":
     from AmplitudeCrafter.locals import config_dir
-    res, mapping_dict = load_resonances(config_dir + "decay_example.yml")
+    res, mapping_dict, bkg = load_resonances(config_dir + "decay_example.yml")
     for r in res[1]:
         r.mapping_dict[r.data_key] = 50
         print(r.fixed())

@@ -80,7 +80,7 @@ class DalitzAmplitude:
     def add_resonances(self,f=config_dir + "decay_example.yml"):
         if not self.loaded:
             raise ValueError("Can only add resonances if a base set is loaded!")
-        res, mapping_dict = load_resonances(f)
+        res, mapping_dict, bkg = load_resonances(f)
         for k,v in res.items():
             self.check_new(v)
             self.resonances[k].extend(v)
@@ -118,10 +118,12 @@ class DalitzAmplitude:
         return self.__mapping_dict.copy()
             
     def load_resonances(self,f=config_dir + "decay_example.yml"):
-        res, mapping_dict = load_resonances(f)
+        res, mapping_dict, bkg = load_resonances(f)
         self.add_file(f)
         self.resonances = res
-         
+        if bkg is not None:
+            bkg_args, bkg_mapping_dict = bkg
+            
         self.__mapping_dict = mapping_dict
         masses= {1:(self.mb,self.mc),2:(self.ma,self.mc),3:(self.ma,self.mb)}
         for channel,resonances_channel in self.resonances.items():

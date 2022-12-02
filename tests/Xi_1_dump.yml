@@ -57,8 +57,8 @@ DKmatrix:
         - g2: 0.4435143035808427
         - g3: -1.549243380487963
   - sigma: sigma1
-  - L: const 2
-  - index: const 0
+  - L: 2 const
+  - index: 0 const
 Ds3_2860:
   func: jitter.resonances.relativisticBWResonance
   d: 0.0015
