@@ -128,6 +128,13 @@ def analyse_value(value,name,dtc,lst):
         dtc["L"] = None # this has to be None for now, as we need to find mistakes (None will somehwere down the line make issues, if it is not properly overwritten)
         lst.append(name)
         hit = True
+    if value.strip() == "L_0":
+        check_hit(hit,name,value)
+        # print("Angular Momentum Variable detected!")
+        dtc[name] = "L_0"
+        dtc["L_0"] = None # this has to be None for now, as we need to find mistakes (None will somehwere down the line make issues, if it is not properly overwritten)
+        lst.append(name)
+        hit = True
     return hit
 
 def analyze_structure(parameters,parameter_dict,designation=""):
@@ -157,6 +164,8 @@ def dump_value(param,name,value,new_name,mapping_dict):
         param[name] = mapping_dict[new_name]
     elif value.strip() == "L":
         param[name] = "L"
+    elif value.strip() == "L_0":
+        param[name] = "L_0"
     elif "const" in value:
         param[name] = value
     elif "sigma" in name:
@@ -242,6 +251,9 @@ def get_val(arg,mapping_dict,numeric=True):
     if val == "L":
         # TODO: ,aybeset these special charakters in a config somewhere?
         return mapping_dict["L"]
+    if val == "L_0":
+        # TODO: ,aybeset these special charakters in a config somewhere?
+        return mapping_dict["L_0"]    
     return val
 
 def get_fit_parameter(arg,mapping_dict):
@@ -350,6 +362,8 @@ class Resonance:
         del dtc["args"]
         mapping_dict[self.data_key] = "sigma%s"%self.kwargs["channel"]
         mapping_dict["L"] = "L"
+        mapping_dict["L_0"] = "L_0"
+
         dump_in_dict(dtc["expects"],mapping_dict,self.name)
         dtc["partial waves in"] = [{"L":pw["L"],"S":pw["S"], "coupling":dump_bls(self.bls_in[(pw["L"],pw["S"])],mapping_dict,pw["coupling"])} for pw in self.kwargs["partial waves in"]]
         dtc["partial waves out"] = [{"L":pw["L"],"S":pw["S"], "coupling":dump_bls(self.bls_out[(pw["L"],pw["S"])],mapping_dict,pw["coupling"])} for pw in self.kwargs["partial waves out"]]

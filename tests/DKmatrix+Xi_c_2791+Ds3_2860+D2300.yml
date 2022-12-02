@@ -1,5 +1,5 @@
 DKmatrix:
-  func: jitter.resonances.KmatX
+  func: jitter.resonances.KmatX_ff
   d: 0.0015
   M0: jitter.resonances.KmatM0
   spin: 2
@@ -62,7 +62,13 @@ DKmatrix:
     - L1: 2 const
     - L2: 2 const
     - L3: 0 const
-  # - d: 0.0015 const
+  - mLc: 2286.46 const
+  - mLb: 5619.60 const
+  - radiusResonance: 0.0015 const
+  - radiusMother: 0.0015 const
+  - l0: L
+  - l1: L_0
+
 Ds3_2860:
   func: jitter.resonances.relativisticBWResonance
   d: 0.0015
@@ -77,8 +83,12 @@ Ds3_2860:
   - width: 53. const
   - mD: 1864.84 const
   - mK: 493.677 const
-  - meson_radius: 0.0015 const
-  - l_orbit: 6 const
+  - mLc: 2286.46 const
+  - mLb: 5619.60 const
+  - radiusResonance: 0.0015 const
+  - radiusMother: 0.0015 const
+  - l0: L
+  - l1: L_0
   partial waves in:
   - L: 4
     S: 5
@@ -104,8 +114,12 @@ D_s_2317:
   - mK: 493.677 const
   - mD: 1864.84 const
   - mPi: 139.5703 const
-  - meson_radius: 0.0015 const
-  - l_orbit: 0 const
+  - mLc: 2286.46 const
+  - mLb: 5619.60 const
+  - radiusDecay: 0.0015 const
+  - radiusMother: 0.0015 const
+  - l0: L
+  - l1: L_0
   partial waves in:
   - L: 0
     S: 1
@@ -128,8 +142,12 @@ xi_c_2791:
   - width: 8.9 const
   - mLc: 2286.46 const
   - mK: 493.677 const
-  - meson_radius: 0.0015 const
-  - l_orbit: 0 const
+  - mD: 1864.84 const
+  - mLb: 5619.60 const
+  - radiusResonance: 0.0015 const
+  - radiusMother: 0.0015 const
+  - l0: L
+  - l1: L_0
   partial waves in:
   - L: 0
     S: 1
