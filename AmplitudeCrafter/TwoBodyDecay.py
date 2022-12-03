@@ -1,7 +1,8 @@
 
 from jitter.constants import spin as sp
 from jitter.kinematics import wigner_capital_d
-from jitter.amplitudes.dalitz_plot_function import helicity_options_nojit, helicity_couplings_from_ls_static, get_clebsch_dict
+from jitter.amplitudes.dalitz_plot_function import helicity_options_nojit, get_clebsch_dict
+from jitter.kinematics import helicity_couplings_from_ls_static
 from AmplitudeCrafter.Resonances import read_bls, map_arguments
 from AmplitudeCrafter.loading import load, write
 from jax import numpy as jnp
