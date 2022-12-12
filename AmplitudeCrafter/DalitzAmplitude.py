@@ -258,7 +258,7 @@ class DalitzAmplitude:
         mapped_args = map_arguments(needed_param_names,self.mapping_dict,numeric=numeric)
         return [value for name, value in zip(needed_param_names,mapped_args)]
 
-    def get_args_from_yml(self,file,numeric=False):
+    def get_args_from_yml(self,file,numeric=False,raiseeException=True):
         from AmplitudeCrafter.FunctionConstructor import map_arguments
         helperAmplitude = DalitzAmplitude(self.p0,*self.particles)
         helperAmplitude.load_resonances(file)
@@ -268,7 +268,10 @@ class DalitzAmplitude:
             print(set(own_param_names))
             print(f"{file}")
             print(set(helperAmplitude.get_arg_names()))
-            raise ValueError(f"File {file} does not contain all needed arguments to represent the amplitude!")
+            if raiseeException:
+                raise ValueError(f"File {file} does not contain all needed arguments to represent the amplitude!")
+            else:
+                print("Waring:",f"File {file} does not contain all needed arguments to represent the amplitude!")
         mapping_dict = self.mapping_dict
         mapping_dict.update(helperAmplitude.mapping_dict)
         mapped_args = map_arguments(own_param_names,mapping_dict,numeric=numeric)
