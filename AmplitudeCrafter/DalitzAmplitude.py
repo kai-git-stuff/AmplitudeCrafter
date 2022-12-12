@@ -269,7 +269,9 @@ class DalitzAmplitude:
             print(f"{file}")
             print(set(helperAmplitude.get_arg_names()))
             raise ValueError(f"File {file} does not contain all needed arguments to represent the amplitude!")
-        mapped_args = map_arguments(own_param_names,helperAmplitude.mapping_dict,numeric=numeric)
+        mapping_dict = self.mapping_dict
+        mapping_dict.update(helperAmplitude.mapping_dict)
+        mapped_args = map_arguments(own_param_names,mapping_dict,numeric=numeric)
         return [value for name, value in zip(own_param_names,mapped_args)]
 
 
