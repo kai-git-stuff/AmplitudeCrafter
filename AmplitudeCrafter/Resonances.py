@@ -3,42 +3,13 @@ from jitter.constants import spin as sp
 from AmplitudeCrafter.loading import load, write
 from jitter.fitting import FitParameter
 import importlib
+from AmplitudeCrafter.helpers import *
 from AmplitudeCrafter.ParticleLibrary import particle
 __MINFP__ = -60000000000
 __MAXFP__ =  60000000000
 __SWAVE_BKG__ = "swave_bkg"
-def is_free(p):
-    if isinstance(p,FitParameter):
-        return not p.fixed
-    return False
 
-def get_parity(L,p1,p2):
-    if L % 2 != 0:
-        raise ValueError("Angular momentum has to be multiple of 2!")
-    return p1 * p2 * (-1)**(L//2)
-
-def check_bls(mother:particle,daughter1:particle,daughter2:particle,bls,parity_conserved=False):
-    Ls = []
-    for S in sp.couple(daughter1.spin,daughter2.spin):
-        for L in sp.couple(mother.spin,S):
-            if get_parity(L,daughter1.parity,daughter2.parity) == mother.parity or not parity_conserved:
-                Ls.append((L,S))
-    minL,minS = min(Ls,key=lambda x: x[0])
-    Ls_bls = [L for L,S in bls.keys()]
-    Lset = set([L for L,_ in Ls])
-    Sset = set([S for L,S in Ls])
-    if min(Ls_bls) != minL:
-        raise ValueError(f"""Lowest partial wave {(minL,minS)} not contained in LS couplings {list(bls.keys())}!
-        Values {mother} -> {daughter1} {daughter2} 
-        Parity{" " if parity_conserved else " not "}conserved!""")
-    if not all([L in Lset for L,S in bls.keys()]):
-        string = "; ".join([str(L) for L,S in bls.keys() if not S in Lset])
-        raise ValueError(f"""Not all L couplings possible! {string} 
-                        For decay {mother} -> {daughter1} {daughter2}""")
-    if not all([S in Sset for L,S in bls.keys()]):
-        string = "; ".join([str(S) for L,S in bls.keys() if not S in Sset])
-        raise ValueError(f"""Not all S couplings possible! {string} 
-                        For decay {mother} -> {daughter1} {daughter2}""")
+from parameters import parameter, UNDERSTOOD_PARAMS
 
 def process_complex(value):
     value = value.replace("complex","")
@@ -76,65 +47,17 @@ def analyse_value(value,name,dtc,lst):
         lst.append(name)
         dtc[name] = FitParameter(name,value,__MINFP__,__MAXFP__,0.01)
         return True
-    try:
-        val = float(value)
-        lst.append(name)
-        dtc[name] = FitParameter(name,val,__MINFP__,__MAXFP__,0.01)
-        return True
-    except:
-        pass
-    if "from" in value and "to" in value and not "complex" in value:
-        # bounded value gets treated in separate functiuon
-        lst.append(name)
-        dtc[name] = get_FitParameter(name,value)
-        hit =  True
-    if "sigma" in value:
-        check_hit(hit,name,value)
-        # sigma is the key for the dalitz variables
-        lst.append(value)
-        dtc[value] = value
-        hit =  True
-    if "complex" in value:
-        check_hit(hit,name,value)
-        if "const" in value.split(")")[-1]:
-            value = value.replace("const","")
-            dtc[name] = process_complex(value)
-            lst.append(name)
-            return  True
-        value = value.replace("complex(","").replace(")","")
-        v1,v2 =value.split(",") 
-        n1, n2 = name + "_real", name + "_imag"
-        # send a dummy list, because we append ourselfes here
-        analyse_value(v1,n1,dtc,list())
-        analyse_value(v2,n2,dtc,list())
-        # dtc[n1] = FitParameter(n1,v1,__MINFP__,__MAXFP__,0.01)
-        # dtc[n2] = FitParameter(n2,v2,__MINFP__,__MAXFP__,0.01)
-        lst.append(name+"_complex")
-        return True
-    if "const" in value:
-        check_hit(hit,name,value)
-        # if we have a constant, we expect
-        value = value.replace("const","")            
-        try:
-            dtc[name] = int(value)
-        except ValueError:
-            dtc[name] = float(value)
-        lst.append(name)
-        hit =  True
-    if value.strip() == "L":
-        check_hit(hit,name,value)
-        # print("Angular Momentum Variable detected!")
-        dtc[name] = "L"
-        dtc["L"] = None # this has to be None for now, as we need to find mistakes (None will somehwere down the line make issues, if it is not properly overwritten)
-        lst.append(name)
-        hit = True
-    if value.strip() == "L_0":
-        check_hit(hit,name,value)
-        # print("Angular Momentum Variable detected!")
-        dtc[name] = "L_0"
-        dtc["L_0"] = None # this has to be None for now, as we need to find mistakes (None will somehwere down the line make issues, if it is not properly overwritten)
-        lst.append(name)
-        hit = True
+    
+    
+    matching_signatures = [param for param in UNDERSTOOD_PARAMS if param.match(value)]
+
+    high_level_parameters = [param for param in matching_signatures if not param.final()]
+
+    low_level_parametes = [param for param in matching_signatures if param.final()]
+        
+    if len(high_level_parameters) > 1 :
+        raise ValueError("No more than one high level parameter per value!")
+
     return hit
 
 def analyze_structure(parameters,parameter_dict,designation=""):
