@@ -4,7 +4,7 @@ from AmplitudeCrafter.loading import load, write
 from AmplitudeCrafter.ParticleLibrary import particle
 from jitter.phasespace.DalitzPhasespace import DalitzPhaseSpace
 from AmplitudeCrafter.locals import config_dir
-from AmplitudeCrafter.Resonances import check_bls, flatten, load_resonances, is_free, needed_parameter_names, check_if_wanted
+from AmplitudeCrafter.Resonances import check_bls, load_resonances, is_free, check_if_wanted
 from AmplitudeCrafter.FunctionConstructor import construct_function
 from jitter.fitting import FitParameter
 from jitter.kinematics import two_body_momentum
@@ -13,6 +13,7 @@ from jitter.constants import spin as sp
 from jitter.amplitudes.dalitz_plot_function import helicity_options_nojit
 from jax import numpy as jnp
 from multiprocessing import Pool
+from AmplitudeCrafter.helpers import flatten
 
 def run(self,args,smp,nu,lambdas,resonance):
     print(resonance)
@@ -238,7 +239,7 @@ class DalitzAmplitude:
     def get_arg_names(self):
         param_names = [k for k,p in self.mapping_dict.items() if is_free(p)]
         # translate values with _complex in to imaginary and real part
-        return needed_parameter_names(param_names)
+        return param_names
 
     def get_cov(self,f):
         if not self.loaded:

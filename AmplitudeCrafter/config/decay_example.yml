@@ -1,141 +1,167 @@
-Kmatrix:
-  func: jitter.resonances.KmatX
-  d: 0.0015
-  M0: 2850.
-  spin: 2
-  parity: -1
-  channel: 1
-  partial waves in:
-    - L: 0
-      S: 1
-      coupling: complex(1,0) const
-    - L: 2
-      S: 1
-      coupling: complex(1,0)
-    - L: 2
-      S: 3
-      coupling: complex(1,0)
-  partial waves out:
-    - L: 2
-      S: 0
-      coupling: complex(1,0)
-  type: D0-Kmatrix
-  expects:
-    - channels: 
-      - chanel1:
-        - index: const 0
-        - L: const 2
-        - bg: 0.00046646033624466593 
-        - m1: 1864.84
-        - m2: 493.677
-      - chanel2:
-        - index: const 1
-        - L: const 2
-        - bg: -0.0024885762382539436
-        - m1: 493.677
-        - m2: 2006.85
-    - alphas: 
-      - a1: complex(-21.838053922163205,2.5835176753426845)
-      - a2: complex(97.92875728553436 , -25.05989712965156)
-    - resonances:
-      - pole1:
-        - pole mass: 2713.6
-        - g: 
-          - g1: 8.766707041735982
-          - g2: -14.803591954940154
-      - pole2:
-        - pole mass: 2967.1
-        - g: 
-          - g1: -26.929560109929664
-          - g2: 4.898837086811296
-    - sigma: sigma1
-    - L: const 2
-    - index: const 0
+# Kmatrix:
+#   func: jitter.resonances.KmatX
+#   d: 0.0015
+#   M0: 2850.
+#   spin: 2
+#   parity: -1
+#   channel: 1
+#   partial waves in:
+#     - L: 0
+#       S: 1
+#       coupling: complex(1,0) const
+#     - L: 2
+#       S: 1
+#       coupling: complex(1,0)
+#     - L: 2
+#       S: 3
+#       coupling: complex(1,0)
+#   partial waves out:
+#     - L: 2
+#       S: 0
+#       coupling: complex(1,0)
+#   type: D0-Kmatrix
+#   expects:
+#     - channels: 
+#       - chanel1:
+#         - index: const 0
+#         - L: const 2
+#         - bg: 0.00046646033624466593 
+#         - m1: 1864.84
+#         - m2: 493.677
+#       - chanel2:
+#         - index: const 1
+#         - L: const 2
+#         - bg: -0.0024885762382539436
+#         - m1: 493.677
+#         - m2: 2006.85
+#     - alphas: 
+#       - a1: complex(-21.838053922163205,2.5835176753426845)
+#       - a2: complex(97.92875728553436 , -25.05989712965156)
+#     - resonances:
+#       - pole1:
+#         - pole mass: 2713.6
+#         - g: 
+#           - g1: 8.766707041735982
+#           - g2: -14.803591954940154
+#       - pole2:
+#         - pole mass: 2967.1
+#         - g: 
+#           - g1: -26.929560109929664
+#           - g2: 4.898837086811296
+#     - sigma: sigma1
+#     - L: const 2
+#     - index: const 0
 
-D2300:
-  func: jitter.resonances.BWresonance
-  d: 0.0015
-  M0: 2317
-  spin: 0
-  parity: 1
-  channel: 1
-  type: D2300-BW
-  expects:
-  expects: 
-    - sigma: sigma1
-    - m: 2317. const
-    - width: 53. const
-  partial waves in:
-    - L: 0
-      S: 1
-      coupling: complex(1,0)
-  partial waves out:
-    - L: 0
-      S: 0
-      coupling: complex(1,0) const
+# D2300:
+#   func: jitter.resonances.BWresonance
+#   d: 0.0015
+#   M0: 2317
+#   spin: 0
+#   parity: 1
+#   channel: 1
+#   type: D2300-BW
+#   expects:
+#   expects: 
+#     - sigma: sigma1
+#     - m: 2317. const
+#     - width: 53. const
+#   partial waves in:
+#     - L: 0
+#       S: 1
+#       coupling: complex(1,0)
+#   partial waves out:
+#     - L: 0
+#       S: 0
+#       coupling: complex(1,0) const
+
+# Ds3_2860:
+#   func: jitter.resonances.BWresonance
+#   d: 0.0015
+#   M0: 2860
+#   spin: 6
+#   parity: -1
+#   channel: 1
+#   type: Ds3_2860-BW
+#   expects:
+#   expects: 
+#     - sigma: sigma1
+#     - m: 2860. const
+#     - width: 53. const
+#   partial waves in:
+#     - L: 4
+#       S: 5
+#       coupling: complex(1,0) 
+#   partial waves out:
+#     - L: 6
+#       S: 0
+#       coupling: complex(1,0) const
+
+# xi_c_2791:
+#   func: jitter.resonances.BWresonance
+#   d: 0.0015
+#   M0: 2791.9
+#   spin: 1
+#   parity: -1
+#   channel: 2
+#   type: xi_c_2791-BW
+#   expects:
+#   expects: 
+#     - sigma: sigma1
+#     - m: 2791.9 const
+#     - width: 8.9 const
+#   partial waves in:
+#     - L: 0
+#       S: 1
+#       coupling: complex(1,0) 
+#   partial waves out:
+#     - L: 0
+#       S: 1
+#       coupling: complex(1,0) const
+
+# xi_c_2815:
+#   func: jitter.resonances.BWresonance
+#   d: 0.0015
+#   M0: 2815
+#   spin: 1
+#   parity: -1
+#   channel: 2
+#   type: xi_c_2815-BW
+#   expects:
+#   expects: 
+#     - sigma: sigma1
+#     - m: 2815 const
+#     - width: 2.43 const
+#   partial waves in:
+#     - L: 0
+#       S: 1
+#       coupling: complex(1,0) 
+#   partial waves out:
+#     - L: 0
+#       S: 1
+#       coupling: complex(1,0) const
 
 Ds3_2860:
-  func: jitter.resonances.BWresonance
-  d: 0.0015
-  M0: 2860
+  func: jitter.resonances.relativisticBWResonance
   spin: 6
   parity: -1
   channel: 1
-  type: Ds3_2860-BW
   expects:
-  expects: 
-    - sigma: sigma1
-    - m: 2860. const
-    - width: 53. const
+  - sigma: sigma1
+  - m: 2860. const
+  - width: 53. const
+  - mD: 1864.84 const
+  - mK: 493.677 const
+  - mLc: 2286.46 const
+  - mLb: 5619.60 const
+  - radiusResonance: 0.0015 const
+  - radiusMother: 0.0015 const
+  - lr: L
+  - ld: L_0
   partial waves in:
-    - L: 4
-      S: 5
-      coupling: complex(1,0) 
+  - L: 4
+    S: 5
+    coupling: complex(28.254172001510163,-41.59839711894527)
   partial waves out:
-    - L: 6
-      S: 0
-      coupling: complex(1,0) const
-
-xi_c_2791:
-  func: jitter.resonances.BWresonance
-  d: 0.0015
-  M0: 2791.9
-  spin: 1
-  parity: -1
-  channel: 2
-  type: xi_c_2791-BW
-  expects:
-  expects: 
-    - sigma: sigma1
-    - m: 2791.9 const
-    - width: 8.9 const
-  partial waves in:
-    - L: 0
-      S: 1
-      coupling: complex(1,0) 
-  partial waves out:
-    - L: 0
-      S: 1
-      coupling: complex(1,0) const
-
-xi_c_2815:
-  func: jitter.resonances.BWresonance
-  d: 0.0015
-  M0: 2815
-  spin: 1
-  parity: -1
-  channel: 2
-  type: xi_c_2815-BW
-  expects:
-  expects: 
-    - sigma: sigma1
-    - m: 2815 const
-    - width: 2.43 const
-  partial waves in:
-    - L: 0
-      S: 1
-      coupling: complex(1,0) 
-  partial waves out:
-    - L: 0
-      S: 1
-      coupling: complex(1,0) const
+  - L: 6
+    S: 0
+    coupling: complex(1,0) const

@@ -34,3 +34,13 @@ def check_bls(mother:particle,daughter1:particle,daughter2:particle,bls,parity_c
         string = "; ".join([str(S) for L,S in bls.keys() if not S in Sset])
         raise ValueError(f"""Not all S couplings possible! {string} 
                         For decay {mother} -> {daughter1} {daughter2}""")
+
+def flatten(listoflists):
+    lst = []
+    def flatten_recursive(listoflists,ret_list:list):
+        if isinstance(listoflists,list):
+            [flatten_recursive(l,ret_list) for l in listoflists] 
+            return 
+        ret_list.append(listoflists)
+    flatten_recursive(listoflists,lst)
+    return lst

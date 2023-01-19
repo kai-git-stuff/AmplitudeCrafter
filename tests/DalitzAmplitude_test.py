@@ -5,13 +5,13 @@ import os
 from jax.config import config
 
 config.update("jax_enable_x64", True)
-dir = os.path.dirname(__file__)
+this_dir = os.path.dirname(__file__)
 
-amplitude_file = os.path.join(dir,"DKmatrix+Xi_c_2791+Ds3_2860+D2300.yml")
-dump_file = os.path.join(dir,"Xi_1_dump.yml")
-cov_file = os.path.join(dir,"DKmatrix+Xi_c_2791+Ds3_2860+D2300_cov.yml")
+amplitude_file = os.path.join(this_dir,"DKmatrix+Xi_c_2791+Ds3_2860+D2300.yml")
+dump_file = os.path.join(this_dir,"Xi_1_dump.yml")
+cov_file = os.path.join(this_dir,"DKmatrix+Xi_c_2791+Ds3_2860+D2300_cov.yml")
 
-amplitude_dump = os.path.join(dir,"ampl.npy")
+amplitude_dump = os.path.join(this_dir,"ampl.npy")
 p0 = particle.get_particle("Lb")
 p1 = particle.get_particle("Lc")
 p2 = particle.get_particle("D0")

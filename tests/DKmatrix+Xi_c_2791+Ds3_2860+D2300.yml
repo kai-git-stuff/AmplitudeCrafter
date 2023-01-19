@@ -68,7 +68,6 @@ DKmatrix:
   - radiusMother: 0.0015 const
   - lr: L
   - ld: L_0
-  # - d: 0.0015 const
 
 Ds3_2860:
   func: jitter.resonances.relativisticBWResonance
