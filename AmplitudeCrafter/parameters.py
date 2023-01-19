@@ -18,12 +18,6 @@ class parameter:
     def final():
         # this method is to tell if this value allows a substructure
         return True
-    
-    # @classmethod
-    # @abstractmethod
-    # def strip():
-    #     # here weremove the 
-    #     return ""
 
 
 class complexParameter(parameter):
@@ -110,11 +104,6 @@ class number(parameter):
             return FitParameter(name,float(string),float(fromValue), float(toValue))
         if not isConst:
             FitParameter(name,float(string),None, None)
-
-
-
-
-
 
 
 UNDERSTOOD_PARAMS = [complexParameter,number]
