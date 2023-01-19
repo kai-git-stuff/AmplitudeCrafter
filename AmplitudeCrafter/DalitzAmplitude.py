@@ -16,7 +16,6 @@ from multiprocessing import Pool
 from AmplitudeCrafter.helpers import flatten
 
 def run(self,args,smp,nu,lambdas,resonance):
-    print(resonance)
     f,start = self.get_amplitude_function(smp,resonances=[resonance],total_absolute=False, just_in_time_compile = False)
     return f(args,nu,lambdas)
 class DalitzAmplitude:
@@ -164,15 +163,6 @@ class DalitzAmplitude:
     def get_amplitude_function(self,smp,resonances = None, total_absolute=True, just_in_time_compile = True, numericArgs=True):
         # resonances parameter designed to get run systematic studies later
         # so we can use the same config, but exclude or include specific resonances
-
-
-        """
-        decay_tree = a nested dict composed of the data needed in order to describe the decays of the daughters of this decay
-                    for example : {1:[theta1, phi1] # the parameters for the underlying decay of particle 1 
-                                    2:{'theta':theta2, 'phi':phi2, 'decay_tree': None} #  the parameters for the underlying decay of particle 2
-                                                               # here we have a different structure with the optional argument of the decay tree
-                                    }
-        """
         if not self.loaded:
             raise ValueError("Load Resonance config first, before building Amplitude!")
         
@@ -182,8 +172,9 @@ class DalitzAmplitude:
             raise ValueError("Only string allowed for the selection of resonances!")
 
         param_names = [k for k,p in self.mapping_dict.items() 
-                                if is_free(p) ]
+                                if not p.const ]
         params = [self.mapping_dict[p] for p in param_names]
+
         mapping_dict = self.mapping_dict.copy()
         bls_in = self.get_bls_in(resonances)
         bls_out = self.get_bls_out(resonances)
@@ -193,11 +184,21 @@ class DalitzAmplitude:
         parities = [self.p0.parity] + [p.parity for p in self.particles]
         masses = [self.p0.mass] + [p.mass for p in self.particles]
 
-        mapping_dict["sigma3"] = self.phsp.m2ab(smp)
-        mapping_dict["sigma2"] = self.phsp.m2ac(smp)
-        mapping_dict["sigma1"] = self.phsp.m2bc(smp)
+        try:
+            mapping_dict["sigma3"].update(self.phsp.m2ab(smp))
+        except Exception as e:
+            pass
+        try:
+            mapping_dict["sigma2"].update(self.phsp.m2ac(smp))
+        except Exception as e:
+            pass
+        try:
+            mapping_dict["sigma1"].update(self.phsp.m2bc(smp))
+        except Exception as e:
+            pass
+        
         resonances = [[r for r in self.resonances[i] if check_if_wanted(r.name,resonances)] for i in [1,2,3]]
-        f,start = construct_function(masses,spins,parities,param_names,params,mapping_dict,
+        f,start = construct_function(masses,spins,parities,params,mapping_dict,
                                 resonances,resonance_tuples,bls_in,bls_out,resonance_args,smp,self.phsp,total_absolute,just_in_time_compile, numericArgs = numericArgs)
         
         return f,start

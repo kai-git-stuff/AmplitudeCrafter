@@ -9,14 +9,14 @@ from jitter.kinematics import two_body_momentum
 from jitter.dynamics import orbital_barrier_factor
 
 def run_lineshape(resonance_tuple,args,mapping_dict,bls_in,bls_out):
-    s,p,hel,lineshape_func = resonance_tuple
+    s,p,hel,lineshape_func,_,_,_ = resonance_tuple
     lineshape = {}
     for LS,b in bls_out.items():
         for LS_i,b_i in bls_in.items():
             L,S = LS
             L_0, S_0 = LS_i
-            mapping_dict["L"] = L # set the correct angular momentum
-            mapping_dict["L_0"] = L_0 # set the correct angular momentum
+            mapping_dict["L"].update(L) # set the correct angular momentum
+            mapping_dict["L_0"].update(L_0) # set the correct angular momentum
             lineshape[(L_0,L)] = lineshape_func(*map_arguments(args,mapping_dict))
 
     return (s,p,hel,lineshape,None,None,None)
@@ -39,7 +39,7 @@ def construct_function(masses,spins,parities,params,mapping_dict,resonances,reso
             # wierd bug...
             # need to investigate this
             args = args[0]
-        dtc = mapping_dict.copy()
+        dtc = mapping_dict
         for p, val in zip(needed_params,args):
             p.update(val)
         return dtc

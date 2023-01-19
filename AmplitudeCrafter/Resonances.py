@@ -93,6 +93,8 @@ def load_resonances(f:str):
     resonances = {1:[],2:[],3:[]}
     bkg = None
     for resonance_name, resonance in resonance_dict.items():
+        if not check_resonance_dict(resonance):
+            continue
         params, mapping_dict = handle_resonance_config(resonance,resonance_name)
         resonance["args"] = params
         r = Resonance(resonance,mapping_dict,resonance_name)
@@ -195,15 +197,15 @@ class Resonance:
             self.mapping_dict[self.data_key] = s
             return (self.spin,self.parity,sp.direction_options(self.spin),
                         self.lineshape(*map_arguments(self.args,self.mapping_dict)),
-                        self.M0(*map_arguments(self.args,self.mapping_dict)),self.d,self.p0)
+                        self.M0(*map_arguments(self.args,self.mapping_dict)),None,self.p0)
         return (self.spin,self.parity,sp.direction_options(self.spin),
                         self.lineshape,
-                        self.M0,self.d,self.p0)
+                        self.M0,None,self.p0)
     
     def fixed(self):
-        return not any([is_free(p) for p in 
+        return not any([not p.const for p in 
                 flatten(
-                    get_fit_params(self.args)
+                    self.args
                     )])
 
     def __repr__(self):

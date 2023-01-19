@@ -1,7 +1,5 @@
 DKmatrix:
   func: jitter.resonances.KmatX_ff
-  d: 0.0015
-  M0: jitter.resonances.KmatM0
   spin: 2
   parity: -1
   channel: 1
@@ -71,12 +69,9 @@ DKmatrix:
 
 Ds3_2860:
   func: jitter.resonances.relativisticBWResonance
-  d: 0.0015
-  M0: jitter.resonances.BWM0
   spin: 6
   parity: -1
   channel: 1
-  type: Ds3_2860-BW
   expects:
   - sigma: sigma1
   - m: 2860. const
@@ -99,8 +94,6 @@ Ds3_2860:
     coupling: complex(1,0) const
 D_s_2317:
   func: jitter.resonances.FlatteResonance
-  d: 0.0015
-  M0: 2317.0
   spin: 0
   parity: 1
   channel: 1
@@ -130,12 +123,9 @@ D_s_2317:
     coupling: complex(1,0) const
 xi_c_2791:
   func: jitter.resonances.relativisticBWResonance
-  d: 0.0015
-  M0: jitter.resonances.BWM0
   spin: 1
   parity: -1
   channel: 2
-  type: xi_c_2791-BW
   expects:
   - sigma: sigma2
   - m: 2791.9 const

@@ -1,6 +1,16 @@
 from jitter.fitting import FitParameter
 from abc import abstractmethod
 
+def failFalse(func):
+    # returns false whenever 
+    def inner(*args,**kwargs):
+        try:
+            return func(*args,**kwargs)
+        except Exception as e:
+            print(e)
+            return False
+    return inner
+
 class parameter:
 
     parmeters = dict()
@@ -43,11 +53,18 @@ class parameter:
 
 class complexParameter(parameter):
     @classmethod
+    @failFalse
     def match(cls,string):
+        if not isinstance(string,str):
+            return False
         if "complex" in string:
             if "(" in string and ")" in string:
                 return True
+        return False
     
+    def __repr__(self):
+        return self.name
+
     @classmethod
     def final(cls):
         return False
@@ -89,7 +106,7 @@ class complexParameter(parameter):
     def __call__(self,numeric=True):
         if numeric is False:
             return self.real(False), self.imag(False)
-        return self.real() + 1j * self.imag()
+        return self.real(numeric=True) + 1j * self.imag(numeric=True)
 
     @classmethod
     def strip(cls,string:str):
@@ -126,7 +143,10 @@ def checkFloat(string:str):
 
 class number(parameter):
     @classmethod
+    @failFalse
     def match(cls,string:str):
+        if not isinstance(string,str):
+            return True
         string, fromValue = findNext(string,"from")
         string, toValue = findNext(string,"to")
         string, isConst = checkConst(string)
@@ -137,6 +157,9 @@ class number(parameter):
         
         return any(accepted) and isCastable
     
+    def __repr__(self):
+        return self.name
+
     @classmethod
     def final(cls):
         return True
@@ -151,6 +174,8 @@ class number(parameter):
 
     @classmethod
     def evaluate(cls,name,string:str):
+        if not isinstance(string,str):
+            string = str(string)
         initialString = string
         string, fromValue = findNext(string,"from")
         string, toValue = findNext(string,"to")
@@ -159,7 +184,13 @@ class number(parameter):
         if not number.match(string):
             raise ValueError(f"Value '{initialString}' of parameter {name} does not match pattern of a number!")
         if isConst:
-            return isConst,float(string)
+            for cast in [int,float]:
+                try: 
+                    val = cast(string)
+                    break
+                except:
+                    continue
+            return isConst,val
         if toValue is not None:
             return isConst,FitParameter(name,float(string),float(fromValue), float(toValue))
         if not isConst:
@@ -190,14 +221,21 @@ class number(parameter):
 
 class specialParameter(parameter):
     specialSymbols = ["sigma1","sigma2","sigma3","L","L_0"]
+    values = {}
     @classmethod
+    @failFalse
     def match(cls,string:str):
+        if not isinstance(string,str):
+            return False
         return string in  cls.specialSymbols
     
     @classmethod
     def final(cls):
         return True
     
+    def __repr__(self):
+        return self.name + " " + repr(self(True))
+
     @property
     def dict(self):
         return {self.name:self}
@@ -214,13 +252,13 @@ class specialParameter(parameter):
         self.const = True
         self.name = string
         # value will be updated, but this is not a fit parameter, so it is const
-        self.value = 0
+        self.value = None
     
     def __call__(self,numeric=False):
-        return self.value
+        return specialParameter.values.get(self.name,None)
 
     def update(self,val):
-        self.value = val
+        specialParameter.values[self.name] = val
 
 
 UNDERSTOOD_PARAMS = [complexParameter,number,specialParameter]
