@@ -17,21 +17,22 @@ def run_lineshape(resonance_tuple,args,mapping_dict,bls_in,bls_out):
             L_0, S_0 = LS_i
             mapping_dict["L"].update(L) # set the correct angular momentum
             mapping_dict["L_0"].update(L_0) # set the correct angular momentum
-            lineshape[(L_0,L)] = lineshape_func(*map_arguments(args,mapping_dict))
+            lineshape[(L_0,L)] = lineshape_func(*map_arguments(args))
 
     return (s,p,hel,lineshape,None,None,None)
 
 def construct_function(masses,spins,parities,params,mapping_dict,resonances,resonance_tuples,bls_in,bls_out,resonance_args,smp,phsp,total_absolute=True,just_in_time_compile=True, numericArgs=True):
     mapping_dict_global = mapping_dict
     free_indices = [[not r.fixed() for r in res ] for res in resonances ]
-    bls_in_mapped = map_arguments(bls_in,mapping_dict)
-    bls_out_mapped = map_arguments(bls_out,mapping_dict)
+    bls_in_mapped = map_arguments(bls_in)
+    bls_out_mapped = map_arguments(bls_out)
     resonances_filled = [[run_lineshape(r,resonance_args[i][j],mapping_dict,bls_in_mapped[i][j],bls_out_mapped[i][j]) for j,r in enumerate(res)] for i, res in enumerate(resonance_tuples)  ]
 
     decay = DalitzDecay(*masses,*spins,*parities,smp,resonances_filled,[bls_in_mapped,bls_out_mapped],phsp=phsp)
     
     needed_params = [p for p in params if not p.const]
     # we need to translate all _complex values into real and imaginary
+    print(needed_params)
     start = map_arguments(needed_params,numeric=numericArgs)
 
     def fill_args(args,mapping_dict):
@@ -53,8 +54,8 @@ def construct_function(masses,spins,parities,params,mapping_dict,resonances,reso
     if total_absolute:
         def f(args):
             mapping_dict = fill_args(args,mapping_dict_global)
-            bls_in_mapped = map_arguments(bls_in,mapping_dict)
-            bls_out_mapped = map_arguments(bls_out,mapping_dict)
+            bls_in_mapped = map_arguments(bls_in)
+            bls_out_mapped = map_arguments(bls_out)
             update(mapping_dict,bls_out_mapped)
 
             def O(nu,lambdas):       
@@ -69,8 +70,8 @@ def construct_function(masses,spins,parities,params,mapping_dict,resonances,reso
     else:
         def f(args,nu,*lambdas):
             mapping_dict = fill_args(args,mapping_dict_global)
-            bls_in_mapped = map_arguments(bls_in,mapping_dict)
-            bls_out_mapped = map_arguments(bls_out,mapping_dict)
+            bls_in_mapped = map_arguments(bls_in)
+            bls_out_mapped = map_arguments(bls_out)
             update(mapping_dict,bls_out_mapped)
 
             def O(nu,lambdas):       

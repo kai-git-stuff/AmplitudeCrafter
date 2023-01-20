@@ -106,7 +106,7 @@ class complexParameter(parameter):
     def __call__(self,numeric=True):
         if numeric is False:
             return self.real(False), self.imag(False)
-        return self.real(numeric=True) + 1j * self.imag(numeric=True)
+        return self.real(numeric=True) + 1j * (self.imag(numeric=True))
 
     @classmethod
     def strip(cls,string:str):
@@ -204,7 +204,7 @@ class number(parameter):
         self.special=False
     
     def __call__(self,numeric=False):
-        if self.const:
+        if self.const is True:
             if numeric is False:
                 raise ValueError("Constant parameter can not be returned as fit parameter!")
             return self.value
@@ -216,6 +216,8 @@ class number(parameter):
         if self.const:
             raise ValueError("Can not update constant parameter!")
         else:
+            if isinstance(val,FitParameter):
+                val = val()
             self.value.update(val)
 
 
