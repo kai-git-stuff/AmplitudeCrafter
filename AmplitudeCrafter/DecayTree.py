@@ -63,6 +63,7 @@ class DecayTreeNode:
             raise NotImplementedError("Theta only available for two-body decays!")
         theta, phi = self.getHelicityAngles()
         return theta
+    
     @property
     def phi(self):
         if len(self.daughters) != 2:

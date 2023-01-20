@@ -25,7 +25,7 @@ def analyse_value(value,name,dtc,lst):
     low_level_parametes = [param for param in matching_signatures if param.final()]
         
     fallback_parameters = [param for param in FALLBACK_PARAMETERS if param.match(value)]
-    
+
     if len(high_level_parameters) > 1 or len(low_level_parametes) > 1:
         raise ValueError(f"More than one parameter matches value {value} with name {name}!")
     
@@ -163,8 +163,8 @@ class Resonance:
 
         self.args = kwargs["args"]
         self.mapping_dict = mapping_dict
-        self.data_key = [k for k,v in mapping_dict.items() if isinstance(v,specialParameter) and "sigma" in v.name][0]
-        self.data_replacement = mapping_dict[self.data_key]
+        # self.data_key = [k for k,v in mapping_dict.items() if isinstance(v,specialParameter) and "sigma" in v.name][0]
+        # self.data_replacement = mapping_dict[self.data_key]
 
         module = importlib.import_module(".".join(kwargs["func"].split(".")[:-1]))
         self.lineshape = getattr(module,kwargs["func"].split(".")[-1])
@@ -208,11 +208,11 @@ class Resonance:
         return self.__bls_out
 
     def tuple(self,s=None):
-        if s is not None:
-            self.mapping_dict[self.data_key] = s
-            return (self.spin,self.parity,sp.direction_options(self.spin),
-                        self.lineshape(*map_arguments(self.args,self.mapping_dict)),
-                        self.M0(*map_arguments(self.args,self.mapping_dict)),None,self.p0)
+        # if s is not None:
+        #     self.mapping_dict[self.data_key] = s
+        #     return (self.spin,self.parity,sp.direction_options(self.spin),
+        #                 self.lineshape(*map_arguments(self.args,self.mapping_dict)),
+        #                 self.M0(*map_arguments(self.args,self.mapping_dict)),None,self.p0)
         return (self.spin,self.parity,sp.direction_options(self.spin),
                         self.lineshape,
                         self.M0,None,self.p0)
@@ -233,6 +233,3 @@ if __name__=="__main__":
     res, mapping_dict, bkg = load_resonances(config_dir + "decay_example.yml")
     for k,v in mapping_dict.items():
         print(k,v)
-    for r in res[1]:
-        r.mapping_dict[r.data_key] = 50
-        print(r.fixed())

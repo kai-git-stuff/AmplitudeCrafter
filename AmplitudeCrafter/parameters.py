@@ -1,5 +1,6 @@
 from jitter.fitting import FitParameter
 from abc import abstractmethod
+from warnings import warn
 
 def failFalse(func):
     # returns false whenever 
@@ -11,7 +12,6 @@ def failFalse(func):
     return inner
 
 class parameter:
-
     parmeters = dict()
 
     @classmethod
@@ -204,6 +204,8 @@ class number(parameter):
                     continue
             return isConst,val
         if toValue is not None:
+            if not (fromValue <= float(string) and toValue >= float(string)):
+                raise ValueError(f"Parameter {name} is outside the specified interval!")
             return isConst,FitParameter(name,float(string),float(fromValue), float(toValue))
         if not isConst:
             return isConst,FitParameter(name,float(string),None, None)
@@ -302,6 +304,7 @@ class stringParam(parameter):
     def match(cls,string:str):
         if not isinstance(string,str):
             return False
+        return True
     
     def dump(self):
         # the value can be whatever, but the name is constant here
@@ -331,13 +334,17 @@ class stringParam(parameter):
         pass
 
     def __init__(self,string,name):
+        # remove a potential const declaration
+        string, isDecalredConst = checkConst(string)
+        if isDecalredConst:
+            warn(f"Parameter {name} is of type string and was declared const! The explicit declaration can be omitted!")
         self.const = True
         self.name = name
         # value will be updated, but this is not a fit parameter, so it is const
         self.value = string
     
-    def __call__(self,numeric=False):
-        if numeric is not False:
+    def __call__(self,numeric=True):
+        if numeric is False:
             raise ValueError("String parameters can only be constant!")
         return self.value
 
@@ -346,4 +353,4 @@ class stringParam(parameter):
 
 UNDERSTOOD_PARAMS = [complexParameter,number,specialParameter]
 
-FALLBACK_PARAMETER = stringParam
+FALLBACK_PARAMETERS = [stringParam]

@@ -188,7 +188,6 @@ class DalitzAmplitude:
         mapping_dict["sigma2"].update(self.phsp.m2ac(smp))
 
         mapping_dict["sigma1"].update(self.phsp.m2bc(smp))
-
         
         resonances = [[r for r in self.resonances[i] if check_if_wanted(r.name,resonances)] for i in [1,2,3]]
         f,start = construct_function(masses,spins,parities,params,mapping_dict,

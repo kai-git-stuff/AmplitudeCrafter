@@ -4,6 +4,12 @@ import numpy as np
 import os
 from jax.config import config
 
+
+def string_one(string):
+    print(string)
+    assert isinstance(string,str)
+    return 1.0
+
 config.update("jax_enable_x64", True)
 dir = os.path.dirname(__file__)
 p0 = particle.get_particle("Lb")

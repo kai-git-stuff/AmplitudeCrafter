@@ -18,8 +18,25 @@ Ds3_2860:
   partial waves in:
   - L: 4
     S: 5
-    coupling: complex(28.254172001510163,-41.59839711894527)
+    coupling: complex(28.254172001510163,-41.59839711894527 from -100 to 100)
   partial waves out:
   - L: 6
     S: 0
     coupling: complex(1,0) const
+
+String_Test:
+  func: parameter_test.string_one
+  spin: 6
+  parity: -1
+  channel: 1
+  expects:
+    - string: hello wolrd! const
+  partial waves in:
+  - L: 4
+    S: 5
+    coupling: complex(28.254172001510163,-41.59839711894527 from -100 to 100)
+  partial waves out:
+  - L: 6
+    S: 0
+    coupling: complex(1,0) const
+  
