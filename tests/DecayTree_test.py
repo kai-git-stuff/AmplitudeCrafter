@@ -49,9 +49,11 @@ hels = [[-1,1,0,0],
         [1,-1,0,0]]
 ampl = sum(jnp.abs(f(start,*hel))**2 for hel in hels)
 
+
+# np.save(amplitude_dump,ampl)
 print(ampl)
 print()
-print(np.array(ampl) - np.load(amplitude_dump))
+print((np.array(ampl) - np.load(amplitude_dump)) /np.load(amplitude_dump))
 
 
 exit(0)
