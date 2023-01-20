@@ -13,5 +13,10 @@ p3 = particle.get_particle("K")
 this_dir = os.path.dirname(__file__)
 
 amplitude_file = os.path.join(this_dir,"Xi_1.yml")
+amplitude_file_dump = os.path.join(this_dir,"Xi_1_dump.yml")
+
 amplitude = DalitzAmplitude(p0,p1,p2,p3)
 amplitude.load_resonances(amplitude_file)
+args = amplitude.get_args()
+
+amplitude.dump(args,amplitude_file_dump)

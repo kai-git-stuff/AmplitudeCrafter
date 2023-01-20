@@ -10,7 +10,7 @@ __MINFP__ = -60000000000
 __MAXFP__ =  60000000000
 __SWAVE_BKG__ = "swave_bkg"
 
-from AmplitudeCrafter.parameters import parameter, UNDERSTOOD_PARAMS
+from AmplitudeCrafter.parameters import parameter, UNDERSTOOD_PARAMS, FALLBACK_PARAMETERS
 
 def check_hit(hit,name,value):
     if hit:
@@ -24,6 +24,8 @@ def analyse_value(value,name,dtc,lst):
 
     low_level_parametes = [param for param in matching_signatures if param.final()]
         
+    fallback_parameters = [param for param in FALLBACK_PARAMETERS if param.match(value)]
+    
     if len(high_level_parameters) > 1 or len(low_level_parametes) > 1:
         raise ValueError(f"More than one parameter matches value {value} with name {name}!")
     
@@ -31,6 +33,8 @@ def analyse_value(value,name,dtc,lst):
         matching_parameter_type, = high_level_parameters
     elif len(low_level_parametes) > 0:
         matching_parameter_type, = low_level_parametes
+    elif len(fallback_parameters) > 0:
+        matching_parameter_type,  = fallback_parameters
     else:
         raise ValueError(f"No signature matches value {value} with name {name}!")
 
@@ -61,12 +65,27 @@ def analyze_structure(parameters,parameter_dict,designation=""):
             raise ValueError("Can not interprete value %s with name %s!"%(value,name))
     return ret_list,ret_dict
 
-def dump_value(param,name,value,new_name,mapping_dict):
-    raise NotImplementedError()
-
 def dump_in_dict(replace_dict,mapping_dict,designation):
-    raise NotImplementedError()
-    return True
+    """
+    Expected Structure:
+    lists of dicts of lists or values ->
+        recurse deeper until we find dict with only one element
+    """
+    if isinstance(replace_dict,list):
+        for element in replace_dict:
+            if not isinstance(element,dict):
+                raise ValueError("Encountered a non dict entrie while dumping!")
+            if len(element) != 1:
+                raise ValueError("Wrong size element!")
+            (k,v), = element.items()
+            element[k] = dump_in_dict(v,mapping_dict,designation + "=>" + k)
+        return replace_dict
+    
+    # we use the readout logic again, to ensure consitency
+    lst = []
+    analyse_value(replace_dict,designation,{},lst)
+    name = lst[0].name
+    return mapping_dict[name].dump()
 
 def handle_resonance_config(config_dict:dict,name):
     parameter_dict = {}
@@ -89,7 +108,7 @@ def check_resonance_dict(resonance_dict):
 def load_resonances(f:str):
     # load Resonances based on a yml file including multiple resoances
     resonance_dict = load(f)
-    global_mapping_dict = {}
+    global_mapping_dict = specialParameter.load_specials()
     resonances = {1:[],2:[],3:[]}
     bkg = None
     for resonance_name, resonance in resonance_dict.items():
@@ -127,7 +146,8 @@ def read_bls(bls_dicts,mapping_dict,name):
     return dtc
 
 def dump_bls(b,mapping_dict,coupling):
-    raise NotImplementedError()
+    return b.dump()
+
 
 def check_if_wanted(name,resonance_names):
     if resonance_names is None:
@@ -143,7 +163,6 @@ class Resonance:
 
         self.args = kwargs["args"]
         self.mapping_dict = mapping_dict
-        print(mapping_dict)
         self.data_key = [k for k,v in mapping_dict.items() if isinstance(v,specialParameter) and "sigma" in v.name][0]
         self.data_replacement = mapping_dict[self.data_key]
 
@@ -166,11 +185,7 @@ class Resonance:
         # todo not Finished yet
         dtc = self.kwargs.copy()
         del dtc["args"]
-        mapping_dict[self.data_key] = "sigma%s"%self.kwargs["channel"]
-        mapping_dict["L"] = "L"
-        mapping_dict["L_0"] = "L_0"
-
-        dump_in_dict(dtc["expects"],mapping_dict,self.name)
+        result_dict = dump_in_dict(dtc["expects"],mapping_dict,self.name)
         dtc["partial waves in"] = [{"L":pw["L"],"S":pw["S"], "coupling":dump_bls(self.bls_in[(pw["L"],pw["S"])],mapping_dict,pw["coupling"])} for pw in self.kwargs["partial waves in"]]
         dtc["partial waves out"] = [{"L":pw["L"],"S":pw["S"], "coupling":dump_bls(self.bls_out[(pw["L"],pw["S"])],mapping_dict,pw["coupling"])} for pw in self.kwargs["partial waves out"]]
         return dtc

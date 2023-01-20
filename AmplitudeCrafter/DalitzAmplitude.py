@@ -146,9 +146,8 @@ class DalitzAmplitude:
         if mapping_dict is None:
             mapping_dict = self.mapping_dict.copy()
             for param,name in zip(parameters,self.get_arg_names()):
-                mapping_dict[name] = param
-        else:
-            mapping_dict = {k:v() if isinstance(v,FitParameter) else v for k,v in mapping_dict.items()}
+                mapping_dict[name].update(param)
+
         for i, resonances in self.resonances.items():
             for res in resonances:
                 dtc[res.name] = res.dumpd(mapping_dict)
@@ -184,18 +183,12 @@ class DalitzAmplitude:
         parities = [self.p0.parity] + [p.parity for p in self.particles]
         masses = [self.p0.mass] + [p.mass for p in self.particles]
 
-        try:
-            mapping_dict["sigma3"].update(self.phsp.m2ab(smp))
-        except Exception as e:
-            pass
-        try:
-            mapping_dict["sigma2"].update(self.phsp.m2ac(smp))
-        except Exception as e:
-            pass
-        try:
-            mapping_dict["sigma1"].update(self.phsp.m2bc(smp))
-        except Exception as e:
-            pass
+        mapping_dict["sigma3"].update(self.phsp.m2ab(smp))
+
+        mapping_dict["sigma2"].update(self.phsp.m2ac(smp))
+
+        mapping_dict["sigma1"].update(self.phsp.m2bc(smp))
+
         
         resonances = [[r for r in self.resonances[i] if check_if_wanted(r.name,resonances)] for i in [1,2,3]]
         f,start = construct_function(masses,spins,parities,params,mapping_dict,
@@ -257,7 +250,8 @@ class DalitzAmplitude:
     def get_args(self,numeric=False):
         from AmplitudeCrafter.FunctionConstructor import map_arguments
         needed_param_names = self.get_arg_names()
-        mapped_args = map_arguments(needed_param_names,self.mapping_dict,numeric=numeric)
+        args = [self.mapping_dict[name] for name in needed_param_names]
+        mapped_args = map_arguments(args,numeric=numeric)
         return [value for name, value in zip(needed_param_names,mapped_args)]
 
     def get_args_from_yml(self,file,numeric=False,raiseeException=True):

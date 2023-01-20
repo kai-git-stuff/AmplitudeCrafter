@@ -7,7 +7,6 @@ def failFalse(func):
         try:
             return func(*args,**kwargs)
         except Exception as e:
-            print(e)
             return False
     return inner
 
@@ -116,8 +115,21 @@ class complexParameter(parameter):
         return string.split(",")
     
     def update(self,val):
+        raise ValueError("Update Call on complex number!")
         # updtes do nothing on complex nubers
         pass
+    
+    def dump(self):
+        real_string = self.real.dump()
+        imag_string = self.imag.dump()
+
+        if self.const:
+            real_string = real_string.replace("const", "")
+            imag_string = imag_string.replace("const", "")
+        
+            return f"complex({real_string}, {imag_string}) const"
+        return f"complex({real_string}, {imag_string})"
+
 
 def findNext(string:str,key:str):
     words = string.split()
@@ -219,7 +231,21 @@ class number(parameter):
             if isinstance(val,FitParameter):
                 val = val()
             self.value.update(val)
-
+    
+    def dump(self):
+        additions = []
+        if self.const:
+            additions.append("const")
+            return str(self(numeric=True)) + " " + " ".join(additions)
+        if isinstance(self.value,FitParameter):
+            if self.value.lower_limit is not None:
+                additions.append("from")
+                additions.append(str(self.value.lower_limit))
+            if self.value.upper_limit is not None:
+                additions.append("to")
+                additions.append(str(self.value.upper_limit))
+            return str(self(numeric=True)) + " " + " ".join(additions)
+        raise ValueError("This number does not match any dump pattern!")
 
 class specialParameter(parameter):
     specialSymbols = ["sigma1","sigma2","sigma3","L","L_0"]
@@ -229,7 +255,15 @@ class specialParameter(parameter):
     def match(cls,string:str):
         if not isinstance(string,str):
             return False
-        return string in  cls.specialSymbols
+        return string.strip() in  cls.specialSymbols
+    
+    def dump(self):
+        # the value can be whatever, but the name is constant here
+        return self.name
+
+    @classmethod
+    def load_specials(cls):
+        return {sym: cls(sym,sym) for sym in cls.specialSymbols}
     
     @classmethod
     def final(cls):
@@ -262,5 +296,54 @@ class specialParameter(parameter):
     def update(self,val):
         specialParameter.values[self.name] = val
 
+class stringParam(parameter):
+    @classmethod
+    @failFalse
+    def match(cls,string:str):
+        if not isinstance(string,str):
+            return False
+    
+    def dump(self):
+        # the value can be whatever, but the name is constant here
+        return self.value
+
+    @classmethod
+    def load_specials(cls):
+        return {sym: cls(sym,sym) for sym in cls.specialSymbols}
+    
+    @classmethod
+    def final(cls):
+        return True
+    
+    def __repr__(self):
+        return self.name + " " + repr(self(True))
+
+    @property
+    def dict(self):
+        return {self.name:self}
+
+    @property
+    def parameters(self):
+        return self
+
+    @classmethod
+    def evaluate(cls,name,string:str):
+        pass
+
+    def __init__(self,string,name):
+        self.const = True
+        self.name = name
+        # value will be updated, but this is not a fit parameter, so it is const
+        self.value = string
+    
+    def __call__(self,numeric=False):
+        if numeric is not False:
+            raise ValueError("String parameters can only be constant!")
+        return self.value
+
+    def update(self,val):
+        raise ValueError()
 
 UNDERSTOOD_PARAMS = [complexParameter,number,specialParameter]
+
+FALLBACK_PARAMETER = stringParam
