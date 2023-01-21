@@ -392,7 +392,7 @@ class stringParam(parameter):
         self.value = string
         super().__init__(name)
 
-    def __call__(self,numeric=True):
+    def __call__(self,numeric=True, value_dict=None):
         if numeric is False:
             raise ValueError("String parameters can only be constant!")
         return self.value
