@@ -38,7 +38,7 @@ def analyse_value(value,name,dtc,lst):
     else:
         raise ValueError(f"No signature matches value {value} with name {name}!")
 
-    p = matching_parameter_type(value,name)
+    p = matching_parameter_type(name,value)
     lst.append(p)
     dtc.update(p.dict)
     return True
@@ -124,18 +124,20 @@ def load_resonances(f:str):
 def get_val(arg,numeric=True):
     return arg(numeric)
    
-def map_arguments(args,numeric = True):
+def map_arguments(args,mapping_dict=None,numeric = True):
+    if numeric is False and mapping_dict is not None:
+        raise ValueError("Mapping Dict can only be used to accuire numeric values!")
     if isinstance(args,list):
         # tuple is simply better here, as it is hashable and jax likes this
-        return tuple([map_arguments(l,numeric) for l in args])
+        return tuple([map_arguments(l,mapping_dict=mapping_dict,numeric=numeric) for l in args])
     if isinstance(args,dict):
-        return {k:map_arguments(v,numeric) for k,v in args.items()}
+        return {k:map_arguments(v,mapping_dict=mapping_dict,numeric=numeric) for k,v in args.items()}
     if isinstance(args,parameter):
-        return args(numeric)
+        return args(numeric,value_dict= mapping_dict)
     raise ValueError(f"Argument {args} can not be mapped!")
 
 def get_fit_params(args):
-    return map_arguments(args,False)
+    return map_arguments(args,numeric=False)
 
 def read_bls(bls_dicts,mapping_dict,name):
     dtc = {}
@@ -147,7 +149,6 @@ def read_bls(bls_dicts,mapping_dict,name):
 
 def dump_bls(b,mapping_dict,coupling):
     return b.dump()
-
 
 def check_if_wanted(name,resonance_names):
     if resonance_names is None:
@@ -179,7 +180,7 @@ class Resonance:
         return resonance,mapping_dict, bkg
 
     def to_particle(self):
-        return particle(self.M0(*map_arguments(self.args,self.mapping_dict)),self.spin,self.parity,self.name)
+        return particle(None,self.spin,self.parity,self.name)
 
     def dumpd(self,mapping_dict):
         # todo not Finished yet

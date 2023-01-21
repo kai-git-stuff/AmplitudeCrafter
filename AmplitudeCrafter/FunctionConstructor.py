@@ -1,12 +1,9 @@
 from jitter.amplitudes.dalitz_plot_function import DalitzDecay, chain
 from jitter.constants import spin as sp
-from numpy import ma
 from AmplitudeCrafter.Resonances import map_arguments
 from jax import numpy as jnp
-from jitter.amplitudes.dalitz_plot_function import helicity_options
 from jax import jit
-from jitter.kinematics import two_body_momentum
-from jitter.dynamics import orbital_barrier_factor
+from jitter.fitting import FitParameter
 
 def run_lineshape(resonance_tuple,args,mapping_dict,bls_in,bls_out):
     s,p,hel,lineshape_func,_,_,_ = resonance_tuple
@@ -15,24 +12,23 @@ def run_lineshape(resonance_tuple,args,mapping_dict,bls_in,bls_out):
         for LS_i,b_i in bls_in.items():
             L,S = LS
             L_0, S_0 = LS_i
-            mapping_dict["L"].update(L) # set the correct angular momentum
-            mapping_dict["L_0"].update(L_0) # set the correct angular momentum
-            lineshape[(L_0,L)] = lineshape_func(*map_arguments(args))
+            mapping_dict["L"] = L  # set the correct angular momentum
+            mapping_dict["L_0"] = L_0 # set the correct angular momentum
+            lineshape[(L_0,L)] = lineshape_func(*map_arguments(args,mapping_dict=mapping_dict))
 
     return (s,p,hel,lineshape,None,None,None)
 
 def construct_function(masses,spins,parities,params,mapping_dict,resonances,resonance_tuples,bls_in,bls_out,resonance_args,smp,phsp,total_absolute=True,just_in_time_compile=True, numericArgs=True):
-    mapping_dict_global = mapping_dict
+    needed_params = params
+    needed_names = [p.name for p in needed_params] # TODO: Names are wrong here!!! They do not reflect the names in the mapping dict!
     free_indices = [[not r.fixed() for r in res ] for res in resonances ]
-    bls_in_mapped = map_arguments(bls_in)
-    bls_out_mapped = map_arguments(bls_out)
+    bls_in_mapped = map_arguments(bls_in,mapping_dict=mapping_dict)
+    bls_out_mapped = map_arguments(bls_out,mapping_dict=mapping_dict)
     resonances_filled = [[run_lineshape(r,resonance_args[i][j],mapping_dict,bls_in_mapped[i][j],bls_out_mapped[i][j]) for j,r in enumerate(res)] for i, res in enumerate(resonance_tuples)  ]
-
+    mapping_dict_global = mapping_dict
     decay = DalitzDecay(*masses,*spins,*parities,smp,resonances_filled,[bls_in_mapped,bls_out_mapped],phsp=phsp)
-    
-    needed_params = [p for p in params if not p.const]
+
     # we need to translate all _complex values into real and imaginary
-    print(needed_params)
     start = map_arguments(needed_params,numeric=numericArgs)
 
     def fill_args(args,mapping_dict):
@@ -40,9 +36,11 @@ def construct_function(masses,spins,parities,params,mapping_dict,resonances,reso
             # wierd bug...
             # need to investigate this
             args = args[0]
-        dtc = mapping_dict
-        for p, val in zip(needed_params,args):
-            p.update(val)
+        dtc = mapping_dict.copy()
+        for param_name, val in zip(needed_names,args):
+            if isinstance(val,FitParameter):
+                val = val()
+            dtc[param_name] = val
         return dtc
 
     def update(mapping_dict,bls_out):
@@ -54,8 +52,8 @@ def construct_function(masses,spins,parities,params,mapping_dict,resonances,reso
     if total_absolute:
         def f(args):
             mapping_dict = fill_args(args,mapping_dict_global)
-            bls_in_mapped = map_arguments(bls_in)
-            bls_out_mapped = map_arguments(bls_out)
+            bls_in_mapped = map_arguments(bls_in,mapping_dict=mapping_dict)
+            bls_out_mapped = map_arguments(bls_out,mapping_dict=mapping_dict)
             update(mapping_dict,bls_out_mapped)
 
             def O(nu,lambdas):       
@@ -70,8 +68,8 @@ def construct_function(masses,spins,parities,params,mapping_dict,resonances,reso
     else:
         def f(args,nu,*lambdas):
             mapping_dict = fill_args(args,mapping_dict_global)
-            bls_in_mapped = map_arguments(bls_in)
-            bls_out_mapped = map_arguments(bls_out)
+            bls_in_mapped = map_arguments(bls_in,mapping_dict=mapping_dict)
+            bls_out_mapped = map_arguments(bls_out,mapping_dict=mapping_dict)
             update(mapping_dict,bls_out_mapped)
 
             def O(nu,lambdas):       

@@ -13,7 +13,7 @@ from jitter.constants import spin as sp
 from jitter.amplitudes.dalitz_plot_function import helicity_options_nojit
 from jax import numpy as jnp
 from multiprocessing import Pool
-from AmplitudeCrafter.helpers import flatten
+from AmplitudeCrafter.helpers import flatten, ensure_numeric
 
 def run(self,args,smp,nu,lambdas,resonance):
     f,start = self.get_amplitude_function(smp,resonances=[resonance],total_absolute=False, just_in_time_compile = False)
@@ -114,8 +114,16 @@ class DalitzAmplitude:
         return string%(decay_description, resonance_string)
 
     @property
+    def active_parameters(self):
+        arg_dict = {p.name:p.copy() for k,p in self.__mapping_dict.items()}
+        return arg_dict
+
+    @property
     def mapping_dict(self):
-        return self.__mapping_dict.copy()
+        dtc = self.__mapping_dict.copy()
+        arg_dict = self.active_parameters
+        dtc.update({k:arg_dict[v.name] for k,v in dtc.items()})
+        return dtc
             
     def load_resonances(self,f=config_dir + "decay_example.yml"):
         res, mapping_dict, bkg = load_resonances(f)
@@ -156,7 +164,7 @@ class DalitzAmplitude:
         return dtc
 
     def dump(self,parameters,fname,fit_result=None,mapping_dict=None):
-        parameters = [float(p) for p in parameters] # to get rid of numpy types and so on
+        parameters = [ensure_numeric(p) for p in parameters] # to get rid of numpy types and so on
         write(self.dumpd(parameters,fit_result,mapping_dict=mapping_dict),fname)
 
     def get_amplitude_function(self,smp,resonances = None, total_absolute=True, just_in_time_compile = True, numericArgs=True):
@@ -170,11 +178,14 @@ class DalitzAmplitude:
         if any([not isinstance(r,str) for r in resonances]):
             raise ValueError("Only string allowed for the selection of resonances!")
 
-        param_names = [k for k,p in self.mapping_dict.items() 
-                                if not p.const ]
-        params = [self.mapping_dict[p] for p in param_names]
+        param_names = self.get_arg_names()
+        params = self.get_args()
 
-        mapping_dict = self.mapping_dict.copy()
+        mapping_dict = {p.name:p(numeric=True) for k,p in  self.mapping_dict.items() }
+        mapping_dict["sigma3"] = self.phsp.m2ab(smp)
+        mapping_dict["sigma2"] = self.phsp.m2ac(smp)
+        mapping_dict["sigma1"] = self.phsp.m2bc(smp)
+
         bls_in = self.get_bls_in(resonances)
         bls_out = self.get_bls_out(resonances)
         resonance_tuples = self.get_resonance_tuples(resonances)
@@ -183,12 +194,6 @@ class DalitzAmplitude:
         parities = [self.p0.parity] + [p.parity for p in self.particles]
         masses = [self.p0.mass] + [p.mass for p in self.particles]
 
-        mapping_dict["sigma3"].update(self.phsp.m2ab(smp))
-
-        mapping_dict["sigma2"].update(self.phsp.m2ac(smp))
-
-        mapping_dict["sigma1"].update(self.phsp.m2bc(smp))
-        
         resonances = [[r for r in self.resonances[i] if check_if_wanted(r.name,resonances)] for i in [1,2,3]]
         f,start = construct_function(masses,spins,parities,params,mapping_dict,
                                 resonances,resonance_tuples,bls_in,bls_out,resonance_args,smp,self.phsp,total_absolute,just_in_time_compile, numericArgs = numericArgs)
@@ -212,6 +217,7 @@ class DalitzAmplitude:
         return full_interference, start
 
     def run_function(self,args,smp,resonances = None,parallel = False):
+        raise NotImplementedError()
         pool = Pool(6)
         if resonances is None:
             resonances = list(self.resonance_map.keys())
@@ -228,11 +234,22 @@ class DalitzAmplitude:
                 amplitude = sum(amplitudes)
                 amplitude_abs += jnp.abs(amplitude)**2
         return amplitude_abs
-         
+    
+    def get_args(self,numeric=False):
+        if numeric is True:
+            arg_dict = {p.name:p(numeric = True) for k,p in self.mapping_dict.items() if is_free(p)}
+        else:
+            arg_dict = {p.name:p for k,p in self.mapping_dict.items() if is_free(p)}
+        return list(
+            arg_dict.values()
+            )
+    
     def get_arg_names(self):
-        param_names = [k for k,p in self.mapping_dict.items() if is_free(p)]
+        arg_dict = {p.name:k for k,p in self.mapping_dict.items() if is_free(p)}
         # translate values with _complex in to imaginary and real part
-        return param_names
+        return list(
+            arg_dict.values()
+            )
 
     def get_cov(self,f):
         if not self.loaded:
@@ -245,13 +262,6 @@ class DalitzAmplitude:
             for j,p2 in enumerate(p_names):
                 cov_mat[i,j] = cov_dict[p1][p2]
         return cov_mat
-
-    def get_args(self,numeric=False):
-        from AmplitudeCrafter.FunctionConstructor import map_arguments
-        needed_param_names = self.get_arg_names()
-        args = [self.mapping_dict[name] for name in needed_param_names]
-        mapped_args = map_arguments(args,numeric=numeric)
-        return [value for name, value in zip(needed_param_names,mapped_args)]
 
     def get_args_from_yml(self,file,numeric=False,raiseeException=True):
         from AmplitudeCrafter.FunctionConstructor import map_arguments
@@ -269,7 +279,7 @@ class DalitzAmplitude:
                 print("Waring:",f"File {file} does not contain all needed arguments to represent the amplitude!")
         mapping_dict = self.mapping_dict
         mapping_dict.update(helperAmplitude.mapping_dict)
-        mapped_args = map_arguments(own_param_names,mapping_dict,numeric=numeric)
+        mapped_args = map_arguments(own_param_names,numeric=numeric)
         return [value for name, value in zip(own_param_names,mapped_args)]
 
 

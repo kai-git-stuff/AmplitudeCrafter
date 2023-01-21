@@ -1,16 +1,21 @@
 from AmplitudeCrafter.ParticleLibrary import particle
 from jitter.fitting import FitParameter
 from jitter.constants import spin as sp
-
+from AmplitudeCrafter.parameters import parameter
 def is_free(p):
-    if isinstance(p,FitParameter):
-        return not p.fixed
-    return False
+    return not p.const
 
 def get_parity(L,p1,p2):
     if L % 2 != 0:
         raise ValueError("Angular momentum has to be multiple of 2!")
     return p1 * p2 * (-1)**(L//2)
+
+def ensure_numeric(p):
+    if isinstance(p,parameter):
+        p = p(numeric=True)
+    if isinstance(p,FitParameter):
+        p = p()
+    return float(p)
 
 def check_bls(mother:particle,daughter1:particle,daughter2:particle,bls,parity_conserved=False):
     Ls = []

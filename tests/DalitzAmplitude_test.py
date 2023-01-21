@@ -42,6 +42,8 @@ def test_DynamicL():
     amplitude_file = "/home/kai/LHCb/AmplitudeCrafter/tests/Xi_1.yml"
     amplitude.load_resonances(amplitude_file)
     res_non_fix_L = f(start)
+    assert np.all(abs(res_fix_L - res_non_fix_L) < 1e-10)
 
-    assert abs(np.all(res_fix_L - res_non_fix_L)) < 1e-10
-
+if __name__=="__main__":
+    test_AmplitudeConstitency()
+    test_DynamicL()

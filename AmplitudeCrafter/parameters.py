@@ -1,5 +1,5 @@
 from jitter.fitting import FitParameter
-from abc import abstractmethod
+from abc import abstractmethod, ABC
 from warnings import warn
 
 def failFalse(func):
@@ -11,8 +11,29 @@ def failFalse(func):
             return False
     return inner
 
-class parameter:
+def findIfNamed(name, value):
+    if not isinstance(value,str):
+        return name, value
+    if "NAMED(" in value and ")" in value:
+        index0 = value.index("NAMED(") + len("NAMED")
+        index1 = value[index0:].index(")") + index0
+        new_name = value[index0+1:index1]
+
+        new_value = value[:index0] + value[index1+1:]
+        return new_name, new_value
+    return name, value
+
+def tryFloat(string:str):
+    try:
+        return float(string)
+    except:
+        return string
+
+class parameter(ABC):
     parmeters = dict()
+
+    def check_exists(self):
+        return hasattr(self,"name") and getattr(self,"name") in  parameter.parmeters
 
     @classmethod
     @abstractmethod
@@ -38,10 +59,13 @@ class parameter:
         raise NotImplementedError()
     
     @abstractmethod
-    def __init__(self,string:str,name:str):
+    def __init__(self,name:str):
+        if self.check_exists():
+            return
         # __init__ usually calls to class.evaluate, and then sets an internal state
+        self.name = name
         parameter.parmeters[name] = self
-    
+
     @property
     @abstractmethod
     def dict(self):
@@ -49,6 +73,19 @@ class parameter:
 
     def update(self):
         raise NotImplementedError()
+    
+    def copy(self):
+        cls = type(self)
+        new_obj = object.__new__(cls)
+        new_obj.__dict__ = self.__dict__
+        return new_obj
+    
+    def __new__(cls,name,value,*args,**kwargs):
+        # ensure, that named parameters only exist once per name
+        name, value = findIfNamed(name,value)
+        new_obj = object.__new__(cls)
+        new_obj.name = name
+        return parameter.parmeters.get(name,new_obj)
 
 class complexParameter(parameter):
     @classmethod
@@ -62,7 +99,7 @@ class complexParameter(parameter):
         return False
     
     def __repr__(self):
-        return self.name
+        return "Parameter:" + " " + self.name
 
     @classmethod
     def final(cls):
@@ -92,25 +129,27 @@ class complexParameter(parameter):
     def parameters(self):
         return self.real, self.imag
 
-    def __init__(self,string,name):
+    def __init__(self,name,string):
+        if self.check_exists():
+            return
         const, (real_str, imag_str) = complexParameter.evaluate(string)
         self.const = const
         self.real_string = real_str
         self.imag_string = imag_str
-        self.name = name
         complex_name, real_name, imag_name = self.param_names
-        self.real = number(real_str, real_name)
-        self.imag = number(imag_str, imag_name)
+        self.real = number(real_name, real_str)
+        self.imag = number(imag_name, imag_str)
+        super().__init__(name)
 
-    def __call__(self,numeric=True):
+    def __call__(self,numeric=True, value_dict = None):
         if numeric is False:
             return self.real(False), self.imag(False)
-        return self.real(numeric=True) + 1j * (self.imag(numeric=True))
+        return self.real(numeric=True,value_dict=value_dict) + 1j * (self.imag(numeric=True,value_dict=value_dict))
 
     @classmethod
     def strip(cls,string:str):
-        index0 = string.index("(")
-        index1 = string.index(")")
+        index0 = string.index("complex(") + len("complex") 
+        index1 = string[index0:].index(")") + index0
         string = string[index0+1:index1]
         return string.split(",")
     
@@ -139,7 +178,7 @@ def findNext(string:str,key:str):
     if index +1 >= len(words):
         raise ValueError(f"Found Key {key}, but no value was supplied: {string}!")
     wordsfiltered = [w for i,w in enumerate(words) if i != index and i != index + 1]
-    return " ".join(wordsfiltered), float(words[index + 1])
+    return " ".join(wordsfiltered), tryFloat(words[index + 1])
 
 def checkConst(string:str):
     if "const" in string:
@@ -170,7 +209,7 @@ class number(parameter):
         return any(accepted) and isCastable
     
     def __repr__(self):
-        return self.name
+        return "Parameter:" + " " + self.name
 
     @classmethod
     def final(cls):
@@ -185,7 +224,7 @@ class number(parameter):
         return self
 
     @classmethod
-    def evaluate(cls,name,string:str):
+    def evaluate(cls,name:str,string:str):
         if not isinstance(string,str):
             string = str(string)
         initialString = string
@@ -196,6 +235,7 @@ class number(parameter):
         if not number.match(string):
             raise ValueError(f"Value '{initialString}' of parameter {name} does not match pattern of a number!")
         if isConst:
+            # sometimes we want integers for constant values, as they will be indices or such
             for cast in [int,float]:
                 try: 
                     val = cast(string)
@@ -210,14 +250,19 @@ class number(parameter):
         if not isConst:
             return isConst,FitParameter(name,float(string),None, None)
 
-    def __init__(self,string,name):
+    def __init__(self,name:str,string:str):
         const, value = number.evaluate(name,string)
         self.const = const
         self.value = value
-        self.name = name
-        self.special=False
+        super().__init__(name)
+
     
-    def __call__(self,numeric=False):
+    def __call__(self,numeric=False,value_dict=None):
+        if value_dict is not None:
+            if numeric is True:
+                return value_dict[self.name]
+            raise ValueError("Value Dict supplied, but")
+
         if self.const is True:
             if numeric is False:
                 raise ValueError("Constant parameter can not be returned as fit parameter!")
@@ -272,7 +317,7 @@ class specialParameter(parameter):
         return True
     
     def __repr__(self):
-        return self.name + " " + repr(self(True))
+        return "Parameter:" + " " + self.name + " " + repr(self(True))
 
     @property
     def dict(self):
@@ -286,13 +331,17 @@ class specialParameter(parameter):
     def evaluate(cls,name,string:str):
         pass
 
-    def __init__(self,string,name):
+    def __init__(self,name:str,string:str):
         self.const = True
         self.name = string
         # value will be updated, but this is not a fit parameter, so it is const
         self.value = None
     
-    def __call__(self,numeric=False):
+    def __call__(self,numeric=False,value_dict=None):
+        if value_dict is not None:
+            if numeric is True:
+                return value_dict[self.name]
+            raise ValueError("Value Dict supplied, but non numeric values wanted!")
         return specialParameter.values.get(self.name,None)
 
     def update(self,val):
@@ -319,7 +368,7 @@ class stringParam(parameter):
         return True
     
     def __repr__(self):
-        return self.name + " " + repr(self(True))
+        return "Parameter:" + " " + self.name + " " + repr(self(True))
 
     @property
     def dict(self):
@@ -333,16 +382,16 @@ class stringParam(parameter):
     def evaluate(cls,name,string:str):
         pass
 
-    def __init__(self,string,name):
+    def __init__(self,name:str,string:str):
         # remove a potential const declaration
         string, isDecalredConst = checkConst(string)
         if isDecalredConst:
             warn(f"Parameter {name} is of type string and was declared const! The explicit declaration can be omitted!")
         self.const = True
-        self.name = name
         # value will be updated, but this is not a fit parameter, so it is const
         self.value = string
-    
+        super().__init__(name)
+
     def __call__(self,numeric=True):
         if numeric is False:
             raise ValueError("String parameters can only be constant!")

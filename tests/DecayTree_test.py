@@ -56,3 +56,7 @@ def test_Boosts():
         print(boost_to_rest(P2,P1))
         print(mass(P2))
         print(mass(boost_to_rest(P2,P1)))
+
+
+if __name__ == "__main__":
+        test_DecayTree()
