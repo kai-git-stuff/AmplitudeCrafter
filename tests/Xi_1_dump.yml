@@ -29,7 +29,7 @@ String_Test:
   parity: -1
   channel: 1
   expects:
-  - string: 'hello wolrd! '
+  - string: hello wolrd!
   partial waves in:
   - L: 4
     S: 5

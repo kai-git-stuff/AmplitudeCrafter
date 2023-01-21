@@ -29,11 +29,24 @@ def tryFloat(string:str):
     except:
         return string
 
+class ParameterScope:
+    def __init__(self,dict=None):
+        if dict is None:
+            self.dict = {}
+        else:
+            self.dict={}
+        
+    def __enter__(self):
+        self.dict_before = parameter.setBackend(self.dict)
+        return self
+    def __exit__(self,*args):
+        parameter.setBackend(self.dict_before)
+
 class parameter(ABC):
-    parmeters = dict()
+    parameters = dict()
 
     def check_exists(self):
-        return hasattr(self,"name") and getattr(self,"name") in  parameter.parmeters
+        return hasattr(self,"name") and getattr(self,"name") in  parameter.parameters
 
     @classmethod
     @abstractmethod
@@ -53,6 +66,16 @@ class parameter(ABC):
         # this method is to tell if this value allows a substructure
         return True
 
+    @classmethod
+    def clear(cls):
+        cls.parameters = {}
+    
+    @classmethod
+    def setBackend(cls,known_params:dict):
+        dtc = cls.parameters
+        cls.parameters = known_params
+        return dtc
+
     @abstractmethod
     def __call__(self):
         # Calling is supposed to retrieve the underlying number itself
@@ -64,7 +87,7 @@ class parameter(ABC):
             return
         # __init__ usually calls to class.evaluate, and then sets an internal state
         self.name = name
-        parameter.parmeters[name] = self
+        parameter.parameters[name] = self
 
     @property
     @abstractmethod
@@ -85,7 +108,7 @@ class parameter(ABC):
         name, value = findIfNamed(name,value)
         new_obj = object.__new__(cls)
         new_obj.name = name
-        return parameter.parmeters.get(name,new_obj)
+        return parameter.parameters.get(name,new_obj)
 
 class complexParameter(parameter):
     @classmethod
@@ -389,7 +412,7 @@ class stringParam(parameter):
             warn(f"Parameter {name} is of type string and was declared const! The explicit declaration can be omitted!")
         self.const = True
         # value will be updated, but this is not a fit parameter, so it is const
-        self.value = string
+        self.value = string.strip()
         super().__init__(name)
 
     def __call__(self,numeric=True, value_dict=None):
