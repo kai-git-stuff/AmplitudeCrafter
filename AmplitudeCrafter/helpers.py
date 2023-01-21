@@ -2,6 +2,7 @@ from AmplitudeCrafter.ParticleLibrary import particle
 from jitter.fitting import FitParameter
 from jitter.constants import spin as sp
 from AmplitudeCrafter.parameters import parameter
+
 def is_free(p):
     return not p.const
 

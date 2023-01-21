@@ -26,7 +26,7 @@ def closing_index(string:str,opening_index):
 
 def findIfNamed(name, value):
     if not isinstance(value,str):
-        return name, value
+        return name, value, False
     opening, closing = find_parentesis(value)
     if "NAMED(" in value and len(closing) > 0:
         # simple check is enough, as only the name can be inside the parentesis and there may be no
@@ -34,11 +34,19 @@ def findIfNamed(name, value):
         index0 = value.index("NAMED(") + len("NAMED")
         index1 = value[index0:].index(")") + index0
         if index1 != closing[-1]:
-            return name,value
+            return name,value, False
         new_name = value[index0+1:index1]
         new_value = (value[:index0] + value[index1+1:]).replace("NAMED","")
-        return new_name, new_value
-    return name, value
+        return new_name, new_value, True
+    return name, value, False
+
+def appendName(f):
+    def inner(param):
+        name,_,named = findIfNamed(param.name,param.initial_value)
+        if named:
+            return f(param) + f" NAMED({name})"
+        return f(param) + ""
+    return inner
 
 def tryFloat(string:str):
     try:
@@ -64,11 +72,13 @@ class ParameterScope:
     def __exit__(self,*args):
         parameter.setBackend(self.dict_before)
 
+
+
 class parameter(ABC):
     parameters = dict()
 
     def check_exists(self):
-        return hasattr(self,"name") and getattr(self,"name") in  parameter.parameters
+        return hasattr(self,"name") and getattr(self,"name") in  parameter.parameters  
 
     @classmethod
     @abstractmethod
@@ -128,8 +138,9 @@ class parameter(ABC):
     
     def __new__(cls,name,value,*args,**kwargs):
         # ensure, that named parameters only exist once per name
-        name, value = findIfNamed(name,value)
         new_obj = object.__new__(cls)
+        new_obj.initial_value = value
+        name, value, named = findIfNamed(name,value) 
         new_obj.name = name
         new_obj.value_string = value            
         return parameter.parameters.get(name,new_obj)
@@ -208,7 +219,8 @@ class complexParameter(parameter):
         raise ValueError("Update Call on complex number!")
         # updtes do nothing on complex nubers
         pass
-    
+
+    @appendName
     def dump(self):
         real_string = self.real.dump()
         imag_string = self.imag.dump()
@@ -339,7 +351,7 @@ class number(parameter):
             if isinstance(val,FitParameter):
                 val = val()
             self.value.update(val)
-    
+    @appendName
     def dump(self):
         additions = []
         if self.const:
@@ -368,6 +380,7 @@ class specialParameter(parameter):
             return False
         return string.strip() in  cls.specialSymbols
     
+    @appendName
     def dump(self):
         # the value can be whatever, but the name is constant here
         return self.name
@@ -421,7 +434,7 @@ class stringParam(parameter):
         if not isinstance(string,str):
             return False
         return True
-    
+    @appendName
     def dump(self):
         # the value can be whatever, but the name is constant here
         return self.value
