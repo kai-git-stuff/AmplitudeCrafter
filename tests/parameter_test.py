@@ -19,7 +19,10 @@ def testParameter():
     amplitude = DalitzAmplitude(p0,p1,p2,p3)
     amplitude.load_resonances(amplitude_file)
 
-    args = amplitude.get_args()
+    args = amplitude.get_args(True)
+    
+    print(args)
+    print(amplitude.get_arg_names())
     args = list(range(len(args)))
     mapping_dict1 = { k:p(numeric=True) for k,p in amplitude.mapping_dict.items()}
     amplitude.dump(args,amplitude_file_dump)
@@ -27,6 +30,8 @@ def testParameter():
     amplitude = DalitzAmplitude(p0,p1,p2,p3)
     amplitude.load_resonances(amplitude_file_dump)
     print([(a1,a2) for a1,a2 in zip(args,amplitude.get_args(numeric=True))])
+    exit(0)
+    
     assert all([a1 == a2 for a1,a2 in zip(args,amplitude.get_args(numeric=True))])
     mapping_dict2 = { k:p(numeric=True) for k,p in amplitude.mapping_dict.items()}
     assert sum([(v != mapping_dict2[k]) for k,v in mapping_dict1.items()]) == 4

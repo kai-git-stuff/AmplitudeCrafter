@@ -11,15 +11,32 @@ def failFalse(func):
             return False
     return inner
 
+def find_parentesis(string:str):
+    # helper to identify where brakcets open and close
+    opening = [i for i,c in enumerate(string) if c == "("]
+    closing = [i for i,c in enumerate(string) if c == ")"]
+    return opening, closing
+
+def closing_index(string:str,opening_index):
+    opening, closing = find_parentesis(string)
+    if opening_index not in opening:
+        raise ValueError(f"Index {opening_index} not in index list for opening parentesis {opening}!s")
+    n_open = opening.index(opening_index) + 1
+    return closing[-(n_open)]
+
 def findIfNamed(name, value):
     if not isinstance(value,str):
         return name, value
-    if "NAMED(" in value and ")" in value:
+    opening, closing = find_parentesis(value)
+    if "NAMED(" in value and len(closing) > 0:
+        # simple check is enough, as only the name can be inside the parentesis and there may be no
+        # parentesis in the name itself
         index0 = value.index("NAMED(") + len("NAMED")
         index1 = value[index0:].index(")") + index0
+        if index1 != closing[-1]:
+            return name,value
         new_name = value[index0+1:index1]
-
-        new_value = value[:index0] + value[index1+1:]
+        new_value = (value[:index0] + value[index1+1:]).replace("NAMED","")
         return new_name, new_value
     return name, value
 
@@ -30,6 +47,11 @@ def tryFloat(string:str):
         return string
 
 class ParameterScope:
+    """
+    Helper class to change parameter scope in case multiple amplitudes get defined in the same file
+    This class is only used by DalitzAmplitude interanly
+    Can be omitted for other cases
+    """
     def __init__(self,dict=None):
         if dict is None:
             self.dict = {}
@@ -84,10 +106,10 @@ class parameter(ABC):
     @abstractmethod
     def __init__(self,name:str):
         if self.check_exists():
-            return
+            return False
+        parameter.parameters[self.name] = self
+        return True
         # __init__ usually calls to class.evaluate, and then sets an internal state
-        self.name = name
-        parameter.parameters[name] = self
 
     @property
     @abstractmethod
@@ -98,6 +120,7 @@ class parameter(ABC):
         raise NotImplementedError()
     
     def copy(self):
+        raise NotImplementedError()
         cls = type(self)
         new_obj = object.__new__(cls)
         new_obj.__dict__ = self.__dict__
@@ -108,6 +131,7 @@ class parameter(ABC):
         name, value = findIfNamed(name,value)
         new_obj = object.__new__(cls)
         new_obj.name = name
+        new_obj.value_string = value            
         return parameter.parameters.get(name,new_obj)
 
 class complexParameter(parameter):
@@ -130,8 +154,8 @@ class complexParameter(parameter):
     
     @classmethod
     def evaluate(cls,string:str):
-        index0 = string.index("(")
-        index1 = string.index(")")
+        index0 = string.index("complex(") + len("complex")
+        index1 = closing_index(string,index0)        
         if "const" in (string[:index0] + string[index1 + 1:]):
             return True, [ substring.replace("const" , "") + " const"
                         for substring in cls.strip(string)
@@ -142,8 +166,11 @@ class complexParameter(parameter):
     @property
     def param_names(self):
         # the three parameters added by this class
-        return self.name , self.name + "_REAL", self.name + "_IMAG"
+        return self.name , self.real.name, self.imag.name
     
+    def generate_param_names(self):
+        return self.name, self.name+"_REAL", self.name+"_IMAG"
+
     @property
     def dict(self):
         return {n:p for n,p in zip(self.param_names[1:],self.parameters)}
@@ -153,16 +180,17 @@ class complexParameter(parameter):
         return self.real, self.imag
 
     def __init__(self,name,string):
-        if self.check_exists():
-            return
+        if not super().__init__(name):
+            return 
+
+        string = self.value_string
         const, (real_str, imag_str) = complexParameter.evaluate(string)
         self.const = const
         self.real_string = real_str
         self.imag_string = imag_str
-        complex_name, real_name, imag_name = self.param_names
+        complex_name, real_name, imag_name = self.generate_param_names()
         self.real = number(real_name, real_str)
         self.imag = number(imag_name, imag_str)
-        super().__init__(name)
 
     def __call__(self,numeric=True, value_dict = None):
         if numeric is False:
@@ -171,8 +199,8 @@ class complexParameter(parameter):
 
     @classmethod
     def strip(cls,string:str):
-        index0 = string.index("complex(") + len("complex") 
-        index1 = string[index0:].index(")") + index0
+        index0 = string.index("complex(") + len("complex")
+        index1 = closing_index(string,index0) 
         string = string[index0+1:index1]
         return string.split(",")
     
@@ -216,6 +244,13 @@ def checkFloat(string:str):
         return False
 
 class number(parameter):
+    """
+    Basic numbers. 
+    The main used type of parameter. 
+    Checks for const, to and from
+    may be named
+    """
+
     @classmethod
     @failFalse
     def match(cls,string:str):
@@ -274,6 +309,9 @@ class number(parameter):
             return isConst,FitParameter(name,float(string),None, None)
 
     def __init__(self,name:str,string:str):
+        if not super().__init__(name):
+            return 
+        string = self.value_string
         const, value = number.evaluate(name,string)
         self.const = const
         self.value = value
@@ -318,6 +356,9 @@ class number(parameter):
         raise ValueError("This number does not match any dump pattern!")
 
 class specialParameter(parameter):
+    """
+    Idea: special parameters may only exist in one version per scope
+    """
     specialSymbols = ["sigma1","sigma2","sigma3","L","L_0"]
     values = {}
     @classmethod
@@ -355,6 +396,9 @@ class specialParameter(parameter):
         pass
 
     def __init__(self,name:str,string:str):
+        if not super().__init__(name):
+            return 
+        string = self.value_string
         self.const = True
         self.name = string
         # value will be updated, but this is not a fit parameter, so it is const
@@ -406,7 +450,10 @@ class stringParam(parameter):
         pass
 
     def __init__(self,name:str,string:str):
+        if not super().__init__(name):
+            return 
         # remove a potential const declaration
+        string = self.value_string
         string, isDecalredConst = checkConst(string)
         if isDecalredConst:
             warn(f"Parameter {name} is of type string and was declared const! The explicit declaration can be omitted!")

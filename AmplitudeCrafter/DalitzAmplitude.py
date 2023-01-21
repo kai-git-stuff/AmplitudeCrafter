@@ -90,10 +90,6 @@ class DalitzAmplitude:
                 self.resonances[k].extend(v)
             self.add_file(f)
             self.__mapping_dict.update(mapping_dict)
-            # masses= {1:(self.mb,self.mc),2:(self.ma,self.mc),3:(self.ma,self.mb)}
-            # for channel,resonances_channel in self.resonances.items():
-            #     for resonance in resonances_channel:
-            #         resonance.p0 = two_body_momentum(self.md,*masses[channel])
             self.check_bls()
             self.__loaded = True
 
@@ -119,14 +115,14 @@ class DalitzAmplitude:
 
     @property
     def active_parameters(self):
-        arg_dict = {p.name:p.copy() for k,p in self.__mapping_dict.items()}
+        arg_dict = {p.name:p for k,p in self.__mapping_dict.items()}
         return arg_dict
 
     @property
     def mapping_dict(self):
         dtc = self.__mapping_dict.copy()
-        arg_dict = self.active_parameters
-        dtc.update({k:arg_dict[v.name] for k,v in dtc.items()})
+        # arg_dict = self.active_parameters
+        # dtc.update({k:arg_dict[v.name] for k,v in dtc.items()})
         return dtc
             
     def load_resonances(self,f=config_dir + "decay_example.yml"):
@@ -154,18 +150,18 @@ class DalitzAmplitude:
     def dumpd(self,parameters,fit_result=None,mapping_dict=None):
         if not self.loaded:
             raise ValueError("Load Resonance config first, before saving!")
-        dtc = {}
-        # if we dont have a mapping dict, we can load parameters into the dict
-        if mapping_dict is None:
-            mapping_dict = self.mapping_dict.copy()
-            for param,name in zip(parameters,self.get_arg_names()):
-                mapping_dict[name].update(param)
-
-        for i, resonances in self.resonances.items():
-            for res in resonances:
-                dtc[res.name] = res.dumpd(mapping_dict)
-        if fit_result is not None:
-            dtc["fit_result"] = fit_result
+        with ParameterScope(self.__scope) as scope:
+            dtc = {}
+            # if we dont have a mapping dict, we can load parameters into the dict
+            if mapping_dict is None:
+                mapping_dict = self.mapping_dict.copy()
+                for value,param in zip(parameters,self.get_args(numeric=False)):
+                    param.update(value)
+            for i, resonances in self.resonances.items():
+                for res in resonances:
+                    dtc[res.name] = res.dumpd(mapping_dict)
+            if fit_result is not None:
+                dtc["fit_result"] = fit_result
         return dtc
 
     def dump(self,parameters,fname,fit_result=None,mapping_dict=None):

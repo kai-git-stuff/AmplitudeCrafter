@@ -202,11 +202,11 @@ class Resonance:
     @property
     def bls_in(self):
         # TODO: maybe needs to be copied
-        return self.__bls_in
+        return self.__bls_in.copy()
     
     @property
     def bls_out(self):
-        return self.__bls_out
+        return self.__bls_out.copy()
 
     def tuple(self,s=None):
         # if s is not None:
