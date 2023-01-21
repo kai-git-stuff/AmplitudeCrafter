@@ -3,7 +3,10 @@ from abc import abstractmethod, ABC
 from warnings import warn
 
 def failFalse(func):
-    # returns false whenever 
+    """
+    returns false whenever  a call failed
+    is used as a wrapper for the match functions of parameter types
+    """
     def inner(*args,**kwargs):
         try:
             return func(*args,**kwargs)
@@ -12,12 +15,17 @@ def failFalse(func):
     return inner
 
 def find_parentesis(string:str):
-    # helper to identify where brakcets open and close
+    """
+    helper to identify where brakcets open and close
+    """
     opening = [i for i,c in enumerate(string) if c == "("]
     closing = [i for i,c in enumerate(string) if c == ")"]
     return opening, closing
 
 def closing_index(string:str,opening_index):
+    """
+    helper function to get the index where a given parentesis is closed
+    """
     opening, closing = find_parentesis(string)
     if opening_index not in opening:
         raise ValueError(f"Index {opening_index} not in index list for opening parentesis {opening}!s")
@@ -25,6 +33,15 @@ def closing_index(string:str,opening_index):
     return closing[-(n_open)]
 
 def findIfNamed(name, value):
+    """
+    name: inital name of the parameter
+    value: the definition string of the parameter
+
+    returns a new name and a value, where the value has the naming string removed if it was present
+    and the new name is the corresponding name if a naming string was present
+    otherwise it is the initial name
+    """
+
     if not isinstance(value,str):
         return name, value, False
     opening, closing = find_parentesis(value)
@@ -41,6 +58,9 @@ def findIfNamed(name, value):
     return name, value, False
 
 def appendName(f):
+    """
+    decorator that adds the name of a parameter, in case it was named explicitly
+    """
     def inner(param):
         name,_,named = findIfNamed(param.name,param.initial_value)
         if named:
@@ -49,6 +69,12 @@ def appendName(f):
     return inner
 
 def tryFloat(string:str):
+    """
+    helper, that casts to float if possible
+    only accepts string
+    """
+    if not isinstance(string,str):
+        raise ValueError(f"Only string allowed not {type(string)}!")
     try:
         return float(string)
     except:
@@ -75,6 +101,14 @@ class ParameterScope:
 
 
 class parameter(ABC):
+    """
+    parameter base class (ABC) enforces, taht all abstract classes are defined
+    most important: the __new__ method controlls the namespace where parameters with the same name are
+    the same parameter
+
+    a namespace is given by the static 'parameters' dictionary
+    a non global namespace is best entered using the Parameter scope helper class
+    """
     parameters = dict()
 
     def check_exists(self):
@@ -146,6 +180,14 @@ class parameter(ABC):
         return parameter.parameters.get(name,new_obj)
 
 class complexParameter(parameter):
+
+    """
+    complex number
+    consists of two internal number parameters, which are combined in the correct way, whenever 
+    the value of the complex is demanded
+    The complex can not be updated as a whole!!
+    """
+
     @classmethod
     @failFalse
     def match(cls,string):
@@ -260,7 +302,6 @@ class number(parameter):
     Basic numbers. 
     The main used type of parameter. 
     Checks for const, to and from
-    may be named
     """
 
     @classmethod
@@ -370,6 +411,9 @@ class number(parameter):
 class specialParameter(parameter):
     """
     Idea: special parameters may only exist in one version per scope
+    These parameters are defined by keywords and can be put anywhere in the parameter lists
+    Parameters L and L_0 are int
+    sigma1, sigma2 and sigma3 are the dalitz plot variables.
     """
     specialSymbols = ["sigma1","sigma2","sigma3","L","L_0"]
     values = {}
@@ -428,6 +472,9 @@ class specialParameter(parameter):
         specialParameter.values[self.name] = val
 
 class stringParam(parameter):
+    """
+    
+    """
     @classmethod
     @failFalse
     def match(cls,string:str):

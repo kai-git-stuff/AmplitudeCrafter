@@ -38,6 +38,5 @@ def testParameter():
     amplitude = DalitzAmplitude(p0,p1,p2,p3)
     amplitude.load_resonances(amplitude_file)
  
-
 if __name__ == "__main__":
     testParameter()
