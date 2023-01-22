@@ -148,6 +148,12 @@ class DalitzAmplitude:
         return [[r.arguments for r in self.resonances[i] if check_if_wanted(r.name,resonances)]  for i in [1,2,3]]
     
     def dumpd(self,parameters,fit_result=None,mapping_dict=None):
+        """
+        Dumps a result with updated parameters to a dictionary
+        An extra entrie will be made for the fit_result, if a result is supplied
+        Here errors and other fit related quantities can be supplied
+        This ensures, that the resulting yml file can be read and run by the software again
+        """
         if not self.loaded:
             raise ValueError("Load Resonance config first, before saving!")
         with ParameterScope(self.__scope) as scope:
@@ -202,16 +208,20 @@ class DalitzAmplitude:
         return f,start
 
     def get_interference_terms(self,smp,resonances1,resonances2):
-        f1,start = self.get_amplitude_function(smp,resonances=resonances1,total_absolute=False)
-        f2,start = self.get_amplitude_function(smp,resonances=resonances2,total_absolute=False)
+        """
+        Not yet properly tested, even though it should work!
+        TODO: Test 
+        """
+        f1,start = self.get_amplitude_function(smp,resonances=resonances1,total_absolute=False,just_in_time_compile=False)
+        f2,start = self.get_amplitude_function(smp,resonances=resonances2,total_absolute=False,just_in_time_compile=False)
 
-        def interference(args,nu,lambdas):
-            return f1(args,nu,lambdas) * conjugate(f2(args,nu,lambdas)) + conjugate(f1(args,nu,lambdas)) * f2(args,nu,lambdas)
+        def interference(args,nu,*lambdas):
+            return f1(args,nu,*lambdas) * conjugate(f2(args,nu,*lambdas)) + conjugate(f1(args,nu,*lambdas)) * f2(args,nu,*lambdas)
 
         def full_interference(args):
             return sum(
                 sum(
-                    interference(args,ld,[la,lb,lc]) 
+                    interference(args,ld,la,lb,lc) 
                         for la,lb,lc in helicity_options_nojit(*[p.spin for p in self.particles])
                             ) for ld in sp.direction_options(self.p0.spin))
 

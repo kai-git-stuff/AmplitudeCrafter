@@ -6,6 +6,12 @@ from jax import jit
 from jitter.fitting import FitParameter
 
 def run_lineshape(resonance_tuple,args,mapping_dict,bls_in,bls_out):
+    """
+    Performs the execution of a single Resonance lineshape
+    L and L_0 values are set manually
+    The resonance tuple includes information no longer needed
+    For legacy resoans it is still carried, but will be droppend in future versions
+    """
     s,p,hel,lineshape_func,_,_,_ = resonance_tuple
     lineshape = {}
     for LS,b in bls_out.items():
@@ -18,7 +24,19 @@ def run_lineshape(resonance_tuple,args,mapping_dict,bls_in,bls_out):
 
     return (s,p,hel,lineshape,None,None,None)
 
-def construct_function(masses,spins,parities,params,mapping_dict,resonances,resonance_tuples,bls_in,bls_out,resonance_args,smp,phsp,total_absolute=True,just_in_time_compile=True, numericArgs=True):
+def construct_function(masses,spins,parities,params,mapping_dict,
+                        resonances,resonance_tuples,bls_in,bls_out,resonance_args,smp,phsp,
+                        total_absolute=True, just_in_time_compile=True, numericArgs=True):
+    """
+    Function to construct the actual ampltude function from the Dalitz Amplitude
+    The function will take all non fixed parameters as defined in the yml files
+
+    total_absolute will descide weather the dalitz plot funciton will be returned or
+    the sum over all helicity configurations
+
+    TODO: spin density matrices added automatically at different positions
+    """
+    
     needed_params = params
     needed_names = [p.name for p in needed_params] # TODO: Names are wrong here!!! They do not reflect the names in the mapping dict!
     free_indices = [[not r.fixed() for r in res ] for res in resonances ]
@@ -32,6 +50,14 @@ def construct_function(masses,spins,parities,params,mapping_dict,resonances,reso
     start = map_arguments(needed_params,numeric=numericArgs)
 
     def fill_args(args,mapping_dict):
+        """
+        Put the arguments into the correct places in the mapping dict
+        This has to be used, so no JAX Tracer objects leak
+        Thus the parameter.update() functionlaity may not be used!
+        Instead the parmeter value can be retrieved by using parameter(value_dict=mapping_dict)
+        This will read the needed value from the dict, but still make use of the internal logic to construct
+        complex numbers and adhere to naming schemes.
+        """
         if len(args) == 1:
             # wierd bug...
             # need to investigate this
@@ -44,6 +70,9 @@ def construct_function(masses,spins,parities,params,mapping_dict,resonances,reso
         return dtc
 
     def update(mapping_dict,bls_out):
+        """
+        We only need to update the resonance lineshapes, where parameters of the lineshape are free
+        """
         for i,l in enumerate(free_indices):
             for j, free in enumerate(l):
                 if free:

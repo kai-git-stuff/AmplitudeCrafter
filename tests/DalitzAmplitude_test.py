@@ -25,6 +25,10 @@ def test_AmplitudeConstitency():
     ampl = f(start)
     assert np.all( abs((np.array(ampl) - np.load(amplitude_dump))/np.load(amplitude_dump)) < 1e-8 )
 
+    interference,_ = amplitude.get_interference_terms(smp,["DKmatrix"],["Ds3_2860"])
+    interference = interference(start)
+    assert( np.all( abs(np.imag(interference)) < 1e-18 ) )
+
 def test_DynamicL():
 
     p0 = particle.get_particle("Lb")
@@ -43,6 +47,9 @@ def test_DynamicL():
     amplitude.load_resonances(amplitude_file)
     res_non_fix_L = f(start)
     assert np.all(abs(res_fix_L - res_non_fix_L) < 1e-10)
+
+
+
 
 if __name__=="__main__":
     test_AmplitudeConstitency()

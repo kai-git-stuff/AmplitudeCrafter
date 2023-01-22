@@ -98,8 +98,6 @@ class ParameterScope:
     def __exit__(self,*args):
         parameter.setBackend(self.dict_before)
 
-
-
 class parameter(ABC):
     """
     parameter base class (ABC) enforces, taht all abstract classes are defined
@@ -473,7 +471,10 @@ class specialParameter(parameter):
 
 class stringParam(parameter):
     """
-    
+    The fallback parameter type
+    If a string could not be interpreted it will be seen as string an treated as constant
+    This may change soon, as this method will stop a proper exception to be raised in case
+    of a small syntax error
     """
     @classmethod
     @failFalse
