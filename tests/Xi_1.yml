@@ -1,24 +1,42 @@
-xi_c(2879):
+Ds3_2860:
   func: jitter.resonances.relativisticBWResonance
-  d: 0.0015
-  M0: jitter.resonances.BWM0
-  spin: 1
+  spin: 6
   parity: -1
-  channel: 2
-  type: xi_c(2879)-BW
+  channel: 1
   expects:
-  - sigma: sigma2
-  - m: 2879. from 2865. to 2885.
-  - width: 2. from 1. to 15.
-  - mLc: 2286.46 const
+  - sigma: sigma1
+  - m: 2860. const
+  - width: 53. const
+  - mD: 1864.84 const
   - mK: 493.677 const
-  - meson_radius: 0.0015 const
-  - l_orbit: "L"
+  - mLc: 2286.46 const
+  - mLb: 5619.60 const
+  - radiusResonance: 0.0015 const
+  - radiusMother: 0.0015 const
+  - lr: L
+  - ld: L_0
   partial waves in:
-  - L: 0
-    S: 1
-    coupling: complex(1.0,0.0)
+  - L: 4
+    S: 5
+    coupling: complex(28.254172001510163,-41.59839711894527 from -100 to 100 NAMED(var1) ) 
   partial waves out:
-  - L: 0
-    S: 1
-    coupling: complex(1.0,0.0) const
+  - L: 6
+    S: 0
+    coupling: complex(1,0) const
+
+String_Test:
+  func: linespahes_for_testing.string_one
+  spin: 6
+  parity: -1
+  channel: 1
+  expects:
+    - string: hello wolrd! const
+  partial waves in:
+  - L: 4
+    S: 5
+    coupling: complex(28.254172001510163,-41.59839711894527 from -100 to 100 NAMED(var1) ) 
+  partial waves out:
+  - L: 6
+    S: 0
+    coupling: complex(1,0) const
+  

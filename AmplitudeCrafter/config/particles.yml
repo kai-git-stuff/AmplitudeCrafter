@@ -47,3 +47,21 @@ Bs:
   spin: 0
   parity: -1
   type: meson
+
+p:
+  mass: 938.27
+  spin: 1
+  parity: 1
+  type: baryon
+
+mu:
+  mass: 105.658
+  spin: 1
+  parity: 1
+  type: lepton
+
+JPsi:
+  mass: 3096.0
+  spin: 2
+  parity: -1
+  type: meson

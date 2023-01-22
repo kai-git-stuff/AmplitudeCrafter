@@ -11,6 +11,7 @@ class particle:
         self.mass = mass
         self.spin = spin
         self.parity = parity
+        self.decay = None
 
         if type is None:
             self.type = {True:"Fermion", False:"Boson"}[sp.is_half(self.spin)]
@@ -24,6 +25,17 @@ class particle:
         
         particle.particles[self.type].append(self)
 
+    def __eq__(self,other):
+        return all([self.mass == other.mass, 
+                    self.spin == other.spin, 
+                    self.parity == other.parity, 
+                    self.name == other.name])
+
+    def set_decay(self, decay):
+        if not decay.p0 == self:
+            raise ValueError(f"Decay {decay} has different initial particle than {self} !")
+        self.decay = decay
+
     @staticmethod
     def get_particle(name):
         return particle.particles_by_name[name]
@@ -35,6 +47,12 @@ class particle:
 
     def __repr__(self):
         return f"{self.name} ({self.type}) ({self.mass}MeV, (J:P)=({self.spin}:{self.parity}))"
+
+    def get_decay(self):
+        if self.decay is None:
+            return None, False
+
+        return self.decay, True
 
 particle.load_library(particle_config)
 
