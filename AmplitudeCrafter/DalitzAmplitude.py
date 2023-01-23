@@ -13,7 +13,7 @@ from jitter.constants import spin as sp
 from jitter.amplitudes.dalitz_plot_function import helicity_options_nojit
 from jax import numpy as jnp
 from multiprocessing import Pool
-from AmplitudeCrafter.helpers import flatten, ensure_numeric
+from AmplitudeCrafter.helpers import flatten, ensure_numeric, flipCP
 
 def run(self,args,smp,nu,lambdas,resonance):
     f,start = self.get_amplitude_function(smp,resonances=[resonance],total_absolute=False, just_in_time_compile = False)
@@ -51,10 +51,14 @@ class DalitzAmplitude:
     def add_file(self,f):
         self.loaded_files.append(f.replace(".yml","").replace(".yaml","").split("/")[-1])
 
-    def get_bls_in(self,resonances):
+    def get_bls_in(self,resonances,applyCP=False):
+        if applyCP:
+            return [[flipCP(r.bls_in) for r in self.resonances[i] if check_if_wanted(r.name,resonances)]  for i in [1,2,3]]
         return [[r.bls_in for r in self.resonances[i] if check_if_wanted(r.name,resonances)]  for i in [1,2,3]]
 
-    def get_bls_out(self,resonances):
+    def get_bls_out(self,resonances,applyCP=False):
+        if applyCP:
+            return [[flipCP(r.bls_out) for r in self.resonances[i] if check_if_wanted(r.name,resonances)]  for i in [1,2,3]]
         return [[r.bls_out for r in self.resonances[i] if check_if_wanted(r.name,resonances)]  for i in [1,2,3]]
 
     def check_new(self,resonances_channel,fail=True):
@@ -174,7 +178,8 @@ class DalitzAmplitude:
         parameters = [ensure_numeric(p) for p in parameters] # to get rid of numpy types and so on
         write(self.dumpd(parameters,fit_result,mapping_dict=mapping_dict),fname)
 
-    def get_amplitude_function(self,smp,resonances = None, total_absolute=True, just_in_time_compile = True, numericArgs=True):
+    def get_amplitude_function(self,smp,resonances = None, total_absolute=True, 
+                                just_in_time_compile = True, numericArgs=True, applyCP=False):
         # resonances parameter designed to get run systematic studies later
         # so we can use the same config, but exclude or include specific resonances
         if not self.loaded:
@@ -203,9 +208,26 @@ class DalitzAmplitude:
 
         resonances = [[r for r in self.resonances[i] if check_if_wanted(r.name,resonances)] for i in [1,2,3]]
         f,start = construct_function(masses,spins,parities,params,mapping_dict,
-                                resonances,resonance_tuples,bls_in,bls_out,resonance_args,smp,self.phsp,total_absolute,just_in_time_compile, numericArgs = numericArgs)
+                                resonances,resonance_tuples,bls_in,bls_out,
+                                resonance_args,smp,self.phsp,total_absolute,
+                                just_in_time_compile, numericArgs = numericArgs,
+                                applyCP=applyCP)
         
         return f,start
+    
+    def getCPPairFunction(self,smp,resonances = None, total_absolute=True, just_in_time_compile = True, numericArgs=True):
+        fNoCP,start = self.get_amplitude_function(smp,resonances = resonances, total_absolute=total_absolute,
+                                             just_in_time_compile = just_in_time_compile, 
+                                             numericArgs=numericArgs, applyCP=False)
+        fCP,_ = self.get_amplitude_function(smp,resonances = resonances, total_absolute=total_absolute,
+                                             just_in_time_compile = just_in_time_compile, 
+                                             numericArgs=numericArgs, applyCP=True)
+        
+        def f(*args,**kwargs):
+            return fNoCP(*args,**kwargs) + fCP(*args,**kwargs) 
+        
+        return f, start
+
 
     def get_interference_terms(self,smp,resonances1,resonances2):
         """

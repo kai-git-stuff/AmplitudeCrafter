@@ -4,6 +4,7 @@ from AmplitudeCrafter.Resonances import map_arguments
 from jax import numpy as jnp
 from jax import jit
 from jitter.fitting import FitParameter
+from AmplitudeCrafter.helpers import flipCP
 
 def run_lineshape(resonance_tuple,args,mapping_dict,bls_in,bls_out,masses):
     """
@@ -31,7 +32,8 @@ def run_lineshape(resonance_tuple,args,mapping_dict,bls_in,bls_out,masses):
 
 def construct_function(masses,spins,parities,params,mapping_dict,
                         resonances,resonance_tuples,bls_in,bls_out,resonance_args,smp,phsp,
-                        total_absolute=True, just_in_time_compile=True, numericArgs=True):
+                        total_absolute=True, just_in_time_compile=True, numericArgs=True,
+                        applyCP=False):
     """
     Function to construct the actual ampltude function from the Dalitz Amplitude
     The function will take all non fixed parameters as defined in the yml files
@@ -89,6 +91,9 @@ def construct_function(masses,spins,parities,params,mapping_dict,
             mapping_dict = fill_args(args,mapping_dict_global)
             bls_in_mapped = map_arguments(bls_in,mapping_dict=mapping_dict)
             bls_out_mapped = map_arguments(bls_out,mapping_dict=mapping_dict)
+            if applyCP:
+                bls_in_mapped = flipCP(bls_in_mapped)
+                bls_out_mapped = flipCP(bls_out_mapped)
             update(mapping_dict,bls_out_mapped)
 
             def O(nu,lambdas):       
@@ -106,7 +111,9 @@ def construct_function(masses,spins,parities,params,mapping_dict,
             bls_in_mapped = map_arguments(bls_in,mapping_dict=mapping_dict)
             bls_out_mapped = map_arguments(bls_out,mapping_dict=mapping_dict)
             update(mapping_dict,bls_out_mapped)
-
+            if applyCP:
+                bls_in_mapped = flipCP(bls_in_mapped)
+                bls_out_mapped = flipCP(bls_out_mapped)
             def O(nu,lambdas):       
                 tmp = chain(decay,nu,*lambdas,resonances_filled[2],bls_in_mapped[2],bls_out_mapped[2],3) + chain(decay,nu,*lambdas,resonances_filled[1],bls_in_mapped[1],bls_out_mapped[1],2) + chain(decay,nu,*lambdas,resonances_filled[0],bls_in_mapped[0],bls_out_mapped[0],1)
                 return tmp
