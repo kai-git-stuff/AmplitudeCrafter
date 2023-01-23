@@ -5,15 +5,20 @@ from jax import numpy as jnp
 from jax import jit
 from jitter.fitting import FitParameter
 
-def run_lineshape(resonance_tuple,args,mapping_dict,bls_in,bls_out):
+def run_lineshape(resonance_tuple,args,mapping_dict,bls_in,bls_out,masses):
     """
     Performs the execution of a single Resonance lineshape
     L and L_0 values are set manually
     The resonance tuple includes information no longer needed
     For legacy resoans it is still carried, but will be droppend in future versions
     """
-    s,p,hel,lineshape_func,_,_,_ = resonance_tuple
+    s,p,hel,lineshape_func,channel = resonance_tuple
     lineshape = {}
+    i,j,k = {1:[2,3,1], 2:[3,1,2], 3:[1,2,3]}[channel]
+    mapping_dict["M0"] = masses[0]
+    mapping_dict["MI"] = masses[i]
+    mapping_dict["MJ"] = masses[j]
+    mapping_dict["MK"] = masses[k]
     for LS,b in bls_out.items():
         for LS_i,b_i in bls_in.items():
             L,S = LS
@@ -42,7 +47,8 @@ def construct_function(masses,spins,parities,params,mapping_dict,
     free_indices = [[not r.fixed() for r in res ] for res in resonances ]
     bls_in_mapped = map_arguments(bls_in,mapping_dict=mapping_dict)
     bls_out_mapped = map_arguments(bls_out,mapping_dict=mapping_dict)
-    resonances_filled = [[run_lineshape(r,resonance_args[i][j],mapping_dict,bls_in_mapped[i][j],bls_out_mapped[i][j]) for j,r in enumerate(res)] for i, res in enumerate(resonance_tuples)  ]
+    resonances_filled = [[run_lineshape(r,resonance_args[i][j],mapping_dict,bls_in_mapped[i][j],bls_out_mapped[i][j],masses) 
+                                for j,r in enumerate(res)] for i, res in enumerate(resonance_tuples)  ]
     mapping_dict_global = mapping_dict
     decay = DalitzDecay(*masses,*spins,*parities,smp,resonances_filled,[bls_in_mapped,bls_out_mapped],phsp=phsp)
 
@@ -76,7 +82,7 @@ def construct_function(masses,spins,parities,params,mapping_dict,
         for i,l in enumerate(free_indices):
             for j, free in enumerate(l):
                 if free:
-                    resonances_filled[i][j] = run_lineshape(resonance_tuples[i][j],resonance_args[i][j],mapping_dict,bls_in[i][j],bls_out[i][j])
+                    resonances_filled[i][j] = run_lineshape(resonance_tuples[i][j],resonance_args[i][j],mapping_dict,bls_in[i][j],bls_out[i][j],masses)
 
     if total_absolute:
         def f(args):

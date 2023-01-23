@@ -7,7 +7,8 @@ class specialParameter(parameter):
     Parameters L and L_0 are int
     sigma1, sigma2 and sigma3 are the dalitz plot variables.
     """
-    specialSymbols = ["sigma1","sigma2","sigma3","L","L_0"]
+    specialSymbols = ["sigma1","sigma2","sigma3","L","L_0",
+                        "M0","MI","MJ","MK"]
     values = {}
     @classmethod
     @failFalse

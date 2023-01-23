@@ -209,14 +209,8 @@ class Resonance:
         return self.__bls_out.copy()
 
     def tuple(self,s=None):
-        # if s is not None:
-        #     self.mapping_dict[self.data_key] = s
-        #     return (self.spin,self.parity,sp.direction_options(self.spin),
-        #                 self.lineshape(*map_arguments(self.args,self.mapping_dict)),
-        #                 self.M0(*map_arguments(self.args,self.mapping_dict)),None,self.p0)
         return (self.spin,self.parity,sp.direction_options(self.spin),
-                        self.lineshape,
-                        self.M0,None,self.p0)
+                self.lineshape,self.channel)
     
     def fixed(self):
         return not any([not p.const for p in 
