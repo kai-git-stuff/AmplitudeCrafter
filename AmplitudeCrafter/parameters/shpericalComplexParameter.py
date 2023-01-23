@@ -16,7 +16,7 @@ class sphericalComplexParameter(parameter):
     def match(cls,string):
         if not isinstance(string,str):
             return False
-        if "complexRPhi" in string:
+        if "complexRPhi(" in string:
             if "(" in string and ")" in string:
                 return True
         return False
