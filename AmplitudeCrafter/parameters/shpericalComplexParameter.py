@@ -83,7 +83,6 @@ class sphericalComplexParameter(parameter):
     def update(self,val):
         raise ValueError("Update Call on complex number!")
         # updtes do nothing on complex nubers
-        pass
 
     @appendName
     def dump(self):

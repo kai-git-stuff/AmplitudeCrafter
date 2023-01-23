@@ -2,6 +2,28 @@ from jitter.fitting import FitParameter
 from abc import abstractmethod, ABC
 from warnings import warn
 
+def findNext(string:str,key:str):
+    words = string.split()
+    if key not in words:
+        return string, None
+    index = words.index(key)
+    if index +1 >= len(words):
+        raise ValueError(f"Found Key {key}, but no value was supplied: {string}!")
+    wordsfiltered = [w for i,w in enumerate(words) if i != index and i != index + 1]
+    return " ".join(wordsfiltered), tryFloat(words[index + 1])
+
+def checkConst(string:str):
+    if "const" in string:
+        return string.replace("const",""), True
+    return string, False
+
+def checkFloat(string:str):
+    try:
+        float(string)
+        return True
+    except:
+        return False
+
 def failFalse(func):
     """
     returns false whenever  a call failed
@@ -176,25 +198,3 @@ class parameter(ABC):
         new_obj.name = name
         new_obj.value_string = value            
         return parameter.parameters.get(name,new_obj)
-
-def findNext(string:str,key:str):
-    words = string.split()
-    if key not in words:
-        return string, None
-    index = words.index(key)
-    if index +1 >= len(words):
-        raise ValueError(f"Found Key {key}, but no value was supplied: {string}!")
-    wordsfiltered = [w for i,w in enumerate(words) if i != index and i != index + 1]
-    return " ".join(wordsfiltered), tryFloat(words[index + 1])
-
-def checkConst(string:str):
-    if "const" in string:
-        return string.replace("const",""), True
-    return string, False
-
-def checkFloat(string:str):
-    try:
-        float(string)
-        return True
-    except:
-        return False
