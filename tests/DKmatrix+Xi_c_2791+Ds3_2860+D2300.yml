@@ -76,10 +76,10 @@ Ds3_2860:
   - sigma: sigma1
   - m: 2860. const
   - width: 53. const
-  - mD: 1864.84 const
-  - mK: 493.677 const
-  - mLc: 2286.46 const
-  - mLb: 5619.60 const
+  - mD: MI
+  - mK: MJ
+  - mLc: MK
+  - mLb: M0
   - radiusResonance: 0.0015 const
   - radiusMother: 0.0015 const
   - lr: L
