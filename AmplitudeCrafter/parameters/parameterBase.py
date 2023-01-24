@@ -33,6 +33,7 @@ def failFalse(func):
         try:
             return func(*args,**kwargs)
         except Exception as e:
+            print(e)
             return False
     return inner
 
@@ -80,10 +81,10 @@ def findIfNamed(name, value):
     return name, value, False
 
 def noNameString(f):
-    def inner(string,*args):
+    def inner(cls,string,*args):
         name, value, _ = findIfNamed("temporaryName", string)
-        return f(value)
-    return f
+        return f(cls,value)
+    return inner
 
 def appendName(f):
     """

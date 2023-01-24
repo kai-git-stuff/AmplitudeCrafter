@@ -21,7 +21,6 @@ class number(parameter):
         accepted = [   isConst and toValue is None and fromValue is None,
                     not isConst and toValue is not None and fromValue is not None,
                     not isConst and toValue is None and fromValue is None]
-        
         return any(accepted) and isCastable
     
     def __repr__(self):
