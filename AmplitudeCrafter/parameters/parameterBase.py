@@ -83,6 +83,7 @@ def noNameString(f):
     def inner(string,*args):
         name, value, _ = findIfNamed("temporaryName", string)
         return f(value)
+    return f
 
 def appendName(f):
     """

@@ -23,3 +23,18 @@ Ds3_2860:
   - L: 6
     S: 0
     coupling: complex(1 , 1.9 ) const
+String_Test:
+  func: linespahes_for_testing.string_one
+  spin: 6
+  parity: -1
+  channel: 1
+  expects:
+  - string: hello wolrd!
+  partial waves in:
+  - L: 4
+    S: 5
+    coupling: complexRPhi(2.0 , 1.0 from -100.0 to 100.0 NAMED(var1))
+  partial waves out:
+  - L: 6
+    S: 0
+    coupling: complex(1 , 1.4 ) const
