@@ -26,6 +26,7 @@ def testParameter():
     mapping_dict1 = { k:p(numeric=True) for k,p in amplitude.mapping_dict.items()}
     amplitude.dump(args,amplitude_file_dump)
 
+    args = amplitude.get_args_from_yml(amplitude_file_dump)
     amplitude = DalitzAmplitude(p0,p1,p2,p3)
     amplitude.load_resonances(amplitude_file_dump)
     print([(a1,a2) for a1,a2 in zip(args,amplitude.get_args(numeric=True))])
