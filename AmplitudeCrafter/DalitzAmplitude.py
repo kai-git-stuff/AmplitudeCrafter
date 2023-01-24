@@ -38,6 +38,14 @@ class DalitzAmplitude:
     @property
     def loaded(self):
         return self.__loaded
+
+    @property
+    def parities(self):
+        return [self.p0.parity] + [p.parity for p in self.particles]
+    
+    @property
+    def Cparities(self):
+        return [self.p0.C] + [p.C for p in self.particles]
     
     @property
     def saving_name(self):

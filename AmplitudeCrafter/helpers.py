@@ -52,7 +52,7 @@ def flatten(listoflists):
     return lst
 
 def CPSign(L,S):
-    return (-1)**(L//2 + S//2)
+    return (-1)**(L//2)
 
 def flipCP(bls):
     new_bls = {}

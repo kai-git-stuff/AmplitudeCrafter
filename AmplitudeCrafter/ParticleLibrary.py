@@ -7,10 +7,11 @@ __WARN_PARTICLE__ = False
 class particle:
     particles = defaultdict(list)
     particles_by_name = {}
-    def __init__(self,mass,spin,parity,name,type=None) -> None:
+    def __init__(self,mass,spin,parity,c,name,type=None) -> None:
         self.mass = mass
         self.spin = spin
         self.parity = parity
+        self.C = c
         self.decay = None
 
         if type is None:
