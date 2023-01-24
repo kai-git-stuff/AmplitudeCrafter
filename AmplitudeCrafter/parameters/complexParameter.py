@@ -1,4 +1,4 @@
-from AmplitudeCrafter.parameters.parameterBase import failFalse, parameter, closing_index, appendName
+from AmplitudeCrafter.parameters.parameterBase import failFalse, parameter, closing_index, appendName, noNameString
 from AmplitudeCrafter.parameters.numberParameter import number
 
 class complexParameter(parameter):
@@ -11,6 +11,7 @@ class complexParameter(parameter):
     """
 
     @classmethod
+    @noNameString
     @failFalse
     def match(cls,string):
         if not isinstance(string,str):
