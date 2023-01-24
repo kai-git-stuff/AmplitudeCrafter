@@ -1,4 +1,4 @@
-from AmplitudeCrafter.parameters.parameterBase import failFalse, parameter, closing_index, appendName
+from AmplitudeCrafter.parameters.parameterBase import failFalse, parameter, closing_index, appendName, noNameString
 from AmplitudeCrafter.parameters.numberParameter import number
 from jax import numpy as jnp
 
@@ -12,6 +12,7 @@ class sphericalComplexParameter(parameter):
     """
 
     @classmethod
+    @noNameString
     @failFalse
     def match(cls,string):
         if not isinstance(string,str):

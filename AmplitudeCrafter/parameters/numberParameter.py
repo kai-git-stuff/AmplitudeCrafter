@@ -1,4 +1,5 @@
-from AmplitudeCrafter.parameters.parameterBase import failFalse, parameter, findNext, checkConst, checkFloat, FitParameter, appendName
+from AmplitudeCrafter.parameters.parameterBase import failFalse, parameter, findNext, checkConst, checkFloat, FitParameter, appendName,   noNameString
+
 
 class number(parameter):
     """
@@ -8,6 +9,7 @@ class number(parameter):
     """
 
     @classmethod
+    @noNameString
     @failFalse
     def match(cls,string:str):
         if not isinstance(string,str):

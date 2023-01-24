@@ -1,4 +1,4 @@
-from AmplitudeCrafter.parameters.parameterBase import failFalse, parameter, appendName, checkConst
+from AmplitudeCrafter.parameters.parameterBase import failFalse, parameter, appendName, checkConst, noNameString
 from warnings import warn
 
 
@@ -10,6 +10,7 @@ class stringParam(parameter):
     of a small syntax error
     """
     @classmethod
+    @noNameString
     @failFalse
     def match(cls,string:str):
         if not isinstance(string,str):

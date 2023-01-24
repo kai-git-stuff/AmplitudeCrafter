@@ -79,6 +79,11 @@ def findIfNamed(name, value):
         return new_name, new_value, True
     return name, value, False
 
+def noNameString(f):
+    def inner(string,*args):
+        name, value, _ = findIfNamed("temporaryName", string)
+        return f(value)
+
 def appendName(f):
     """
     decorator that adds the name of a parameter, in case it was named explicitly
