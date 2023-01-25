@@ -163,6 +163,7 @@ class DalitzAmplitude:
                 mapping_dict = self.mapping_dict.copy()
                 for value,param in zip(parameters,self.get_args(numeric=False)):
                     param.update(value)
+                    mapping_dict[param.name] = param
             for i, resonances in self.resonances.items():
                 for res in resonances:
                     dtc[res.name] = res.dumpd(mapping_dict)

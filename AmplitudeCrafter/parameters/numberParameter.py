@@ -69,10 +69,9 @@ class number(parameter):
         if not super().__init__(name):
             return 
         string = self.value_string
-        const, value = number.evaluate(name,string)
+        const, value = number.evaluate(self.name,string)
         self.const = const
         self.value = value
-        super().__init__(name)
 
     
     def __call__(self,numeric=False,value_dict=None):
@@ -96,6 +95,7 @@ class number(parameter):
             if isinstance(val,FitParameter):
                 val = val()
             self.value.update(val)
+    
     @appendName
     def dump(self):
         additions = []

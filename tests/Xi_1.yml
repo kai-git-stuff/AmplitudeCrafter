@@ -5,7 +5,7 @@ Ds3_2860:
   channel: 1
   expects:
   - sigma: sigma1
-  - m: 2860. const
+  - m: 2860. NAMED(mass)
   - width: 53. const
   - mD: 1864.84 const
   - mK: 493.677 const
