@@ -1,4 +1,5 @@
-from AmplitudeCrafter.parameters.parameterBase import failFalse, parameter, findNext, checkConst, checkFloat, FitParameter, appendName
+from AmplitudeCrafter.parameters.parameterBase import failFalse, parameter, findNext, checkConst, checkFloat, FitParameter, appendName,   noNameString
+
 
 class number(parameter):
     """
@@ -8,6 +9,7 @@ class number(parameter):
     """
 
     @classmethod
+    @noNameString
     @failFalse
     def match(cls,string:str):
         if not isinstance(string,str):
@@ -19,7 +21,6 @@ class number(parameter):
         accepted = [   isConst and toValue is None and fromValue is None,
                     not isConst and toValue is not None and fromValue is not None,
                     not isConst and toValue is None and fromValue is None]
-        
         return any(accepted) and isCastable
     
     def __repr__(self):
@@ -68,10 +69,9 @@ class number(parameter):
         if not super().__init__(name):
             return 
         string = self.value_string
-        const, value = number.evaluate(name,string)
+        const, value = number.evaluate(self.name,string)
         self.const = const
         self.value = value
-        super().__init__(name)
 
     
     def __call__(self,numeric=False,value_dict=None):
@@ -95,6 +95,7 @@ class number(parameter):
             if isinstance(val,FitParameter):
                 val = val()
             self.value.update(val)
+    
     @appendName
     def dump(self):
         additions = []
