@@ -4,8 +4,9 @@ from AmplitudeCrafter.parameters.parameterBase import parameter, ParameterScope
 from AmplitudeCrafter.parameters.stringParameter import stringParam
 from AmplitudeCrafter.parameters.specialParameter import specialParameter
 from AmplitudeCrafter.parameters.shpericalComplexParameter import sphericalComplexParameter
+from AmplitudeCrafter.parameters.lambdaParameter import lambdaParameter
 
 
-UNDERSTOOD_PARAMS = [complexParameter,sphericalComplexParameter,number,specialParameter]
+UNDERSTOOD_PARAMS = [complexParameter,sphericalComplexParameter,number,specialParameter,lambdaParameter]
 
 FALLBACK_PARAMETERS = [stringParam]

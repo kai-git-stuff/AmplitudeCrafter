@@ -1,7 +1,7 @@
 from jitter.fitting import FitParameter
 from abc import abstractmethod, ABC
 from warnings import warn
-
+import re
 def findNext(string:str,key:str):
     words = string.split()
     if key not in words:
@@ -33,7 +33,6 @@ def failFalse(func):
         try:
             return func(*args,**kwargs)
         except Exception as e:
-            print(e)
             return False
     return inner
 
@@ -52,8 +51,25 @@ def closing_index(string:str,opening_index):
     opening, closing = find_parentesis(string)
     if opening_index not in opening:
         raise ValueError(f"Index {opening_index} not in index list for opening parentesis {opening}!s")
-    n_open = opening.index(opening_index) + 1
-    return closing[-(n_open)]
+
+    opening = [o for o in opening if o >= opening_index]
+    closing = [c for c in closing if c >= opening_index]
+
+    n_open = [
+        len([o for o in opening if o < c]) - i - 1
+        for i,c in enumerate(closing)
+    ]
+
+    return closing[n_open.index(0)]
+
+def inside(opening,string:str):
+    if not "(" in opening:
+        raise ValueError("")
+
+    opening_index = string.index(opening) + len(opening) - 1
+    closing_ind = closing_index(string,opening_index=opening_index)
+
+    return string[opening_index + 1:closing_ind], opening_index, closing_ind
 
 def findIfNamed(name, value):
     """

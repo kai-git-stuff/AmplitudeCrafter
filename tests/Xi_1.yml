@@ -5,7 +5,7 @@ Ds3_2860:
   channel: 1
   expects:
   - sigma: sigma1
-  - m: 2860. NAMED(mass)
+  - m: 2860. const
   - width: 53. const
   - mD: 1864.84 const
   - mK: 493.677 const
@@ -18,11 +18,12 @@ Ds3_2860:
   partial waves in:
   - L: 4
     S: 5
-    coupling: complexRPhi(28.254172001510163,-41. from -100 to 100 NAMED(var1) ) 
+    coupling: complex(28.254172001510163,-41.59839711894527)
   partial waves out:
   - L: 6
     S: 0
-    coupling: complex(1, 1.9) const
+    coupling: complex(1,0) const
+
 
 String_Test:
   func: linespahes_for_testing.string_one
@@ -40,3 +41,29 @@ String_Test:
     S: 0
     coupling: complex(1,1.4) const 
   
+
+Ds3_2560:
+  func: jitter.resonances.relativisticBWResonance
+  spin: 6
+  parity: -1
+  channel: 1
+  expects:
+  - sigma: sigma1
+  - m: 2560. NAMED(mass2)
+  - width: 53. const
+  - mD: 1864.84 const
+  - mK: 493.677 const
+  - mLc: 2286.46 const
+  - mLb: 5619.60 const
+  - radiusResonance: 0.0015 NAMED(var2)
+  - radiusMother: 0.0015 NAMED(var3)
+  - lr: L
+  - ld: L_0
+  partial waves in:
+  - L: 4
+    S: 5
+    coupling: "lambda(x,y,z: - x + y *z) (var2; var3; 10. from -4 to 15 NAMED(var5))"
+  partial waves out:
+  - L: 6
+    S: 0
+    coupling: complex(1, 1.9) const

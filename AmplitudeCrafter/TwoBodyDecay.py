@@ -6,7 +6,7 @@ from jitter.kinematics import helicity_couplings_from_ls_static
 from AmplitudeCrafter.Resonances import read_bls, map_arguments
 from AmplitudeCrafter.loading import load, write
 from jax import numpy as jnp
-
+import warnings
 class TwoBodyDecay:
     decays = 0
     def __init__(self,p0,p1,p2):
@@ -21,7 +21,6 @@ class TwoBodyDecay:
         pass
     
     def load_partial_wave_couplings(self,file):
-
         bls_dict = load(file)
         self.mapping_dict = {}
         self.bls = read_bls(bls_dict,self.mapping_dict,f"TwoBody{self.decayNumber}"+"=>bls")
@@ -52,7 +51,7 @@ class TwoBodyDecay:
                                 self.particles[1].spin,
                                 l1,l2 , bls,clebsch)
         else:
-            print("No Partial Wave couplings specified for TwoBody decay! Defauling to 1.")
+            warnings.warn("No Partial Wave couplings specified for TwoBody decay! Defauling to 1.")
             def getH(l1,l2,params):
                 return 1.
         
