@@ -33,7 +33,7 @@ class DalitzAmplitude:
         self.__loaded = False
         self.loaded_files = []
 
-        # defines the parameter sccope for this function
+        # defines the parameter sccope for this entitz
         # do not mess with this!!
         self.__scope = {}
     @property
