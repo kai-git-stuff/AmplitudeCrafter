@@ -3,6 +3,7 @@ from collections import defaultdict
 from AmplitudeCrafter.locals import particle_config
 
 from AmplitudeCrafter.loading import load
+import warnings
 __WARN_PARTICLE__ = False
 class particle:
     particles = defaultdict(list)
@@ -21,7 +22,7 @@ class particle:
         self.name = name
         if particle.particles_by_name.get(name,None) is not None:
             if __WARN_PARTICLE__:
-                print("WARNING: Particle of Name %s already exists as %s! It will be replaced with %s"%(name,particle.particles_by_name[name],self))
+                warnings.warn("WARNING: Particle of Name %s already exists as %s! It will be replaced with %s"%(name,particle.particles_by_name[name],self))
         particle.particles_by_name[name] = self
         
         particle.particles[self.type].append(self)

@@ -14,6 +14,7 @@ from jitter.amplitudes.dalitz_plot_function import helicity_options_nojit
 from jax import numpy as jnp
 from multiprocessing import Pool
 from AmplitudeCrafter.helpers import flatten, ensure_numeric, flipCP
+import warnings
 
 def run(self,args,smp,nu,lambdas,resonance):
     f,start = self.get_amplitude_function(smp,resonances=[resonance],total_absolute=False, just_in_time_compile = False)
@@ -78,7 +79,7 @@ class DalitzAmplitude:
             if fail:
                 raise ValueError("Resoances of names %s already exist!"%double_names)
             else:
-                print("WARNING: Resoances of names %s already exist!"%double_names)
+                warnings.warn("WARNING: Resoances of names %s already exist!"%double_names)
     
     def check_bls(self):
         particles = {1:(self.particles[1],self.particles[2]),
@@ -311,14 +312,14 @@ class DalitzAmplitude:
         helperAmplitude.load_resonances(file)
         own_param_names = self.get_arg_names()
         if not set(helperAmplitude.get_arg_names()).issubset(set(own_param_names)):
-            print("Own: ")
-            print(set(own_param_names))
-            print(f"{file}")
-            print(set(helperAmplitude.get_arg_names()))
+            warnings.warn("Own: ")
+            warnings.warn(set(own_param_names))
+            warnings.warn(f"{file}")
+            warnings.warn(set(helperAmplitude.get_arg_names()))
             if raiseeException:
                 raise ValueError(f"File {file} does not contain all needed arguments to represent the amplitude!")
             else:
-                print("Waring:",f"File {file} does not contain all needed arguments to represent the amplitude!")
+                warnings.warn("Waring:",f"File {file} does not contain all needed arguments to represent the amplitude!")
         mapping_dict = self.mapping_dict
         mapping_dict.update(helperAmplitude.mapping_dict)
         value_dict = {k:v(numeric=True) for k,v in mapping_dict.items()}
