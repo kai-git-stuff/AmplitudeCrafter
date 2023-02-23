@@ -79,15 +79,12 @@ Did you mean any of the following?
     @staticmethod
     def from_pdg(pdg_particle:Particle):
         s = pdg_particle.J
-        print(pdg_particle.name)
-        print(s)
-        print(pdg_particle.P.p,type(pdg_particle.P.p))
         if s is None:
-            s = 0
+            raise ValueError(f"Particle {pdg_particle.name} does not have a determined Spin quantum number!")
         return particle(
             pdg_particle.mass,
             int(s * 2),
-            int(pdg_particle.P.p),
+            int(pdg_particle.P),
             pdg_particle.name,
             charge=pdg_particle.charge,
             c =int( pdg_particle.C.p)
