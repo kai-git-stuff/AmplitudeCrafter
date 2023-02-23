@@ -1,65 +1,19 @@
-K:
-  mass: 493.677
-  spin: 0
-  parity: -1
-  type: meson
+K: "K-"
 
-D0:
-  mass: 1864.84
-  spin: 0
-  parity: -1
-  type: meson
+D0: "D~0"
 
-Lc:
-  mass : 2286.46
-  spin: 1
-  parity: 1
-  type: baryon
+Lc: "Lambda(c)+"
 
-Lb:
-  mass: 5619.60
-  spin: 1
-  parity: 1
-  type: baryon
+Lb: "Lambda(b)0"
 
-B:
-  mass: 5279.65
-  spin: 0
-  parity: -1
-  type: meson
+B: "B0"
 
-Psi2S:
-  mass: 3686.10
-  spin: 2
-  parity: -1
-  type: meson
+Psi2S: "psi(2S)"
 
-Pi:
-  mass: 139.57
-  spin: 0
-  parity: -1
-  type: meson
+Pi: "pi0"
 
-Bs:
-  mass: 5368.0
-  spin: 0
-  parity: -1
-  type: meson
+Bs: "B(s)0"
 
-p:
-  mass: 938.27
-  spin: 1
-  parity: 1
-  type: baryon
+mu: "mu-"
 
-mu:
-  mass: 105.658
-  spin: 1
-  parity: 1
-  type: lepton
-
-JPsi:
-  mass: 3096.0
-  spin: 2
-  parity: -1
-  type: meson
+JPsi: "J/psi(1S)"
