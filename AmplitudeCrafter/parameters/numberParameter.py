@@ -1,4 +1,4 @@
-from AmplitudeCrafter.parameters.parameterBase import failFalse, parameter, findNext, checkConst, checkFloat, FitParameter, appendName,   noNameString
+from AmplitudeCrafter.parameters.parameterBase import fail_false, parameter, find_next, check_const, check_float, FitParameter, append_name,   no_name_string
 
 
 class number(parameter):
@@ -9,15 +9,15 @@ class number(parameter):
     """
 
     @classmethod
-    @noNameString
-    @failFalse
+    @no_name_string
+    @fail_false
     def match(cls,string:str):
         if not isinstance(string,str):
             return True
-        string, fromValue = findNext(string,"from")
-        string, toValue = findNext(string,"to")
-        string, isConst = checkConst(string)
-        isCastable = checkFloat(string)
+        string, fromValue = find_next(string,"from")
+        string, toValue = find_next(string,"to")
+        string, isConst = check_const(string)
+        isCastable = check_float(string)
         accepted = [   isConst and toValue is None and fromValue is None,
                     not isConst and toValue is not None and fromValue is not None,
                     not isConst and toValue is None and fromValue is None]
@@ -43,9 +43,9 @@ class number(parameter):
         if not isinstance(string,str):
             string = str(string)
         initialString = string
-        string, fromValue = findNext(string,"from")
-        string, toValue = findNext(string,"to")
-        string, isConst = checkConst(string)
+        string, fromValue = find_next(string,"from")
+        string, toValue = find_next(string,"to")
+        string, isConst = check_const(string)
 
         if not number.match(string):
             raise ValueError(f"Value '{initialString}' of parameter {name} does not match pattern of a number!")
@@ -96,7 +96,7 @@ class number(parameter):
                 val = val()
             self.value.update(val)
     
-    @appendName
+    @append_name
     def dump(self):
         additions = []
         if self.const:

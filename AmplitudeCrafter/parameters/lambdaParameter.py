@@ -1,4 +1,4 @@
-from AmplitudeCrafter.parameters.parameterBase import failFalse, parameter, closing_index, appendName, noNameString, inside
+from AmplitudeCrafter.parameters.parameterBase import fail_false, parameter, closing_index, append_name, no_name_string, inside
 from AmplitudeCrafter.parameters.numberParameter import number
 from AmplitudeCrafter.parameters.complexParameter import complexParameter
 from AmplitudeCrafter.parameters.shpericalComplexParameter import sphericalComplexParameter
@@ -15,8 +15,8 @@ class lambdaParameter(parameter):
     The value can not be updated as a whole!!
     """
     @classmethod
-    @noNameString
-    @failFalse
+    @no_name_string
+    @fail_false
     def match(cls,string):
         if "lambda" in string and not "const" in string:
             return True
@@ -37,6 +37,7 @@ class lambdaParameter(parameter):
         lambda_string,opening,closing = inside("lambda(",string)
         parameterStrings = string[closing+1:]
         parameter_definitions = inside("(",parameterStrings)[0].split(";")
+
         def getParameter(n,string:str):
             understood_params = [number,complexParameter,sphericalComplexParameter]
             p = parameter.parameters.get(string.strip())
@@ -45,7 +46,6 @@ class lambdaParameter(parameter):
             matching_signatures = [param for param in understood_params if param.match(string)]
             high_level_matches = [param for param in matching_signatures if not param.final()]
             low_level_matches = [param for param in matching_signatures if param.final()]
-
             if len(high_level_matches) > 1:
                 raise ValueError(f"More than one signature matches value {string}!")
             if len(high_level_matches) == 1:
@@ -56,8 +56,9 @@ class lambdaParameter(parameter):
                 raise ValueError(f"No matching signarture for {string}!")
             return matchingType(n,string)
         
-        parameters = [getParameter(name+str(i),parameterString) for i,parameterString in enumerate(parameter_definitions)]
+        parameters = [getParameter(name+"_"+str(i),parameterString) for i,parameterString in enumerate(parameter_definitions)]
         f = eval("lambda " + lambda_string)
+
         return f,lambda_string,parameters   
  
     @property
@@ -67,7 +68,9 @@ class lambdaParameter(parameter):
 
     @property
     def dict(self):
-        return {p.name:p for p in self.parameters}
+        dtc = {p.name:p for p in self.parameters}
+        dtc.update({self.name:self})
+        return dtc
 
     @property
     def parameters(self):
@@ -76,7 +79,7 @@ class lambdaParameter(parameter):
     def __init__(self,name,string):
         if not super().__init__(name):
             return 
-        
+        self.const = True
         lambda_function, lambda_string, parmeters = type(self).evaluate(string,name) 
 
         self.__parameters = parmeters
@@ -95,7 +98,7 @@ class lambdaParameter(parameter):
         raise ValueError("Update Call on lambda genrated number!")
         # updtes do nothing on complex nubers
 
-    @appendName
+    @append_name
     def dump(self):
         dumped_params = ";".join([p.dump() for p in self.parameters])
         return f"lambda({self.lambda_string}) ({dumped_params})"

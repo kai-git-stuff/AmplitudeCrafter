@@ -1,4 +1,4 @@
-from AmplitudeCrafter.parameters.parameterBase import failFalse, parameter, appendName
+from AmplitudeCrafter.parameters.parameterBase import fail_false, parameter, append_name
 
 class specialParameter(parameter):
     """
@@ -11,13 +11,13 @@ class specialParameter(parameter):
                         "M0","MI","MJ","MK"]
     values = {}
     @classmethod
-    @failFalse
+    @fail_false
     def match(cls,string:str):
         if not isinstance(string,str):
             return False
         return string.strip() in  cls.specialSymbols
     
-    @appendName
+    @append_name
     def dump(self):
         # the value can be whatever, but the name is constant here
         return self.name

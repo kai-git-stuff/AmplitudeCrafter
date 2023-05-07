@@ -1,0 +1,25 @@
+RandomResonance:
+  func: jitter.resonances.relativisticBWResonance
+  spin: 6
+  parity: -1
+  channel: 1
+  expects:
+  - sigma: sigma1
+  - m: 2860. const
+  - width: complex(53.,0) 
+  - mD: 1864.84 const
+  - mK: 493.677 const
+  - mLc: 2286.46 from 1. to 4000.
+  - mLb: 5619.60 const
+  - radiusResonance: 0.0015 const
+  - radiusMother: 0.0015 const
+  - lr: L
+  - ld: L_0
+  partial waves in:
+  - L: 4
+    S: 5
+    coupling: complex(28.254172001510163,-41.59839711894527)
+  partial waves out:
+  - L: 6
+    S: 0
+    coupling: complex(1,0) const

@@ -1,4 +1,4 @@
-from AmplitudeCrafter.parameters.parameterBase import failFalse, parameter, closing_index, appendName, noNameString
+from AmplitudeCrafter.parameters.parameterBase import fail_false, parameter, closing_index, append_name, no_name_string
 from AmplitudeCrafter.parameters.numberParameter import number
 
 class complexParameter(parameter):
@@ -11,8 +11,8 @@ class complexParameter(parameter):
     """
 
     @classmethod
-    @noNameString
-    @failFalse
+    @no_name_string
+    @fail_false
     def match(cls,string):
         if not isinstance(string,str):
             return False
@@ -49,8 +49,14 @@ class complexParameter(parameter):
 
     @property
     def dict(self):
-        return {n:p for n,p in zip(self.param_names[1:],self.parameters)}
+        dtc = {n:p for n,p in zip(self.param_names[1:],self.parameters)}
+        dtc.update({self.name:self})
+        return dtc
 
+    @property
+    def const(self):
+        return True
+    
     @property
     def parameters(self):
         return self.real, self.imag
@@ -61,7 +67,7 @@ class complexParameter(parameter):
 
         string = self.value_string
         const, (real_str, imag_str) = complexParameter.evaluate(string)
-        self.const = const
+        self.__const = const
         self.real_string = real_str
         self.imag_string = imag_str
         complex_name, real_name, imag_name = self.generate_param_names()
@@ -85,12 +91,12 @@ class complexParameter(parameter):
         # updtes do nothing on complex nubers
         pass
 
-    @appendName
+    @append_name
     def dump(self):
         real_string = self.real.dump()
         imag_string = self.imag.dump()
 
-        if self.const:
+        if self.__const:
             real_string = real_string.replace("const", "")
             imag_string = imag_string.replace("const", "")
         

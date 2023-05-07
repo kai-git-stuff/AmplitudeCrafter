@@ -256,6 +256,12 @@ class DalitzAmplitude:
             arg_dict.values()
             )
     
+    def get_fit_params(self):
+        arg_dict = {p.name:p(numeric=False) for k,p in self.mapping_dict.items() if is_free(p)}
+        return list(
+            arg_dict.values()
+            )
+
     def get_arg_names(self):
         arg_dict = {p.name:k for k,p in self.mapping_dict.items() if is_free(p)}
         # translate values with _complex in to imaginary and real part
@@ -281,14 +287,11 @@ class DalitzAmplitude:
         helperAmplitude.load_resonances(file)
         own_param_names = self.get_arg_names()
         if not set(helperAmplitude.get_arg_names()).issubset(set(own_param_names)):
-            warnings.warn("Own: ")
-            warnings.warn(set(own_param_names))
-            warnings.warn(f"{file}")
-            warnings.warn(set(helperAmplitude.get_arg_names()))
+            warnings.warn("Own: " + str(set(own_param_names)) + "/n" + f"{file} " + str(set(helperAmplitude.get_arg_names())))
             if raiseeException:
                 raise ValueError(f"File {file} does not contain all needed arguments to represent the amplitude!")
             else:
-                warnings.warn("Waring:",f"File {file} does not contain all needed arguments to represent the amplitude!")
+                warnings.warn("Waring: " + f"File {file} does not contain all needed arguments to represent the amplitude!")
         mapping_dict = self.mapping_dict
         mapping_dict.update(helperAmplitude.mapping_dict)
         value_dict = {k:v(numeric=True) for k,v in mapping_dict.items()}

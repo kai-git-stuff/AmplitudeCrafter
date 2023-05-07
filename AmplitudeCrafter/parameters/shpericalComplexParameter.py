@@ -1,4 +1,4 @@
-from AmplitudeCrafter.parameters.parameterBase import failFalse, parameter, closing_index, appendName, noNameString
+from AmplitudeCrafter.parameters.parameterBase import fail_false, parameter, closing_index, append_name, no_name_string
 from AmplitudeCrafter.parameters.numberParameter import number
 from jax import numpy as jnp
 
@@ -12,8 +12,8 @@ class sphericalComplexParameter(parameter):
     """
 
     @classmethod
-    @noNameString
-    @failFalse
+    @no_name_string
+    @fail_false
     def match(cls,string):
         if not isinstance(string,str):
             return False
@@ -50,7 +50,9 @@ class sphericalComplexParameter(parameter):
 
     @property
     def dict(self):
-        return {n:p for n,p in zip(self.param_names[1:],self.parameters)}
+        dtc = {n:p for n,p in zip(self.param_names[1:],self.parameters)}
+        dtc.update({self.name:self})
+        return dtc
 
     @property
     def parameters(self):
@@ -62,7 +64,7 @@ class sphericalComplexParameter(parameter):
 
         string = self.value_string
         const, (R_str, Phi_str) = type(self).evaluate(string)
-        self.const = const
+        self.__const = const
         self.R_string = R_str
         self.Phi_string = Phi_str
         complex_name, real_name, imag_name = self.generate_param_names()
@@ -85,12 +87,16 @@ class sphericalComplexParameter(parameter):
         raise ValueError("Update Call on complex number!")
         # updtes do nothing on complex nubers
 
-    @appendName
+    @property
+    def const(self):
+        return True
+
+    @append_name
     def dump(self):
         R_string = self.R.dump()
         Phi_string = self.Phi.dump()
 
-        if self.const:
+        if self.__const:
             R_string = R_string.replace("const", "")
             Phi_string = Phi_string.replace("const", "")
         

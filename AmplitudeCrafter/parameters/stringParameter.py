@@ -1,4 +1,4 @@
-from AmplitudeCrafter.parameters.parameterBase import failFalse, parameter, appendName, checkConst, noNameString
+from AmplitudeCrafter.parameters.parameterBase import fail_false, parameter, append_name, check_const, no_name_string
 from warnings import warn
 
 
@@ -10,13 +10,13 @@ class stringParam(parameter):
     of a small syntax error
     """
     @classmethod
-    @noNameString
-    @failFalse
+    @no_name_string
+    @fail_false
     def match(cls,string:str):
         if not isinstance(string,str):
             return False
         return True
-    @appendName
+    @append_name
     def dump(self):
         # the value can be whatever, but the name is constant here
         return self.value
@@ -49,7 +49,7 @@ class stringParam(parameter):
             return 
         # remove a potential const declaration
         string = self.value_string
-        string, isDecalredConst = checkConst(string)
+        string, isDecalredConst = check_const(string)
         if isDecalredConst:
             warn(f"Parameter {name} is of type string and was declared const! The explicit declaration can be omitted!")
         self.const = True
