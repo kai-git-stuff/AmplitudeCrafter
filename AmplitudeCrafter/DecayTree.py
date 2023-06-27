@@ -36,6 +36,7 @@ class DecayTreeNode:
         self.__decay = None
         self.__p = None
         self.__daughters = None
+        self.__smp = None
 
     def setP(self, p):
         if not p.shape[-1] == 4:
@@ -53,9 +54,15 @@ class DecayTreeNode:
     def smp(self):
         if len(self.daughters) != 3:
             raise NotImplementedError("Dalitz Sample only available for three-body decays!")
+        if self.__smp is not None:
+            return self.__smp
         s1 = mass(self.daughters[1].p + self.daughters[2].p)**2
         s3 = mass(self.daughters[0].p + self.daughters[1].p)**2
         return jnp.stack([jnp.array(s3),jnp.array(s1)],axis=1)
+    
+    @smp.setter
+    def set_smp(self,smp):
+        self.__smp = smp
 
     @property
     def theta(self):
@@ -158,6 +165,7 @@ class DecayTreeNode:
         return mask
         
     def getHelicityAmplitude(self,resonances=None):
+
         if self.decay is None:
             return None, None, None
         fs = []
@@ -217,6 +225,12 @@ class DecayTreeNode:
 
         return f,[ a for par in start_params for a in par ], [ helicy_names[a] for a in helicy_names ]
 
+    def get_helicities(self):
+
+        return list(
+            range(-self.particle.spin, self.particle.spin + 1, 2)
+        )
+
 class DecayTree:
     def __init__(self,root):
         self.root = root
@@ -253,6 +267,13 @@ class DecayTree:
         for node, l in self.traverse():
             node.setP(node.p[mask])
 
+    def get_helicities(self):
+        nodes = [ n for n,l in self.traverse()]
+        helicities = [[h] for h in nodes[0].get_helicities()]
+
+        for node in nodes[1:]:
+            helicities = [h + [h_] for h in helicities for h_ in node.get_helicities()]
+        return helicities
 
 
 if __name__ == "__main__":
