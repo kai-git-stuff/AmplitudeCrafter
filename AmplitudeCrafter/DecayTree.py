@@ -61,7 +61,7 @@ class DecayTreeNode:
         return jnp.stack([jnp.array(s3),jnp.array(s1)],axis=1)
     
     @smp.setter
-    def set_smp(self,smp):
+    def smp(self,smp):
         self.__smp = smp
 
     @property
