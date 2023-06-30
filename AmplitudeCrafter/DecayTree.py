@@ -89,6 +89,13 @@ class DecayTreeNode:
     def parent(self):
         return self.__partent
 
+    @property
+    def phsp(self):
+        if self.decay is None:
+            Warning("No decay defined!")
+            return None
+        return self.decay.phsp
+
     @parent.setter
     def parent(self,p):
         if not self in p.daughters:
