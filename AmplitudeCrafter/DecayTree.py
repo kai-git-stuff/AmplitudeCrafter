@@ -25,7 +25,9 @@ def helicityTheta(p_Parent, P_1, P_2):
     return jnp.arccos(cos_helicity_angle(P_1_boosted,P_2_boosted))
 
 def decay_plane_vector(P_1, P_2):
-
+    """
+    calculate the unit vector defining the plane spanned by the two momenta
+    """
     return perpendicular_unit_vector(spatial_components(P_1), spatial_components(P_2))
 
 class DecayTreeNode:
@@ -52,6 +54,9 @@ class DecayTreeNode:
 
     @property
     def smp(self):
+        """
+        Get the Dalitz Sample for the decay n -> 1 2 3
+        """
         if len(self.daughters) != 3:
             raise NotImplementedError("Dalitz Sample only available for three-body decays!")
         if self.__smp is not None:
@@ -62,6 +67,8 @@ class DecayTreeNode:
     
     @smp.setter
     def smp(self,smp):
+        if len(self.daughters) != 3:
+            raise NotImplementedError("Dalitz Sample only available for three-body decays!")
         self.__smp = smp
 
     @property
