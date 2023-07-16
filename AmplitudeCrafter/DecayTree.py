@@ -3,9 +3,9 @@ import numpy as np
 from jax import numpy as jnp
 from AmplitudeCrafter.ParticleLibrary import particle
 from AmplitudeCrafter.TwoBodyDecay import TwoBodyDecay
-from jitter.kinematics import cos_helicity_angle, boost_to_rest, mass, perpendicular_unit_vector, spatial_components, scalar_product, azimuthal_4body_angle
+from jitter.kinematics import cos_helicity_angle, boost_to_rest, mass, perpendicular_unit_vector, spatial_components, scalar_product, azimuthal_4body_angle, wigner_capital_d
 from AmplitudeCrafter.DalitzAmplitude import DalitzAmplitude
-
+from jitter.constants import spin
 """
 (E/c, p1,p2,p3)
 
@@ -273,6 +273,10 @@ class DecayTree:
         return var[mask]
     
     def self_filter(self):
+        """
+        Filter the momenta of the particles in the decay tree
+        such that we only keep the ones that are inside the phase space
+        """
         mask = self.root.filter(None)
         if mask is None:
             raise ValueError(f"Root {self.root} is stable")
@@ -288,7 +292,33 @@ class DecayTree:
         for node in nodes[1:]:
             helicities = [h + [h_] for h in helicities for h_ in node.get_helicities()]
         return helicities
+    
+    def apply_spin_denysity(self,f):
+        mother_spin = self.root.particle.spin
 
+        helicities = np.array(self.get_helicities())[:,1:]
+
+        alpha, beta, gamma = None, None, None # TODO: get these from the decay
+        
+        D_matrices = {(eta, nu): wigner_capital_d(alpha, beta, gamma,eta, nu) for eta in spin.direction_options(mother_spin) for nu in spin.direction_options(mother_spin)}
+
+        def select(rho,L,L_):
+            L, L_ = (L + mother_spin)//2, (L + mother_spin)//2
+            return rho.reshape((mother_spin + 1,mother_spin + 1))[L, L_]
+
+        def f_(rho,args):
+            sm = 0
+            for L in spin.direction_options(mother_spin):
+                for L_ in spin.direction_options(mother_spin):
+                    
+                    sm = sm + select(rho, L, L_)  * sum(
+                        jnp.conj(D_matrices[(L,nu)]) * D_matrices[(L_,nu_)] * f(args,nu,*h) * jnp.conj(f(args,nu_,*h)) 
+                            for h in helicities
+                                for nu in spin.direction_options(mother_spin)
+                                    for nu_ in spin.direction_options(mother_spin)
+                                )
+            return sm
+        return f_
 
 if __name__ == "__main__":
     pass

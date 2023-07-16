@@ -38,8 +38,6 @@ def construct_function(masses,spins,parities,params,mapping_dict,
 
     total_absolute will descide weather the dalitz plot funciton will be returned or
     the sum over all helicity configurations
-
-    TODO: spin density matrices added automatically at different positions
     """
     
     needed_params = params
