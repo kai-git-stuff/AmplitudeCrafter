@@ -306,7 +306,7 @@ class DecayTree:
             L, L_ = (L + mother_spin)//2, (L + mother_spin)//2
             return rho.reshape((mother_spin + 1,mother_spin + 1))[L, L_]
 
-        def f_(rho,args):
+        def f_(rho, args):
             sm = 0
             for L in spin.direction_options(mother_spin):
                 for L_ in spin.direction_options(mother_spin):
@@ -318,7 +318,12 @@ class DecayTree:
                                     for nu_ in spin.direction_options(mother_spin)
                                 )
             return sm
-        return f_
+        from jitter.fitting.fitting import FitParameter
+        rho_start = [
+            [FitParameter(f"SpinDensity{L:.0f}{L_:.0f}",1,-1,1) for L in spin.direction_options(mother_spin)]
+                for L_ in spin.direction_options(mother_spin)
+            ]
+        return f_, rho_start
 
 if __name__ == "__main__":
     pass
