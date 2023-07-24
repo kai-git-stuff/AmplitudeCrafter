@@ -6,6 +6,8 @@ from AmplitudeCrafter.TwoBodyDecay import TwoBodyDecay
 from jitter.kinematics import cos_helicity_angle, boost_to_rest, mass, perpendicular_unit_vector, spatial_components, scalar_product, azimuthal_4body_angle, wigner_capital_d
 from AmplitudeCrafter.DalitzAmplitude import DalitzAmplitude
 from jitter.constants import spin
+from jitter.fitting.fitting import FitParameter
+
 """
 (E/c, p1,p2,p3)
 
@@ -178,7 +180,7 @@ class DecayTreeNode:
             return ( jnp.isfinite(self.theta) ) & ( jnp.isfinite(self.phi) )
         return mask
         
-    def getHelicityAmplitude(self,resonances=None):
+    def getHelicityAmplitude(self,resonances=None, fixed_data=True):
 
         if self.decay is None:
             return None, None, None
@@ -247,9 +249,21 @@ class DecayTreeNode:
 
 class DecayTree:
     def __init__(self,root):
+        """
+        Initialize a DecayTree object with a root node.
+
+        Args:
+            root (Particle): The root node of the decay tree.
+        """
         self.root = root
     
     def traverse(self):
+        """
+        Traverse the decay tree in depth-first order.
+
+        Yields:
+            Tuple[Particle, int]: A tuple containing the current node and its level in the tree.
+        """
         for a in self.root.traverse():
             yield a
     
@@ -258,6 +272,9 @@ class DecayTree:
         return f, args, hel
 
     def draw(self):
+        """
+        Draw the decay tree to the console.
+        """
         for n,l in self.traverse():
             prefix =  "    "*l + PIPE
             print( prefix)
@@ -265,6 +282,15 @@ class DecayTree:
             print("    "*l + mid + " " + str(n))
 
     def filter(self,var):
+        """
+        Filter the decay tree based on a given variable.
+
+        Args:
+            var (ndarray): The variable to filter on.
+
+        Returns:
+            ndarray: A boolean mask indicating which nodes to keep.
+        """
         mask = self.root.filter(None)
         if mask is None:
             raise ValueError(f"Root {self.root} is stable")
@@ -293,7 +319,7 @@ class DecayTree:
             helicities = [h + [h_] for h in helicities for h_ in node.get_helicities()]
         return helicities
     
-    def apply_spin_denysity(self,f):
+    def apply_spin_density(self,f):
         mother_spin = self.root.particle.spin
 
         helicities = np.array(self.get_helicities())[:,1:]
@@ -318,7 +344,6 @@ class DecayTree:
                                     for nu_ in spin.direction_options(mother_spin)
                                 )
             return sm
-        from jitter.fitting.fitting import FitParameter
         rho_start = [
             [FitParameter(f"SpinDensity{L:.0f}{L_:.0f}",1,-1,1) for L in spin.direction_options(mother_spin)]
                 for L_ in spin.direction_options(mother_spin)
