@@ -1,4 +1,3 @@
-from jitter.amplitudes.dalitz_plot_function import DalitzDecay
 import numpy as np
 from AmplitudeCrafter.loading import load, write
 from AmplitudeCrafter.ParticleLibrary import particle
@@ -190,9 +189,6 @@ class DalitzAmplitude:
         params = self.get_args()
 
         mapping_dict = {p.name:p(numeric=True) for k,p in  self.mapping_dict.items() }
-        mapping_dict["sigma3"] = self.phsp.m2ab(smp)
-        mapping_dict["sigma2"] = self.phsp.m2ac(smp)
-        mapping_dict["sigma1"] = self.phsp.m2bc(smp)
 
         bls_in = self.get_bls_in(resonances)
         bls_out = self.get_bls_out(resonances)

@@ -187,10 +187,12 @@ class DecayTreeNode:
         fs = []
         start_params = []
         helicities = []
+        data_in_tree = []
         if len(self.daughters) == 2 :
             if resonances is not None:
                 raise NotImplementedError("You cant have resonances in two body decay!")
             theta, phi = self.getHelicityAngles()
+            data_in_tree.append((theta, phi))
             f, start = self.decay.get_amplitude_function(theta,phi, total_absolute=False, just_in_time_compile = False,numericArgs=False)
             hel = [self] + list(self.daughters)
             fs.append(f)
@@ -199,6 +201,7 @@ class DecayTreeNode:
 
         if len(self.daughters) == 3 :
             smp = self.smp
+            data_in_tree.append(smp)
             f, start = self.decay.get_amplitude_function(smp,total_absolute=False, just_in_time_compile = False, numericArgs=False,resonances=resonances)
             hel = [self] + list(self.daughters)
             fs.append(f)
@@ -221,11 +224,15 @@ class DecayTreeNode:
         # a dict with no values will do the same
         helicy_names = {a.name:a for hel in helicities for a in hel }
 
-        def f(args,*hel):
+        def f(data,args,*hel):
             f0 = None
             nPar0 = 0
             helicity_dict = {name:h for name,h in zip(helicy_names,hel)}
-            for f_,nPar, H in zip(fs,indP,helicities):
+
+            if not isinstance(data,list) and len(fs) == 1:
+                data = [data]
+
+            for f_,nPar, H, d in zip(fs, indP, helicities, data):
                 # every function has nHel helicity arguments and nPar parameter arguments
                 # we need to correctly sort them
                 nPar1 = nPar0 + nPar
@@ -234,10 +241,13 @@ class DecayTreeNode:
 
                 h = [helicity_dict[node.name] for node in H]
                 if f0 is None:
-                    f0 = f_(p,*h)
+                    f0 = f_(d,p,*h)
                 else:
-                    f0 = f_(p,*h) * f0
+                    f0 = f_(d,p,*h) * f0
             return f0
+
+        if fixed_data:
+            return lambda *args, **kwargs: f(data_in_tree,*args, **kwargs), [ a for par in start_params for a in par ], [ helicy_names[a] for a in helicy_names ]
 
         return f,[ a for par in start_params for a in par ], [ helicy_names[a] for a in helicy_names ]
 
@@ -267,8 +277,8 @@ class DecayTree:
         for a in self.root.traverse():
             yield a
     
-    def getHelicityAmplitude(self,resonances = None):
-        f, args, hel = self.root.getHelicityAmplitude(resonances=resonances)
+    def getHelicityAmplitude(self,resonances = None, fixed_data=True):
+        f, args, hel = self.root.getHelicityAmplitude(resonances=resonances, fixed_data=fixed_data)
         return f, args, hel
 
     def draw(self):
