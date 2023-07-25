@@ -1,7 +1,7 @@
 import os
 from AmplitudeCrafter.DecayTree import *
 from jax.config import config
-
+from jax import jit
 config.update("jax_enable_x64", True)
 dir = os.path.dirname(__file__)
 amplitude_file = os.path.join(dir,"DKmatrix+Xi_c_2791+Ds3_2860+D2300.yml")
@@ -45,9 +45,32 @@ def test_DecayTree():
                 [1,1,0,0],
                 [-1,-1,0,0],
                 [1,-1,0,0]]
-        ampl = sum(jnp.abs(f(start,*hel))**2 for hel in hels)
+        # ampl = sum(jnp.abs(f(start,*hel))**2 for hel in hels)
+        
+        ####################### Amplitude building ######################
+        f, start, helicities = tree.getHelicityAmplitude(fixed_data=False)
 
-        assert np.all( abs((np.array(ampl) - np.load(amplitude_dump)) /np.load(amplitude_dump)) < 1e8)
+        def ampl_func(smp):
+                return sum(jnp.abs(f(smp,start,*hel))**2 for hel in hels)
+        
+        ampl_func = jit(ampl_func)
+        ampl = ampl_func(smp).block_until_ready()
+        print("Amplitude 1 Done")
+        print(abs((np.array(ampl) - np.load(amplitude_dump)) /np.load(amplitude_dump)))
+        smp_large = phsp.rectangular_grid_sample(30000,1000)
+        import time
+        from tqdm import tqdm
+        for i in tqdm(range(100000)):
+                if i == 0: st = time.time()
+                smp_large = smp_large + 1e-8
+                ampl_func(smp_large).block_until_ready()
+                if i == 0:
+                        end = time.time()
+                        print(end - st)
+
+
+
+        assert np.all( abs((np.array(ampl) - np.load(amplitude_dump)) /np.load(amplitude_dump)) < 1e-8)
 
 def test_Boosts():
         P1 = np.array([3.,1.,0,0][::-1],dtype=np.float64)

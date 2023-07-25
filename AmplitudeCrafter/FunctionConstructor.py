@@ -88,9 +88,9 @@ def construct_function(masses,spins,parities,params,mapping_dict,
             update(mapping_dict,bls_out_mapped)
 
             def O(nu,lambdas):       
-                tmp = (chain(smp,nu,*lambdas,resonances_filled[2],bls_in_mapped[2],bls_out_mapped[2],3,*masses,*spins,*parities) + 
-                       chain(smp,nu,*lambdas,resonances_filled[1],bls_in_mapped[1],bls_out_mapped[1],2,*masses,*spins,*parities) + 
-                       chain(smp,nu,*lambdas,resonances_filled[0],bls_in_mapped[0],bls_out_mapped[0],1,*masses,*spins,*parities)
+                tmp = (chain(smp,nu,*lambdas,resonances_filled[2],bls_in_mapped[2],bls_out_mapped[2],3,*masses,*parities,*spins) + 
+                       chain(smp,nu,*lambdas,resonances_filled[1],bls_in_mapped[1],bls_out_mapped[1],2,*masses,*parities,*spins) + 
+                       chain(smp,nu,*lambdas,resonances_filled[0],bls_in_mapped[0],bls_out_mapped[0],1,*masses,*parities,*spins)
                 )
                 return tmp
             ampl =  sum(
@@ -107,9 +107,9 @@ def construct_function(masses,spins,parities,params,mapping_dict,
             update(mapping_dict,bls_out_mapped)
 
             def O(nu,lambdas):       
-                tmp = (chain(smp,nu,*lambdas,resonances_filled[2],bls_in_mapped[2],bls_out_mapped[2],3,*masses,*spins,*parities) + 
-                       chain(smp,nu,*lambdas,resonances_filled[1],bls_in_mapped[1],bls_out_mapped[1],2,*masses,*spins,*parities) + 
-                       chain(smp,nu,*lambdas,resonances_filled[0],bls_in_mapped[0],bls_out_mapped[0],1,*masses,*spins,*parities)
+                tmp = (chain(smp,nu,*lambdas,resonances_filled[2],bls_in_mapped[2],bls_out_mapped[2],3,*masses,*parities,*spins) + 
+                       chain(smp,nu,*lambdas,resonances_filled[1],bls_in_mapped[1],bls_out_mapped[1],2,*masses,*parities,*spins) + 
+                       chain(smp,nu,*lambdas,resonances_filled[0],bls_in_mapped[0],bls_out_mapped[0],1,*masses,*parities,*spins)
                 )
                 return tmp
             return O(nu,lambdas)
