@@ -57,7 +57,7 @@ def test_DecayTree():
         ampl = ampl_func(smp).block_until_ready()
         print("Amplitude 1 Done")
         print(abs((np.array(ampl) - np.load(amplitude_dump)) /np.load(amplitude_dump)))
-        smp_large = phsp.rectangular_grid_sample(30000,1000)
+        smp_large = phsp.rectangular_grid_sample(15000,1000)
         import time
         from tqdm import tqdm
         for i in tqdm(range(100000)):
