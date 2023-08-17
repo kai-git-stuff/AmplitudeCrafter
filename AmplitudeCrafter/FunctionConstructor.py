@@ -1,4 +1,4 @@
-from jitter.amplitudes.dalitz_plot_function import DalitzDecay, chain
+from jitter.amplitudes.dalitz_plot_function import chain, DalitzDecay
 from jitter.constants import spin as sp
 from AmplitudeCrafter.Resonances import map_arguments
 from jax import numpy as jnp
