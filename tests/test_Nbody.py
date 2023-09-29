@@ -1,10 +1,15 @@
 from AmplitudeCrafter.Nbody import DecayTopology
-from AmplitudeCrafter.Nbody.DecayTopology import generateTreeDefinitions, Node
+from AmplitudeCrafter.Nbody.DecayTopology import generateTreeDefinitions, Node, TopologyGroup
 
+tg = TopologyGroup(0,[1,2,3,4])
+assert len(tg.trees) == 15
 
-# print(generateTreeDefinitions([1,2,3]))
-for l,r in generateTreeDefinitions([1,2,3]):
-    root = Node(0)
-    root.add_daughter(l)
-    root.add_daughter(r)
-    print(root)
+tg = TopologyGroup(0,[1,2,3])
+assert len(tg.trees) == 3
+
+tg = TopologyGroup(0,[1,2])
+assert len(tg.trees) == 1
+
+tg = TopologyGroup(0,[1,2,3,4,5])
+assert len(tg.trees) == 105
+
