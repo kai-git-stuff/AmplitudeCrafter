@@ -2,6 +2,7 @@
 import numpy as np
 from typing import List, Tuple, Optional
 from functools import cache
+from AmplitudeCrafter.ParticleLibrary import Particle
 
 
 class Node:
@@ -77,18 +78,20 @@ def generateTreeDefinitions(nodes:List[int]) -> List[Node]:
 
 
 class TopologyGroup:
-    def __init__(self, start_node:int, final_state_nodes:List[int]):
+    def __init__(self, start_node:Particle, final_state_nodes:List[Particle]):
         self.start_node = start_node
         self.final_state_nodes = final_state_nodes
+        self.node_numbers = {i:node for i,node in enumerate([start_node] + final_state_nodes)}
     
-    # @property
-    # @cache
-    # def intermediate_nodes(self):
-    #     nodes = {}
-    #     for i, node1 in enumerate(self.final_state_nodes[:-1]):
-    #         for node2 in self.final_state_nodes[i+1:]:
-    #             nodes[(node1.value, node2.value)] = Node((node1.value, node2.value))
-    #     return nodes
+    @property
+    @cache
+    def intermediate_nodes(self):
+        nodes = {}
+        for i, node1 in enumerate(self.final_state_nodes[:-1]):
+            for j_ , node2 in enumerate(self.final_state_nodes[i+1:]):
+                j = i + j_ + 1
+                nodes[(i, j)] = (node1, node2)
+        return nodes
     
     @property
     @cache
@@ -101,24 +104,35 @@ class TopologyGroup:
             root.add_daughter(r)
             trees_with_root_node.append(root)
         return trees_with_root_node
+    
+    @property
+    @cache
+    def topologies(self):
+        return [Topology(self, tree) for tree in self.trees]
+    
+
+    @property
+    @cache
+    def nodes(self):
+        nodes = self.nodes.copy()
+        nodes.update({(i, None):node for i,node in self.node_numbers.items()})
+        return nodes
         
 class Topology:
 
-    def __init__(self):
+    def __init__(self, group:TopologyGroup, tree:Tree):
         """
         Class to represent the topology of an N-body decay.
         Parameters: topology: List of integers representing the topology of the decay
         """
-        self.topology = topology
-        self.nodes = nodes
+        self.group = group
+        self.__tree = tree
 
     @property
-    @cache
     def tree(self):
         """
         Returns: Tree representation of the topology
         """
-        nodes = [Node(i) for i in self.nodes]
+        return self.__tree
     
 
-        return Tree(nodes[0])
