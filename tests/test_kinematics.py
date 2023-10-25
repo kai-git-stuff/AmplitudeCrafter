@@ -53,5 +53,11 @@ def test_kinematics():
         ) < 2 + 1e-10
     )
 
+    rot = rotation_matrix_2_2_x(1.2) @ rotation_matrix_2_2_y(1.8) #  @ rotation_matrix_2_2_z(1.2) 
+    coeffs = reverse_rotation(rot)
+    rot2 = rotation_matrix_2_2_x(-coeffs[1].imag) @ rotation_matrix_2_2_y(-coeffs[2].imag) #  @ rotation_matrix_2_2_z(1.2)
+    print(coeffs)
+    print(rot -rot2)
+
 if __name__ == "__main__":
     test_kinematics()
