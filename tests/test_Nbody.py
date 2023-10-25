@@ -29,4 +29,3 @@ tg = TopologyGroup(0,[1,2,3,4,5])
 assert len(tg.trees) == 105
 
 
-# tg = TopologyGroup(0,[1,2,3,4,5, 6])

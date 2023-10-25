@@ -13,8 +13,8 @@ def testParameter():
     p3 = particle.get_particle("K")
     this_dir = os.path.dirname(__file__)
 
-    amplitude_file = os.path.join(this_dir,"Xi_1.yml")
-    amplitude_file_dump = os.path.join(this_dir,"Xi_1_dump.yml")
+    amplitude_file = os.path.join(this_dir,"resonance_configs/Xi_1.yml")
+    amplitude_file_dump = os.path.join(this_dir,"resonance_configs/Xi_1_dump.yml")
 
     amplitude = DalitzAmplitude(p0,p1,p2,p3)
     amplitude.load_resonances(amplitude_file)
@@ -39,14 +39,14 @@ def testParameter():
     print([(k,v, mapping_dict2[k])  for k,v in mapping_dict1.items() if (v != mapping_dict2[k])])
     # assert sum([(v != mapping_dict2[k]) for k,v in mapping_dict1.items()]) == len(args_1)
 
-    amplitude_file = os.path.join(this_dir,"Xi_1.yml")
+    amplitude_file = os.path.join(this_dir,"resonance_configs/Xi_1.yml")
     amplitude = DalitzAmplitude(p0,p1,p2,p3)
     amplitude.load_resonances(amplitude_file)
-    amplitude.add_resonances(os.path.join(this_dir,"anyParticle.yml"))
+    amplitude.add_resonances(os.path.join(this_dir,"resonance_configs/anyParticle.yml"))
     args = amplitude.get_args(False)
     print(args)
     print(amplitude.mapping_dict)
-    amplitude.dump(amplitude.get_args(True), os.path.join(this_dir,"Combined.yml"))
+    amplitude.dump(amplitude.get_args(True), os.path.join(this_dir,"resonance_configs/Combined.yml"))
  
 if __name__ == "__main__":
     testParameter()

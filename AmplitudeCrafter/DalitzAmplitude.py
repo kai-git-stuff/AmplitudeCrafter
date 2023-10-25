@@ -15,9 +15,7 @@ from jax import numpy as jnp
 from multiprocessing import Pool
 from AmplitudeCrafter.helpers import flatten, ensure_numeric
 import warnings
-def run(self,args,smp,nu,lambdas,resonance):
-    f,start = self.get_amplitude_function(smp,resonances=[resonance],total_absolute=False, just_in_time_compile = False)
-    return f(args,nu,lambdas)
+
 class DalitzAmplitude:
     def __init__(self,p0:particle,p1:particle,p2:particle,p3:particle):
         self.particles = [p1,p2,p3]
@@ -230,22 +228,6 @@ class DalitzAmplitude:
 
     def run_function(self,args,smp,resonances = None,parallel = False):
         raise NotImplementedError()
-        pool = Pool(6)
-        if resonances is None:
-            resonances = list(self.resonance_map.keys())
-        amplitude_abs = jnp.zeros_like(smp[...,0],dtype=jnp.float64)
-
-        for nu in sp.direction_options(self.p0.spin):
-            for lambdas in helicity_options_nojit(*[p.spin for p in self.particles]):
-                if not parallel:
-                    amplitudes = []
-                    for resonance in resonances:
-                        amplitudes.append( run(self,args,smp,args,nu,lambdas,resonance))
-                else:
-                    amplitudes = pool.map(run,[(self,args,smp,nu,lambdas,resonance) for resonance in resonances])
-                amplitude = sum(amplitudes)
-                amplitude_abs += jnp.abs(amplitude)**2
-        return amplitude_abs
     
     def get_args(self,numeric=False):
         if numeric is True:

@@ -4,9 +4,9 @@ from jax.config import config
 
 config.update("jax_enable_x64", True)
 dir = os.path.dirname(__file__)
-amplitude_file = os.path.join(dir,"DKmatrix+Xi_c_2791+Ds3_2860+D2300.yml")
-dump_file = os.path.join(dir,"Xi_1_dump.yml")
-cov_file = os.path.join(dir,"DKmatrix+Xi_c_2791+Ds3_2860+D2300_cov.yml")
+amplitude_file = os.path.join(dir,"resonance_configs/DKmatrix+Xi_c_2791+Ds3_2860+D2300.yml")
+dump_file = os.path.join(dir,"resonance_configs/Xi_1_dump.yml")
+cov_file = os.path.join(dir,"resonance_configs/resonance_configs/DKmatrix+Xi_c_2791+Ds3_2860+D2300_cov.yml")
 amplitude_dump = os.path.join(dir,"ampl.npy")
 
 def test_DecayTree():

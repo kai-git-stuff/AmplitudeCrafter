@@ -57,7 +57,7 @@ def gamma(p):
     Args:
         p (_type_): momentum 4-vector
     """
-    return p[...,0]/ jnp.sqrt(p[...,0]**2 - jnp.sum(p[...,1:]**2))
+    return p[...,0]/ jnp.sqrt(p[...,0]**2 - jnp.sum(p[...,1:]**2, axis=-1))
 
 def rapidity(p):
     r"""calculate rapidity
@@ -67,3 +67,12 @@ def rapidity(p):
     """
     g = gamma(p)
     return 0.5 * jnp.log((g + 1) / (g - 1))
+
+def reverse_rotation(rotation_matrix):
+    """recover the rotation angles from a pure rotation matrix
+    WARNING: This function has undefine behaviur for non pure rotation matrices
+
+    Args:
+        rotation_matrix (_type_): _description_
+    """
+    

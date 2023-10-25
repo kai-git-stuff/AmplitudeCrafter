@@ -8,9 +8,9 @@ this_dir = os.path.dirname(__file__)
 
 def test_AmplitudeConstitency():
 
-    amplitude_file = os.path.join(this_dir,"DKmatrix+Xi_c_2791+Ds3_2860+D2300.yml")
-    dump_file = os.path.join(this_dir,"Xi_1_dump.yml")
-    cov_file = os.path.join(this_dir,"DKmatrix+Xi_c_2791+Ds3_2860+D2300_cov.yml")
+    amplitude_file = os.path.join(this_dir,"resonance_configs/DKmatrix+Xi_c_2791+Ds3_2860+D2300.yml")
+    dump_file = os.path.join(this_dir,"resonance_configs/Xi_1_dump.yml")
+    cov_file = os.path.join(this_dir,"resonance_configs/resonance_configs/DKmatrix+Xi_c_2791+Ds3_2860+D2300_cov.yml")
 
     amplitude_dump = os.path.join(this_dir,"ampl.npy")
     p0 = particle.get_particle("Lb")
@@ -37,13 +37,13 @@ def test_DynamicL():
     p3 = particle.get_particle("K")
     amplitude = DalitzAmplitude(p0,p1,p2,p3)
     
-    amplitude_file = "/home/kai/LHCb/AmplitudeCrafter/tests/Xi_1_fixedL.yml"
+    amplitude_file = "/home/kai/LHCb/AmplitudeCrafter/tests/resonance_configs/Xi_1_fixedL.yml"
     amplitude.load_resonances(amplitude_file)
     smp = amplitude.phsp.rectangular_grid_sample(10,10)
     f, start = amplitude.get_amplitude_function(smp)
     res_fix_L = f(start)
 
-    amplitude_file = "/home/kai/LHCb/AmplitudeCrafter/tests/Xi_1.yml"
+    amplitude_file = "/home/kai/LHCb/AmplitudeCrafter/tests/resonance_configs/Xi_1.yml"
     amplitude.load_resonances(amplitude_file)
     f, start = amplitude.get_amplitude_function(smp)
 
