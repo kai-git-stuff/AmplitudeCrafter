@@ -51,49 +51,43 @@ def rotation_matrix_2_2_z(theta):
     Args:
         theta (float): rotation angle around z axis
     """
-    return jnp.array([[jnp.exp(-1j*theta/2), 0], 
-                    [0, jnp.exp(1j*theta/2)]])
+    I = jnp.array([[1, 0], [0, 1]])
+    sgma_z = jnp.array([[1, 0], [0, -1]])
+    return jnp.cos(theta/2)*I - 1j*jnp.sin(theta/2)*sgma_z
 
-def build_2_2(theta, phi, xi, theta_rf, phi_rf, xi_rf):
-    return rotation_matrix_2_2_z(theta) @ rotation_matrix_2_2_y(phi) @ boost_matrix_2_2_z(xi) @ rotation_matrix_2_2_z(theta_rf) @ rotation_matrix_2_2_y(phi_rf) @ boost_matrix_2_2_z(xi_rf)
 
 
 def boost_matrix_4_4_z(xi):
     gamma = jnp.cosh(xi)
     beta_gamma = jnp.sinh(xi)
     return jnp.array([
-        1, 0, 0, 0,
-        0, 1, 0, 0,
-        0, 0, gamma, beta_gamma,
-        0, 0, beta_gamma, gamma
-    ])
-
-def rotation_matrix_4_4_x(theta):
-    return jnp.array([
-        1, 0, 0, 0,
-        0, jnp.cos(theta), -jnp.sin(theta), 0,
-        0, jnp.sin(theta), jnp.cos(theta), 0,
-        0, 0, 0, 1
+        [1, 0, 0, 0,],
+        [0, 1, 0, 0,],
+        [0, 0, gamma, beta_gamma,],
+        [0, 0, beta_gamma, gamma,]
     ])
 
 def rotation_matrix_4_4_y(theta):
     return jnp.array([
-        jnp.cos(theta), 0, -jnp.sin(theta), 0,
-        0, 1, 0, 0,
-        jnp.sin(theta), 0, jnp.cos(theta), 0,
-        0, 0, 0, 1
+        [jnp.cos(theta), 0, jnp.sin(theta), 0,],
+        [0, 1, 0, 0,],
+        [-jnp.sin(theta), 0, jnp.cos(theta), 0,],
+        [0, 0, 0, 1]
     ])
 
 def rotation_matrix_4_4_z(theta):
     return jnp.array([
-        jnp.cos(theta), -jnp.sin(theta), 0, 0,
-        jnp.sin(theta), jnp.cos(theta), 0, 0,
-        0, 0, 1, 0,
-        0, 0, 0, 1
+        [jnp.cos(theta), -jnp.sin(theta), 0, 0,],
+        [jnp.sin(theta), jnp.cos(theta), 0, 0,],
+        [0, 0, 1, 0,],
+        [0, 0, 0, 1]
     ])
 
-def build_4_4(theta, phi, xi, theta_rf, phi_rf, xi_rf):
-    return rotation_matrix_4_4_z(theta) @ rotation_matrix_4_4_y(phi) @ boost_matrix_4_4_z(xi) @ rotation_matrix_4_4_z(theta_rf) @ rotation_matrix_4_4_y(phi_rf) @ boost_matrix_4_4_z(xi_rf)
+def build_2_2(psi, theta, xi, theta_rf, phi_rf, psi_rf):
+    return rotation_matrix_2_2_z(psi) @ rotation_matrix_2_2_y(theta) @ boost_matrix_2_2_z(xi) @ rotation_matrix_2_2_z(phi_rf) @ rotation_matrix_2_2_y(theta_rf) @ boost_matrix_2_2_z(psi_rf)
+
+def build_4_4(psi, theta, xi, theta_rf, phi_rf, psi_rf):
+    return rotation_matrix_4_4_z(psi) @ rotation_matrix_4_4_y(theta) @ boost_matrix_4_4_z(xi) @ rotation_matrix_4_4_z(phi_rf) @ rotation_matrix_4_4_y(theta_rf) @ boost_matrix_4_4_z(psi_rf)
 
 
 def decode_rotation_4x4(R):
@@ -102,27 +96,42 @@ def decode_rotation_4x4(R):
     Args:
         matrix (_type_): _description_
     """
-    phi = jnp.arctan2(R[...,1,2], R[...,0,2])
-    theta = jnp.arccos(R[...,2,2])
-    psi = jnp.arctan2(R[...,2,1], -R[...,2,0])
-    return theta, phi, psi
+    phi = jnp.arctan2(R[1,2], R[0,2])
+    theta = jnp.arccos(R[2,2])
+    psi = jnp.arctan2(R[2,1], -R[2,0])
+    return phi, theta, psi
 
 def decode_4_4(matrix):
     m = 1.0
     V0 = jnp.array([0, 0, 0, m])
 
+    # V = jnp.dot(matrix, V0)
     V = matrix @ V0
     w = jkm.time_component(V)
     p = jnp.sum(jkm.spatial_components(V)**2, axis=-1)**0.5
     gamma = w / m
     xi = jnp.arccosh(gamma)
+
     psi = jnp.arctan2(jkm.y_component(V), jkm.x_component(V))
     theta = jnp.arccos(jkm.z_component(V) / p)
 
-    M_rf = boost_matrix_4_4_z(-xi) @ rotation_matrix_4_4_y(-psi) @ rotation_matrix_4_4_z(-theta) @ matrix
-    theta_rf, phi_rf, psi_rf = decode_rotation_4x4(M_rf)
-
+    M_rf = boost_matrix_4_4_z(-xi) @ rotation_matrix_4_4_y(-theta) @ rotation_matrix_4_4_z(-psi) @ matrix
+    phi_rf, theta_rf, psi_rf = decode_rotation_4x4(M_rf)
+    # assert np.allclose(matrix, build_4_4(psi, theta, xi, theta_rf, phi_rf, psi_rf))
     return psi, theta, xi, phi_rf, theta_rf,  psi_rf
+
+def adjust_for_2pi_rotation(M_original_2x2, psi, theta, xi, theta_rf, phi_rf, psi_rf):
+    new_2x2 = build_2_2(psi, theta, xi, theta_rf, phi_rf, psi_rf)
+    
+    print(M_original_2x2 + new_2x2)
+
+
+    if np.allclose(M_original_2x2, new_2x2):
+        return psi, theta, xi, theta_rf, phi_rf, psi_rf
+    elif np.allclose(M_original_2x2, -new_2x2):
+        return psi, theta, xi, theta_rf, phi_rf, psi_rf + 2*np.pi
+    else:
+        raise ValueError("The matrix is not a rotation matrix")
 
 def gamma(p):
     r"""calculate gamma factor
@@ -141,31 +150,31 @@ def rapidity(p):
     g = gamma(p)
     return 0.5 * jnp.log((g + 1) / (g - 1))
 
-def decompose_sum_of_pauli_matrices(matrix):
-    """decompose a matrix into a sum of pauli matrices
+# def decompose_sum_of_pauli_matrices(matrix):
+#     """decompose a matrix into a sum of pauli matrices
 
-    Args:
-        matrix (_type_): _description_
-    """
-    matrix = np.array(matrix)
-    pauli_matrices = [np.array([[1,0],[0,1]]),
-                      np.array([[0,1],[1,0]]),
-                      np.array([[0,-1j],[1j,0]]),
-                      np.array([[1,0],[0,-1]])]
-    pauli_coefficients = []
-    for pauli_matrix in pauli_matrices:
-        pauli_coefficients.append(np.trace(matrix @ pauli_matrix))
-    return pauli_coefficients
+#     Args:
+#         matrix (_type_): _description_
+#     """
+#     matrix = np.array(matrix)
+#     pauli_matrices = [np.array([[1,0],[0,1]]),
+#                       np.array([[0,1],[1,0]]),
+#                       np.array([[0,-1j],[1j,0]]),
+#                       np.array([[1,0],[0,-1]])]
+#     pauli_coefficients = []
+#     for pauli_matrix in pauli_matrices:
+#         pauli_coefficients.append(np.trace(matrix @ pauli_matrix))
+#     return pauli_coefficients
 
-def reverse_rotation(rotation_matrix):
-    """recover the rotation angles from a pure rotation matrix
-    WARNING: This function has undefine behaviur for non pure rotation matrices
+# def reverse_rotation(rotation_matrix):
+#     """recover the rotation angles from a pure rotation matrix
+#     WARNING: This function has undefine behaviur for non pure rotation matrices
 
-    Args:
-        rotation_matrix (_type_): _description_
-    """
-    rotation_matrix = np.array(rotation_matrix)
-    sum_of_angle_scaled_pauli_matirces = la.logm(rotation_matrix)
-    pauli_coefficients = decompose_sum_of_pauli_matrices(sum_of_angle_scaled_pauli_matirces)
+#     Args:
+#         rotation_matrix (_type_): _description_
+#     """
+#     rotation_matrix = np.array(rotation_matrix)
+#     sum_of_angle_scaled_pauli_matirces = la.logm(rotation_matrix)
+#     pauli_coefficients = decompose_sum_of_pauli_matrices(sum_of_angle_scaled_pauli_matirces)
 
-    return pauli_coefficients
+#     return pauli_coefficients

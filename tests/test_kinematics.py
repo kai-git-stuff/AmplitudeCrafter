@@ -1,4 +1,5 @@
 from AmplitudeCrafter.Nbody.kinematics import *
+from AmplitudeCrafter.Nbody.lorentz import su2_lorentz_boost
 from jax import numpy as jnp
 import jax
 import numpy as np
@@ -53,11 +54,17 @@ def test_kinematics():
         ) < 2 + 1e-10
     )
 
-    rot = rotation_matrix_2_2_x(1.2) @ rotation_matrix_2_2_y(1.8) #  @ rotation_matrix_2_2_z(1.2) 
-    coeffs = reverse_rotation(rot)
-    rot2 = rotation_matrix_2_2_x(-coeffs[1].imag) @ rotation_matrix_2_2_y(-coeffs[2].imag) #  @ rotation_matrix_2_2_z(1.2)
-    print(coeffs)
-    print(rot -rot2)
+    psi, theta, xi, theta_rf, phi_rf, psi_rf = 0.1, 0.2, 0.3, 0.4, 0.5, 0.6
+    boost = su2_lorentz_boost(psi, theta, xi, theta_rf, phi_rf, psi_rf)
+    M = build_4_4(psi, theta, xi, theta_rf, phi_rf, psi_rf)
+    # M = build_4_4(1,1,1,1,1,1)
+    psi, theta, xi, phi_rf, theta_rf,  psi_rf = decode_4_4(M)
+    assert np.allclose(M, build_4_4(psi, theta, xi, theta_rf, phi_rf, psi_rf))
+    # print(psi, theta, xi, phi_rf, theta_rf,  psi_rf)
+
+    psi, theta, xi, phi_rf, theta_rf,  psi_rf = boost.decode()
+    print(psi, theta, xi, phi_rf, theta_rf,  psi_rf)
+    
 
 if __name__ == "__main__":
     test_kinematics()
