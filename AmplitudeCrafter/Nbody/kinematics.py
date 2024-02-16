@@ -3,6 +3,11 @@ import numpy as np
 import scipy.linalg as la
 from jitter import kinematics as jkm
 
+def T(f):
+    def _f(*args, **kwargs):
+        return jnp.array(f(*args, **kwargs)).T
+    return _f
+
 def boost_matrix_2_2_x(xi):
     r"""
     [ B_x(\xi_x) = e^{\frac{\xi_x}{2} \sigma^1} = \begin{bmatrix} \cosh\left(\frac{\xi_x}{2}\right) & \sinh\left(\frac{\xi_x}{2}\right) \ \sinh\left(\frac{\xi_x}{2}\right) & \cosh\left(\frac{\xi_x}{2}\right) \end{bmatrix} ]
@@ -55,8 +60,6 @@ def rotation_matrix_2_2_z(theta):
     sgma_z = jnp.array([[1, 0], [0, -1]])
     return jnp.cos(theta/2)*I - 1j*jnp.sin(theta/2)*sgma_z
 
-
-
 def boost_matrix_4_4_z(xi):
     gamma = jnp.cosh(xi)
     beta_gamma = jnp.sinh(xi)
@@ -84,10 +87,10 @@ def rotation_matrix_4_4_z(theta):
     ])
 
 def build_2_2(psi, theta, xi, theta_rf, phi_rf, psi_rf):
-    return rotation_matrix_2_2_z(psi) @ rotation_matrix_2_2_y(theta) @ boost_matrix_2_2_z(xi) @ rotation_matrix_2_2_z(phi_rf) @ rotation_matrix_2_2_y(theta_rf) @ boost_matrix_2_2_z(psi_rf)
+    return (rotation_matrix_2_2_z(psi) @ rotation_matrix_2_2_y(theta) @ boost_matrix_2_2_z(xi) @ rotation_matrix_2_2_z(phi_rf) @ rotation_matrix_2_2_y(theta_rf) @ rotation_matrix_2_2_z(psi_rf))
 
 def build_4_4(psi, theta, xi, theta_rf, phi_rf, psi_rf):
-    return rotation_matrix_4_4_z(psi) @ rotation_matrix_4_4_y(theta) @ boost_matrix_4_4_z(xi) @ rotation_matrix_4_4_z(phi_rf) @ rotation_matrix_4_4_y(theta_rf) @ boost_matrix_4_4_z(psi_rf)
+    return (rotation_matrix_4_4_z(psi) @ rotation_matrix_4_4_y(theta) @ boost_matrix_4_4_z(xi) @ rotation_matrix_4_4_z(phi_rf) @ rotation_matrix_4_4_y(theta_rf) @ rotation_matrix_4_4_z(psi_rf))
 
 
 def decode_rotation_4x4(R):
@@ -105,10 +108,9 @@ def decode_4_4(matrix):
     m = 1.0
     V0 = jnp.array([0, 0, 0, m])
 
-    # V = jnp.dot(matrix, V0)
     V = matrix @ V0
     w = jkm.time_component(V)
-    p = jnp.sum(jkm.spatial_components(V)**2, axis=-1)**0.5
+    p = jkm.p(V)
     gamma = w / m
     xi = jnp.arccosh(gamma)
 
@@ -116,8 +118,7 @@ def decode_4_4(matrix):
     theta = jnp.arccos(jkm.z_component(V) / p)
 
     M_rf = boost_matrix_4_4_z(-xi) @ rotation_matrix_4_4_y(-theta) @ rotation_matrix_4_4_z(-psi) @ matrix
-    phi_rf, theta_rf, psi_rf = decode_rotation_4x4(M_rf)
-    # assert np.allclose(matrix, build_4_4(psi, theta, xi, theta_rf, phi_rf, psi_rf))
+    phi_rf, theta_rf, psi_rf = decode_rotation_4x4(M_rf[:3, :3])
     return psi, theta, xi, phi_rf, theta_rf,  psi_rf
 
 def adjust_for_2pi_rotation(M_original_2x2, psi, theta, xi, theta_rf, phi_rf, psi_rf):
@@ -139,7 +140,7 @@ def gamma(p):
     Args:
         p (_type_): momentum 4-vector
     """
-    return p[...,0]/ jnp.sqrt(p[...,0]**2 - jnp.sum(p[...,1:]**2, axis=-1))
+    return jkm.time_component(p) / jkm.mass(p)
 
 def rapidity(p):
     r"""calculate rapidity
@@ -149,32 +150,3 @@ def rapidity(p):
     """
     g = gamma(p)
     return 0.5 * jnp.log((g + 1) / (g - 1))
-
-# def decompose_sum_of_pauli_matrices(matrix):
-#     """decompose a matrix into a sum of pauli matrices
-
-#     Args:
-#         matrix (_type_): _description_
-#     """
-#     matrix = np.array(matrix)
-#     pauli_matrices = [np.array([[1,0],[0,1]]),
-#                       np.array([[0,1],[1,0]]),
-#                       np.array([[0,-1j],[1j,0]]),
-#                       np.array([[1,0],[0,-1]])]
-#     pauli_coefficients = []
-#     for pauli_matrix in pauli_matrices:
-#         pauli_coefficients.append(np.trace(matrix @ pauli_matrix))
-#     return pauli_coefficients
-
-# def reverse_rotation(rotation_matrix):
-#     """recover the rotation angles from a pure rotation matrix
-#     WARNING: This function has undefine behaviur for non pure rotation matrices
-
-#     Args:
-#         rotation_matrix (_type_): _description_
-#     """
-#     rotation_matrix = np.array(rotation_matrix)
-#     sum_of_angle_scaled_pauli_matirces = la.logm(rotation_matrix)
-#     pauli_coefficients = decompose_sum_of_pauli_matrices(sum_of_angle_scaled_pauli_matirces)
-
-#     return pauli_coefficients
