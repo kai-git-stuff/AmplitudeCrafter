@@ -28,6 +28,7 @@ def check_bls(mother:particle,daughter1:particle,daughter2:particle,bls,parity_c
     Ls_bls = [L for L,S in bls.keys()]
     Lset = set([L for L,_ in Ls])
     Sset = set([S for L,S in Ls])
+    checkSet = set(Ls)
     if min(Ls_bls) != minL:
         raise ValueError(f"""Lowest partial wave {(minL,minS)} not contained in LS couplings {list(bls.keys())}!
         Values {mother} -> {daughter1} {daughter2} 
@@ -40,6 +41,11 @@ def check_bls(mother:particle,daughter1:particle,daughter2:particle,bls,parity_c
         string = "; ".join([str(S) for L,S in bls.keys() if not S in Sset])
         raise ValueError(f"""Not all S couplings possible! {string} 
                         For decay {mother} -> {daughter1} {daughter2}""")
+    for (L, S) in bls.keys():
+        if not (L,S) in checkSet:
+            raise ValueError(f"""Partial wave {(L,S)} not contained in LS couplings {Ls}!
+            Values {mother} -> {daughter1} {daughter2} 
+            Parity{" " if parity_conserved else " not "}conserved!""")
 
 def flatten(listoflists):
     lst = []
