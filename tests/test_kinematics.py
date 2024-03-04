@@ -1,5 +1,4 @@
 from AmplitudeCrafter.Nbody.kinematics import *
-from AmplitudeCrafter.Nbody.lorentz import su2_lorentz_boost
 from jax import numpy as jnp
 import jax
 import numpy as np

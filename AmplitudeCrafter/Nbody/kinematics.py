@@ -25,39 +25,44 @@ def boost_matrix_2_2_y(xi):
 
 def boost_matrix_2_2_z(xi):
     r"""
-    [ B_z(\xi_z) = e^{\frac{\xi_z}{2} \sigma^3} = \begin{bmatrix} e^{\frac{\xi_z}{2}} & 0 \ 0 & e^{-\frac{\xi_z}{2}} \end{bmatrix} ]
     Args:
         xi (float): rapidity of the boost
     """
-    return jnp.array([[jnp.exp(xi/2), 0], 
-                        [0, jnp.exp(-xi/2)]])
+    return jnp.cosh(xi/2)*jnp.array([[1, 0],
+                                    [0, 1]]) + jnp.sinh(xi/2)*jnp.array([[0, 1],
+                                                                        [1, 0]])
 
 def rotation_matrix_2_2_x(theta):
     r"""
-     \begin{bmatrix} \cos\left(\frac{\theta_x}{2}\right) & -i \sin\left(\frac{\theta_x}{2}\right) \ -i \sin\left(\frac{\theta_x}{2}\right) & \cos\left(\frac{\theta_x}{2}\right) \end{bmatrix} ]
     Args:
         theta (float): rotation angle around x axis
     """
-    return jnp.array([[jnp.cos(theta/2), -1j*jnp.sin(theta/2)], 
-                    [-1j*jnp.sin(theta/2), jnp.cos(theta/2)]])
+    I = jnp.array([[1, 0],
+                   [0, 1]])
+    sgma_x = jnp.array([[0, 1],
+                        [1, 0]])
+    return jnp.cos(theta/2) * I - 1j*jnp.sin(theta/2)*sgma_x
 
 def rotation_matrix_2_2_y(theta):
     r"""
-    [ R_y(\theta_y) = e^{-i \frac{\theta_y}{2} \sigma^2} = \begin{bmatrix} \cos\left(\frac{\theta_y}{2}\right) & -\sin\left(\frac{\theta_y}{2}\right) \ \sin\left(\frac{\theta_y}{2}\right) & \cos\left(\frac{\theta_y}{2}\right) \end{bmatrix} ]
     Args:
         theta (float): rotation angle around y axis
     """
-    return jnp.array([[jnp.cos(theta/2), -jnp.sin(theta/2)], 
-                    [jnp.sin(theta/2), jnp.cos(theta/2)]])
+    I = jnp.array([[1, 0],
+                     [0, 1]])
+    sgma_y = jnp.array([[0, -1],
+                        [1, 0]])
+    return jnp.cos(theta/2)*I - jnp.sin(theta/2)*sgma_y
 
 def rotation_matrix_2_2_z(theta):
     r"""
-    [ R_z(\theta_z) = e^{-i \frac{\theta_z}{2} \sigma^3} = \begin{bmatrix} e^{-i \frac{\theta_z}{2}} & 0 \ 0 & e^{i \frac{\theta_z}{2}} \end{bmatrix} ]
     Args:
         theta (float): rotation angle around z axis
     """
-    I = jnp.array([[1, 0], [0, 1]])
-    sgma_z = jnp.array([[1, 0], [0, -1]])
+    I = jnp.array([[1, 0], 
+                   [0, 1]])
+    sgma_z = jnp.array([[1,  0], 
+                        [0, -1]])
     return jnp.cos(theta/2)*I - 1j*jnp.sin(theta/2)*sgma_z
 
 def boost_matrix_4_4_z(xi):
@@ -119,18 +124,19 @@ def decode_4_4(matrix):
 
     M_rf = boost_matrix_4_4_z(-xi) @ rotation_matrix_4_4_y(-theta) @ rotation_matrix_4_4_z(-psi) @ matrix
     phi_rf, theta_rf, psi_rf = decode_rotation_4x4(M_rf[:3, :3])
-    return psi, theta, xi, phi_rf, theta_rf,  psi_rf
+    return psi, theta, xi, phi_rf, theta_rf, psi_rf
 
-def adjust_for_2pi_rotation(M_original_2x2, psi, theta, xi, theta_rf, phi_rf, psi_rf):
-    new_2x2 = build_2_2(psi, theta, xi, theta_rf, phi_rf, psi_rf)
+def adjust_for_2pi_rotation(M_original_2x2, psi, theta, xi, phi_rf, theta_rf, psi_rf):
+    new_2x2 = build_2_2(psi, theta, xi, phi_rf, theta_rf, psi_rf)
     
     print(M_original_2x2 + new_2x2)
-
+    print(M_original_2x2)
+    print(new_2x2)
 
     if np.allclose(M_original_2x2, new_2x2):
-        return psi, theta, xi, theta_rf, phi_rf, psi_rf
+        return psi, theta, xi, phi_rf, theta_rf, psi_rf
     elif np.allclose(M_original_2x2, -new_2x2):
-        return psi, theta, xi, theta_rf, phi_rf, psi_rf + 2*np.pi
+        return psi, theta, xi, phi_rf, theta_rf, psi_rf + 2*np.pi
     else:
         raise ValueError("The matrix is not a rotation matrix")
 
