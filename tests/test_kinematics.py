@@ -27,23 +27,37 @@ def test_kinematics():
         )
         ) < 2 + 1e-10
     )
-    assert ( jnp.sum(
-        abs(
-        rotation_matrix_2_2_x(-1.2) @ rotation_matrix_2_2_x(1.2)
-                    )
-        ) < 2 + 1e-10
+    assert ( jnp.allclose(
+        rotation_matrix_2_2_x(-1.2) @ rotation_matrix_2_2_x(1.2),
+        jnp.eye(2)
+        ) 
     )
-    assert ( jnp.sum(
-        abs(
-        rotation_matrix_2_2_y(-1.2) @ rotation_matrix_2_2_y(1.2)
-                    )
-        ) < 2 + 1e-10
+    assert ( jnp.allclose(
+        rotation_matrix_2_2_y(-1.2) @ rotation_matrix_2_2_y(1.2),
+        jnp.eye(2)
+        ) 
     )
-    assert ( jnp.sum(
-        abs(
-        rotation_matrix_2_2_z(-1.2) @ rotation_matrix_2_2_z(1.2)
-                    )
-        ) < 2 + 1e-10
+    assert ( jnp.allclose(
+        rotation_matrix_2_2_z(-1.2) @ rotation_matrix_2_2_z(1.2),
+        jnp.eye(2)
+        ) 
+    )
+
+
+    print(
+        rotation_matrix_2_2_y(1.2) ,"\n" ,-rotation_matrix_2_2_y(1.2 + 2*jnp.pi)
+    )
+    assert ( jnp.allclose(
+        rotation_matrix_2_2_y(1.2) , -rotation_matrix_2_2_y(1.2 + 2*jnp.pi)
+    )
+    )
+
+    print(
+        rotation_matrix_2_2_z(1.2) ,"\n" ,-rotation_matrix_2_2_z(1.2 + 2*jnp.pi)
+    )
+    assert ( jnp.allclose(
+        rotation_matrix_2_2_z(1.2) , -rotation_matrix_2_2_z(1.2 + 2*jnp.pi)
+    )
     )
 
     assert ( np.sum(
@@ -55,7 +69,7 @@ def test_kinematics():
 
     psi, theta, xi, theta_rf, phi_rf, psi_rf = -1.2, 2.3, 1.4, 2.5, 2.6, -2.7
     M = build_4_4(psi, theta, xi, theta_rf, phi_rf, psi_rf)
-    psi_, theta_, xi_, phi_rf_, theta_rf_,  psi_rf_ = decode_4_4(M)
+    psi_, theta_, xi_, theta_rf_, phi_rf_,  psi_rf_ = decode_4_4(M)
     assert np.allclose(M, build_4_4(psi_, theta_, xi_, theta_rf_, phi_rf_, psi_rf_))
     assert np.allclose(psi, psi_)
     assert np.allclose(theta, theta_)

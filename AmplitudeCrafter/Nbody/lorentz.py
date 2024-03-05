@@ -19,6 +19,5 @@ class LorentzTrafo:
     
     def decode(self):
         params = decode_4_4(self.M4)
-        print(params)
         params = adjust_for_2pi_rotation(self.M2, *params)
         return params

@@ -11,13 +11,13 @@ def test_lotentz():
     P = jnp.array([*p, (m**2 + jnp.sum(p**2))**0.5])
 
   
-    psi, theta, xi, theta_rf, phi_rf, psi_rf = -1.2, 2.3, 1.4, 2.5, 2.6, -2.7 + 2* np.pi
+    psi, theta, xi, theta_rf, phi_rf, psi_rf = -1.8, 1.3, 1.4, 1.5, 2.6, -2.1 + 2* np.pi
     M = build_4_4(psi, theta, xi, theta_rf, phi_rf, psi_rf)
 
 
     M2 = build_2_2(psi, theta, xi, theta_rf, phi_rf, psi_rf)
     trafo = LorentzTrafo(psi, theta, xi, theta_rf, phi_rf, psi_rf)
-    psi_, theta_, xi_, phi_rf_, theta_rf_,  psi_rf_ = trafo.decode()
+    psi_, theta_, xi_, theta_rf_, phi_rf_, psi_rf_ = trafo.decode()
 
     assert np.allclose(M, build_4_4(psi_, theta_, xi_, theta_rf_, phi_rf_, psi_rf_))
 

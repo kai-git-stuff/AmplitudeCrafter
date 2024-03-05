@@ -124,19 +124,15 @@ def decode_4_4(matrix):
 
     M_rf = boost_matrix_4_4_z(-xi) @ rotation_matrix_4_4_y(-theta) @ rotation_matrix_4_4_z(-psi) @ matrix
     phi_rf, theta_rf, psi_rf = decode_rotation_4x4(M_rf[:3, :3])
-    return psi, theta, xi, phi_rf, theta_rf, psi_rf
+    return psi, theta, xi, theta_rf, phi_rf,  psi_rf
 
-def adjust_for_2pi_rotation(M_original_2x2, psi, theta, xi, phi_rf, theta_rf, psi_rf):
-    new_2x2 = build_2_2(psi, theta, xi, phi_rf, theta_rf, psi_rf)
-    
-    print(M_original_2x2 + new_2x2)
-    print(M_original_2x2)
-    print(new_2x2)
+def adjust_for_2pi_rotation(M_original_2x2, psi, theta, xi, theta_rf, phi_rf,  psi_rf):
+    new_2x2 = build_2_2(psi, theta, xi, theta_rf, phi_rf,  psi_rf)
 
     if np.allclose(M_original_2x2, new_2x2):
-        return psi, theta, xi, phi_rf, theta_rf, psi_rf
+        return psi, theta, xi, theta_rf, phi_rf,  psi_rf
     elif np.allclose(M_original_2x2, -new_2x2):
-        return psi, theta, xi, phi_rf, theta_rf, psi_rf + 2*np.pi
+        return psi, theta, xi, theta_rf, phi_rf,  psi_rf + 2*np.pi
     else:
         raise ValueError("The matrix is not a rotation matrix")
 
