@@ -113,14 +113,20 @@ def try_float(string: str):
 
 class ParameterScope:
     def __init__(self, known_params=None):
-        self.dict = known_params or {}
+        if known_params is None:
+            known_params = {}
+        self.dict = known_params
 
     def __enter__(self):
         self.dict_before = parameter.set_backend(self.dict)
-        return self
+        return self.dict
 
     def __exit__(self, *args):
         parameter.set_backend(self.dict_before)
+
+    @classmethod
+    def check_scope(cls, scope_dict):
+        return scope_dict == parameter.parameters
 
 
 class parameter(ABC):

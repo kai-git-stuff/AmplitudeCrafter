@@ -6,7 +6,7 @@ from jitter.phasespace.DalitzPhasespace import DalitzPhaseSpace
 from AmplitudeCrafter.locals import config_dir
 from AmplitudeCrafter.Resonances import check_bls, load_resonances, is_free, check_if_wanted
 from AmplitudeCrafter.FunctionConstructor import construct_function
-from AmplitudeCrafter.parameters import ParameterScope
+from AmplitudeCrafter.parameters import ParameterScope, parameter
 from jitter.kinematics import two_body_momentum
 from jitter.interface import real, imaginary, conjugate
 from jitter.constants import spin as sp
@@ -69,6 +69,8 @@ class DalitzAmplitude:
                 warnings.warn("WARNING: Resoances of names %s already exist!"%double_names)
     
     def check_bls(self):
+        if not ParameterScope.check_scope(self.__scope):
+            raise ValueError("Scope not set!")
         particles = {1:(self.particles[1],self.particles[2]),
                     2:(self.particles[0],self.particles[2]),
                     3:(self.particles[0],self.particles[1])}
@@ -77,14 +79,16 @@ class DalitzAmplitude:
             pk = self.particles[k-1]
             for res in v:
                 pR = res.to_particle()
-                check_bls(self.p0,pk,pR,res.bls_in,False)
-                check_bls(pR,p1,p2,res.bls_out,True)
+                res.bls_in = check_bls(self.p0,pk,pR,res.bls_in,False)
+                self.__mapping_dict.update({p.name: p for p in res.bls_in.values()})
+                res.bls_out = check_bls(pR,p1,p2,res.bls_out,True)
+                self.__mapping_dict.update({p.name: p for p in res.bls_out.values()})
 
     def add_resonances(self,f=config_dir + "decay_example.yml"):
         if not self.loaded:
             raise ValueError("Can only add resonances if a base set is loaded!")
         with ParameterScope(self.__scope) as scope:
-            res, mapping_dict, bkg = load_resonances(f)
+            res, mapping_dict = load_resonances(f)
             for k,v in res.items():
                 self.check_new(v)
                 self.resonances[k].extend(v)
@@ -127,17 +131,15 @@ class DalitzAmplitude:
             
     def load_resonances(self,f=config_dir + "decay_example.yml"):
         with ParameterScope(self.__scope) as scope:
-            res, mapping_dict, bkg = load_resonances(f)
+            res, mapping_dict = load_resonances(f)
             self.add_file(f)
             self.resonances = res
-            if bkg is not None:
-                bkg_args, bkg_mapping_dict = bkg
-                
             self.__mapping_dict = mapping_dict
             masses= {1:(self.mb,self.mc),2:(self.ma,self.mc),3:(self.ma,self.mb)}
             for channel,resonances_channel in self.resonances.items():
                 for resonance in resonances_channel:
                     resonance.p0 = two_body_momentum(self.md,*masses[channel])
+            
             self.check_bls()
             self.__loaded = True
   

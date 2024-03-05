@@ -110,7 +110,6 @@ def load_resonances(f:str):
     resonance_dict = load(f)
     global_mapping_dict = specialParameter.load_specials()
     resonances = {1:[],2:[],3:[]}
-    bkg = None
     for resonance_name, resonance in resonance_dict.items():
         if not check_resonance_dict(resonance):
             continue
@@ -119,7 +118,7 @@ def load_resonances(f:str):
         r = Resonance(resonance,mapping_dict,resonance_name)
         resonances[resonance["channel"]].append(r)
         global_mapping_dict.update(r.mapping_dict)
-    return resonances, global_mapping_dict, bkg
+    return resonances, global_mapping_dict
 
 def get_val(arg,numeric=True):
     return arg(numeric)
@@ -175,9 +174,9 @@ class Resonance:
 
     @staticmethod
     def load_resonance(f):
-        resonances, mapping_dict, bkg = load_resonances(f)
+        resonances, mapping_dict = load_resonances(f)
         resonance, = [r for k,v in resonances.items() for r in v]
-        return resonance,mapping_dict, bkg
+        return resonance,mapping_dict
 
     def to_particle(self):
         return particle(None,self.spin,self.parity,self.name)
@@ -204,9 +203,23 @@ class Resonance:
         # TODO: maybe needs to be copied
         return self.__bls_in.copy()
     
+    @bls_in.setter
+    def bls_in(self,value):
+        if len(value) != len(self.__bls_in):
+            if len(value) != len(self.__bls_in) + 2:
+                raise ValueError("New BLS must stem from the automated adition of new partial waves in case of constraints by photons!")
+        self.__bls_in = value
+    
     @property
     def bls_out(self):
         return self.__bls_out.copy()
+    
+    @bls_out.setter
+    def bls_out(self,value):
+        if len(value) != len(self.__bls_out):
+            if len(value) != len(self.__bls_out) + 2:
+                raise ValueError("New BLS must stem from the automated adition of new partial waves in case of constraints by photons!")
+        self.__bls_out = value
 
     def tuple(self,s=None):
         return (self.spin,self.parity,sp.direction_options(self.spin),
@@ -225,6 +238,6 @@ class Resonance:
 
 if __name__=="__main__":
     from AmplitudeCrafter.locals import config_dir
-    res, mapping_dict, bkg = load_resonances(config_dir + "decay_example.yml")
+    res, mapping_dict = load_resonances(config_dir + "decay_example.yml")
     for k,v in mapping_dict.items():
         print(k,v)
