@@ -1,6 +1,9 @@
 from AmplitudeCrafter.Nbody import DecayTopology
 from AmplitudeCrafter.Nbody.DecayTopology import generateTreeDefinitions, Node, TopologyGroup
 from AmplitudeCrafter.ParticleLibrary import particle
+
+from AmplitudeCrafter.Nbody.Decay import NBodyDecay
+
 p0 = particle.get_particle("B+")
 p1 = particle.get_particle("K+")
 p2 = particle.get_particle("p")
@@ -29,3 +32,5 @@ tg = TopologyGroup(0,[1,2,3,4,5])
 assert len(tg.trees) == 105
 
 
+decay = NBodyDecay(0,1,2,3,4)
+print(decay.topologies)

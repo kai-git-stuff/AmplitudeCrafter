@@ -1,7 +1,7 @@
 
 import numpy as np
 from typing import List, Tuple, Optional
-from functools import cache
+from functools import cached_property
 from AmplitudeCrafter.ParticleLibrary import Particle
 
 
@@ -83,8 +83,7 @@ class TopologyGroup:
         self.final_state_nodes = final_state_nodes
         self.node_numbers = {i:node for i,node in enumerate([start_node] + final_state_nodes)}
     
-    @property
-    @cache
+    @cached_property
     def intermediate_nodes(self):
         nodes = {}
         for i, node1 in enumerate(self.final_state_nodes[:-1]):
@@ -93,8 +92,7 @@ class TopologyGroup:
                 nodes[(i, j)] = (node1, node2)
         return nodes
     
-    @property
-    @cache
+    @cached_property
     def trees(self):
         trees = generateTreeDefinitions(self.final_state_nodes)    
         trees_with_root_node = []
@@ -105,14 +103,12 @@ class TopologyGroup:
             trees_with_root_node.append(root)
         return trees_with_root_node
     
-    @property
-    @cache
+    @cached_property
     def topologies(self):
         return [Topology(self, tree) for tree in self.trees]
     
 
-    @property
-    @cache
+    @cached_property
     def nodes(self):
         nodes = self.nodes.copy()
         nodes.update({(i, None):node for i,node in self.node_numbers.items()})

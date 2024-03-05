@@ -1,39 +1,38 @@
 import numpy as np
 from jax import jit, vmap
 from jax import numpy as jnp
+from functools import cached_property
+from AmplitudeCrafter.Nbody.DecayTopology import TopologyGroup, Topology
+from AmplitudeCrafter.ParticleLibrary import particle
 
 
 class NBodyDecay:
 
-    @staticmethod
-    def _topologies(daughters):
-        """
-        Recursive function to generate all possible internal topologies of an N-body decay.
-
-        Parameters: daughters: list of integers
-
-        Returns: list of lists of integers
-        """
-        particles_in_node = set(daughters)
-        topoligies = []
-        
-
-
-
-
-
-
-    def __init__(self, *daughters):
-        self.daughters = daughters
+    def __init__(self, parent: particle, *children: particle):
+        self.__children = children
+        self.__parent = parent
+        self.__particles = [parent, *children]
+    
+    @property
+    def children(self):
+        return self.__children
+    
+    @property
+    def parent(self):
+        return self.__parent
+    
+    @property
+    def particles(self):
+        return self.__particles
 
     @property
-    def n_daughters(self):
-        return len(self.daughters)
+    def n_children(self):
+        return len(self.children)
     
     @property
     def n_body(self):
-        return self.n_daughters + 1
-    
-    @property
+        return self.n_children + 1
+
+    @cached_property
     def topologies(self):
-        return self._topologies(list(range(1, self.n_daughters + 1)))
+        return TopologyGroup(self.parent, list(self.children)).trees
