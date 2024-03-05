@@ -47,6 +47,23 @@ def check_bls(mother:particle,daughter1:particle,daughter2:particle,bls,parity_c
             Values {mother} -> {daughter1} {daughter2} 
             Parity{" " if parity_conserved else " not "}conserved!""")
 
+    if any([daughter1.mass == 0,daughter2.mass == 0]):
+        if (len(bls.keys()) + 2) >= len(checkSet):
+            raise ValueError(f"""Not all partial waves are possible for massless daughters! 2 can be set by the others!
+            Values {mother} -> {daughter1} {daughter2} 
+            Parity{" " if parity_conserved else " not "}conserved!""")
+        missing = checkSet - set(bls.keys())
+        if len(missing) > 2:
+            raise ValueError(f"""Too many partial waves missing for massless daughters! 2 can be set by the others!
+            Values {mother} -> {daughter1} {daughter2} 
+            Parity{" " if parity_conserved else " not "}conserved!""")
+        if len(missing) == 2:
+            # here we can try to set the missing ones
+            # what we will do is inject a fit parameter of the lambda type, which we will then actually also put in the output yaml
+            # this is a bit of a hack, but it should work
+            # also this may cause the output to fail due to the rest of this code
+            pass
+
 def flatten(listoflists):
     lst = []
     def flatten_recursive(listoflists,ret_list:list):
