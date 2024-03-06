@@ -82,10 +82,10 @@ def check_bls(mother:particle,daughter1:particle,daughter2:particle,bls,parity_c
         #     Values {mother} -> {daughter1} {daughter2} 
         #     Parity{" " if parity_conserved else " not "}conserved!""")
         missing = checkSet - set(bls.keys())
-        # if len(missing) > 2:
-        #     raise ValueError(f"""Too many partial waves missing for massless daughters! 2 can be set by the others!
-        #     Values {mother} -> {daughter1} {daughter2} 
-        #     Parity{" " if parity_conserved else " not "}conserved!""")
+        if len(missing) > 2:
+            raise ValueError(f"""Too many partial waves missing for massless daughters! 2 can be set by the others!
+            Values {mother} -> {daughter1} {daughter2} 
+            Parity{" " if parity_conserved else " not "}conserved!""")
         if len(missing) == 2:
             warnings.warn(f"""Two partial waves missing for massless daughters! 2 can be set by the others!
                           Default behaviour will set these two partial waves now!""")
