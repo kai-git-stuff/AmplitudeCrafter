@@ -64,7 +64,7 @@ class lambdaParameter(parameter):
     @property
     def param_names(self):
         # the three parameters added by this class
-        return [p.name for p in self.params]
+        return [p.name for p in self.parameters]
 
     @property
     def dict(self):
