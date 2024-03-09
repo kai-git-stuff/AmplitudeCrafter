@@ -24,9 +24,7 @@ class TwoBodyDecay:
         bls_dict = load(file)
         self.mapping_dict = {}
         self.bls = read_bls(bls_dict,self.mapping_dict,f"TwoBody{self.decayNumber}"+"=>bls")
-        print(self.bls)
         self.argnames = [ k for k in self.bls.values() if "_complex" in k]
-        print(self.argnames)
         self.__loaded = True
         raise NotImplementedError("Not yet functional!")
 

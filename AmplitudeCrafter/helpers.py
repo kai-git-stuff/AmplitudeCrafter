@@ -101,7 +101,8 @@ def check_bls(mother:particle,daughter1:particle,daughter2:particle,bls,parity_c
             Values {mother} -> {daughter1} {daughter2} 
             Parity{" " if parity_conserved else " not "}conserved!""")
         if len(missing) == 2:
-            logger.debug(f"""Two partial waves missing for massless daughters! 2 can be set by the others!
+            logger.info(f"""{mother} -> {daughter1} {daughter2}:
+                        Two partial waves missing for massless daughters! 2 can be set by the others!
                           Default behaviour will set these two partial waves now!""")
             # here we can try to set the missing ones
             # what we will do is inject a fit parameter of the lambda type, which we will then actually also put in the output yaml
