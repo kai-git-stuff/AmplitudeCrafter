@@ -6,6 +6,7 @@ from AmplitudeCrafter.parameters import parameter, lambdaParameter
 import warnings
 from jitter.kinematics import helicity_couplings_from_ls
 import numpy as np
+from AmplitudeCrafter.locals import logger, DEBUG
 
 def is_free(p):
     return not p.const
@@ -100,7 +101,7 @@ def check_bls(mother:particle,daughter1:particle,daughter2:particle,bls,parity_c
             Values {mother} -> {daughter1} {daughter2} 
             Parity{" " if parity_conserved else " not "}conserved!""")
         if len(missing) == 2:
-            warnings.warn(f"""Two partial waves missing for massless daughters! 2 can be set by the others!
+            logger.debug(f"""Two partial waves missing for massless daughters! 2 can be set by the others!
                           Default behaviour will set these two partial waves now!""")
             # here we can try to set the missing ones
             # what we will do is inject a fit parameter of the lambda type, which we will then actually also put in the output yaml
@@ -129,7 +130,7 @@ def check_bls(mother:particle,daughter1:particle,daughter2:particle,bls,parity_c
                 parameter_times_factor = [f"{name} * {float(prefactors[(L,S)])}" for name, (L, S) in zip(parameter_names, bls.keys())]
                 name = f"{resonance.name}=>autoSetBLSL:{L},S:{S}"
                 lambda_string = f"lambda({', '.join(parameter_names)}: {' + '.join(parameter_times_factor)}) ({'; '.join([param.name for param in bls.values()])})"
-                print("Setting",name,lambda_string)
+                logger.debug("Setting",name,lambda_string)
                 bls[(L, S)] = lambdaParameter(name, lambda_string)
             bls_in_dict = {k:np.array(v(numeric=True)) for k,v in bls.items()}
             h_1_0 = helicity_couplings_from_ls(mother.spin, resonance.spin, gamma.spin,1,0, bls_in_dict)
