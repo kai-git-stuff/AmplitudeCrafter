@@ -1,5 +1,5 @@
 import yaml 
-
+from AmplitudeCrafter.locals import logger
 def make_tuple(dtc):
     if isinstance(dtc,dict):
         return {k: make_tuple(v) for k,v in dtc.items()}
@@ -16,7 +16,7 @@ def load(f:str):
             res = yaml.safe_load(stream)
             # res =  make_tuple(res)
         except yaml.YAMLError as exc:
-            print(exc)
+            logger.warn(exc)
             raise ValueError("The provided yml file could not be read! Read the error printed above for more information")
     return res
 
@@ -25,6 +25,6 @@ def write(dtc,f:str):
         try:
             res = yaml.dump(dtc,stream,sort_keys=False)
         except yaml.YAMLError as exc:
-            print(exc)
+            logger.warn(exc)
     return res
 
