@@ -51,9 +51,23 @@ def test_DynamicL():
     print(abs((res_fix_L - res_non_fix_L)/res_non_fix_L))
     assert np.all(abs((res_fix_L - res_non_fix_L)/res_non_fix_L) < 1e-10)
 
+def test_Dmatrix():
+    p0 = particle.get_particle("Lb")
+    p1 = particle.get_particle("Lc")
+    p2 = particle.get_particle("D0")
+    p3 = particle.get_particle("K")
+    amplitude = DalitzAmplitude(p0,p1,p2,p3)
+    
+    amplitude_file = "tests/resonance_configs/Dmatrix_test.yml"
+    amplitude.load_resonances(amplitude_file)
+    smp = amplitude.phsp.rectangular_grid_sample(10,10)
+    f, start = amplitude.get_amplitude_function(smp)
+    res = f(start)
+    print(res)
 
 
 
 if __name__=="__main__":
-    test_DynamicL()
-    test_AmplitudeConstitency()
+    test_Dmatrix()
+    # test_DynamicL()
+    # test_AmplitudeConstitency()
