@@ -32,5 +32,4 @@ tg = TopologyGroup(0,[1,2,3,4,5])
 assert len(tg.trees) == 105
 
 
-decay = NBodyDecay(0,1,2,3,4)
-print(decay.topologies)
+decay = NBodyDecay(0,1,2,3,4, 5)

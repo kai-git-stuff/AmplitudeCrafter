@@ -28,12 +28,23 @@ class Node:
             d.print_tree()
         print(f"\n {self.value}" )
 
+    def contains(self, contained_node:'Node'):
+        if self.value == contained_node.value:
+            if len(self.daughters) == len(contained_node.daughters):
+                return all([d.contains(cd) for d,cd in zip(self.daughters, contained_node.daughters)])
+            if len(contained_node.daughters) == 0:
+                return True
+        return False
+
 class Tree:
     def __init__(self, root:Node):
         self.root = root
     
     def __repr__(self):
         return str(self.root)
+    
+    def contains(self, contained_tree:'Tree'):
+        return self.root.contains(contained_tree.root)
 
 def split(nodes:List[Node], split:int) -> Tuple[List[Node], List[Node]]:
     """
@@ -76,6 +87,32 @@ def generateTreeDefinitions(nodes:List[int]) -> List[Node]:
                 trees.append((lNode, rNode))
     return trees
 
+class Topology:
+
+    def __init__(self, tree:Node):
+        """
+        Class to represent the topology of an N-body decay.
+        Parameters: topology: List of integers representing the topology of the decay
+        """
+        self.__tree = tree
+
+    @property
+    def tree(self):
+        """
+        Returns: Tree representation of the topology
+        """
+        return self.__tree
+    
+    def __repr__(self) -> str:
+        return str(self.tree)
+    
+    def contains(self, contained_topology:'Topology'):
+        """
+        Check if a given topology is contained in this topology.
+        Parameters: contained_topology: Topology to check if it is contained
+        Returns: True if the given topology is contained in this topology, False otherwise
+        """
+        return self.tree.contains(contained_topology.tree)
 
 class TopologyGroup:
     def __init__(self, start_node:Particle, final_state_nodes:List[Particle]):
@@ -105,7 +142,7 @@ class TopologyGroup:
     
     @cached_property
     def topologies(self):
-        return [Topology(self, tree) for tree in self.trees]
+        return [Topology(tree) for tree in self.trees]
     
 
     @cached_property
@@ -113,22 +150,19 @@ class TopologyGroup:
         nodes = self.nodes.copy()
         nodes.update({(i, None):node for i,node in self.node_numbers.items()})
         return nodes
+    
+    def filter(self, contained_step: Topology):
+        """
+        Filter the topologies based on the number of contained steps.
+
+        Args:
+            contained_step (list): sub topology for which to filter
+        """
+        return [t for t in self.topologies if t.contains(contained_step)]
+            
         
-class Topology:
 
-    def __init__(self, group:TopologyGroup, tree:Tree):
-        """
-        Class to represent the topology of an N-body decay.
-        Parameters: topology: List of integers representing the topology of the decay
-        """
-        self.group = group
-        self.__tree = tree
 
-    @property
-    def tree(self):
-        """
-        Returns: Tree representation of the topology
-        """
-        return self.__tree
+
     
 

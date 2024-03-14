@@ -9,17 +9,11 @@ def T(f):
     return _f
 
 def boost_matrix_2_2_x(xi):
-    r"""
-    [ B_x(\xi_x) = e^{\frac{\xi_x}{2} \sigma^1} = \begin{bmatrix} \cosh\left(\frac{\xi_x}{2}\right) & \sinh\left(\frac{\xi_x}{2}\right) \ \sinh\left(\frac{\xi_x}{2}\right) & \cosh\left(\frac{\xi_x}{2}\right) \end{bmatrix} ]
-    """
     return jnp.array([[jnp.cosh(xi/2), jnp.sinh(xi/2)], 
                         [jnp.sinh(xi/2), jnp.cosh(xi/2)]])
 
 
 def boost_matrix_2_2_y(xi):
-    r"""
-[ B_y(\xi_y) = e^{\frac{\xi_y}{2} \sigma^2} = \begin{bmatrix} \cosh\left(\frac{\xi_y}{2}\right) & -i \sinh\left(\frac{\xi_y}{2}\right) \ i \sinh\left(\frac{\xi_y}{2}\right) & \cosh\left(\frac{\xi_y}{2}\right) \end{bmatrix} ]
-    """
     return jnp.array([[jnp.cosh(xi/2), -1j*jnp.sinh(xi/2)],
                      [1j*jnp.sinh(xi/2), jnp.cosh(xi/2)]])
 
@@ -33,10 +27,6 @@ def boost_matrix_2_2_z(xi):
                                                                         [1, 0]])
 
 def rotation_matrix_2_2_x(theta):
-    r"""
-    Args:
-        theta (float): rotation angle around x axis
-    """
     I = jnp.array([[1, 0],
                    [0, 1]])
     sgma_x = jnp.array([[0, 1],
@@ -44,10 +34,6 @@ def rotation_matrix_2_2_x(theta):
     return jnp.cos(theta/2) * I - 1j*jnp.sin(theta/2)*sgma_x
 
 def rotation_matrix_2_2_y(theta):
-    r"""
-    Args:
-        theta (float): rotation angle around y axis
-    """
     I = jnp.array([[1, 0],
                      [0, 1]])
     sgma_y = jnp.array([[0, -1],
@@ -55,10 +41,6 @@ def rotation_matrix_2_2_y(theta):
     return jnp.cos(theta/2)*I - jnp.sin(theta/2)*sgma_y
 
 def rotation_matrix_2_2_z(theta):
-    r"""
-    Args:
-        theta (float): rotation angle around z axis
-    """
     I = jnp.array([[1, 0], 
                    [0, 1]])
     sgma_z = jnp.array([[1,  0], 

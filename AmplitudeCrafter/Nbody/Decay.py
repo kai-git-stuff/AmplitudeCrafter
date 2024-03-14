@@ -12,6 +12,7 @@ class NBodyDecay:
         self.__children = children
         self.__parent = parent
         self.__particles = [parent, *children]
+
     
     @property
     def children(self):
@@ -36,3 +37,5 @@ class NBodyDecay:
     @cached_property
     def topologies(self):
         return TopologyGroup(self.parent, list(self.children)).trees
+
+    
