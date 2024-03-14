@@ -5,6 +5,7 @@ from typing import List, Tuple, Optional, Union, Any
 from functools import cached_property
 from AmplitudeCrafter.ParticleLibrary import Particle
 from AmplitudeCrafter.Nbody.lorentz import LorentzTrafo
+from jitter import kinematics as jkm
 
 class Node:
     def __init__(self, value: Union[Any, tuple]):
@@ -58,8 +59,29 @@ class Node:
 
     def boost(self, target: 'Node', momenta: dict):
         if self.value == target.value:
-            zero = jnp.zeros_like(self.momentum(momenta))
-            return LorentzTrafo(0 ,0, 0, 0, 0, 0)
+            zero = jnp.zeros_like(jkm.time_component(self.momentum(momenta)))
+            return LorentzTrafo(zero ,zero, zero, zero, zero, zero)
+        for d in self.daughters:
+            path = d.path_to(target)
+            if path is not None:
+                if len(path) == 1:
+                    # TODO: boost propery here
+                    zero = jnp.zeros_like(jkm.time_component(self.momentum(momenta)))
+                    return LorentzTrafo(zero ,zero, zero, zero, zero, zero)
+                boosts = [d.boost(path[i+1], momenta) for i,d in enumerate(path[:-1])]
+                boost = boosts[0]
+                for b in boosts[1:]:
+                    boost = boost @ b
+                return boost
+        
+    def path_to(self, target: 'Node'):
+        if self == target:
+            return [self]
+        for d in self.daughters:
+            path = d.path_to(target)
+            if path:
+                return [self] + path
+        return None
 
 class Tree:
     def __init__(self, root:Node):
