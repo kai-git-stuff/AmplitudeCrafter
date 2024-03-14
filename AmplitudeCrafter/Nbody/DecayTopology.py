@@ -1,12 +1,13 @@
 
 import numpy as np
-from typing import List, Tuple, Optional
+from jax import numpy as jnp
+from typing import List, Tuple, Optional, Union, Any
 from functools import cached_property
 from AmplitudeCrafter.ParticleLibrary import Particle
-
+from AmplitudeCrafter.Nbody.lorentz import LorentzTrafo
 
 class Node:
-    def __init__(self, value):
+    def __init__(self, value: Union[Any, tuple]):
         self.value = value
         self.daughters = []
         self.parent = None
@@ -35,6 +36,30 @@ class Node:
             if len(contained_node.daughters) == 0:
                 return True
         return False
+    
+    def inorder(self):
+        if len(self.daughters) == 0:
+            return [self]
+        return [self] + [node for d in self.daughters for node in d.inorder()]
+    
+    def momentum(self, momenta:dict):
+        """Get a particles momentum
+
+        Args:
+            momenta (dict): the momenta of the final state particles
+
+        Returns:
+            the momentum of the particle, as set by the momenta dictionary
+            This expects the momenta to be jax or numpy compatible
+        """
+        if len(self.daughters) == 0:
+            return momenta[self.value]
+        return sum([d.momentum(momenta) for d in self.daughters])
+
+    def boost(self, target: 'Node', momenta: dict):
+        if self.value == target.value:
+            zero = jnp.zeros_like(self.momentum(momenta))
+            return LorentzTrafo(0 ,0, 0, 0, 0, 0)
 
 class Tree:
     def __init__(self, root:Node):
@@ -46,7 +71,7 @@ class Tree:
     def contains(self, contained_tree:'Tree'):
         return self.root.contains(contained_tree.root)
 
-def split(nodes:List[Node], split:int) -> Tuple[List[Node], List[Node]]:
+def split(nodes:List[Node], split:int) -> Tuple[Tuple[Node], Tuple[Node]]:
     """
     Split a list of nodes into two lists of nodes.
     Parameters: nodes: List of nodes to split
@@ -60,7 +85,7 @@ def split(nodes:List[Node], split:int) -> Tuple[List[Node], List[Node]]:
             left.append(n)
         else:
             right.append(n)
-    return  left, right
+    return  tuple(left), tuple(right)
 
 
 def generateTreeDefinitions(nodes:List[int]) -> List[Node]:
@@ -75,12 +100,18 @@ def generateTreeDefinitions(nodes:List[int]) -> List[Node]:
     for i in range(1,1 << len(nodes) - 1):
         left, right = split(nodes, i)
         for l,r in generateTreeDefinitions(left):
-            lNode = Node(left)
+            if len(left) == 1:
+                lNode = Node(left[0])
+            else:
+                lNode = Node(left)
             if l is not None:
                 lNode.add_daughter(l)
                 lNode.add_daughter(r)
             for l2,r2 in generateTreeDefinitions(right):
-                rNode = Node(right)
+                if len(right) == 1:
+                    rNode = Node(right[0])
+                else:
+                    rNode = Node(right)
                 if l2 is not None:
                     rNode.add_daughter(l2)
                     rNode.add_daughter(r2)
@@ -159,10 +190,4 @@ class TopologyGroup:
             contained_step (list): sub topology for which to filter
         """
         return [t for t in self.topologies if t.contains(contained_step)]
-            
         
-
-
-
-    
-

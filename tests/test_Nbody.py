@@ -1,7 +1,7 @@
 from AmplitudeCrafter.Nbody import DecayTopology
 from AmplitudeCrafter.Nbody.DecayTopology import generateTreeDefinitions, Node, TopologyGroup
 from AmplitudeCrafter.ParticleLibrary import particle
-
+from jax import numpy as jnp
 from AmplitudeCrafter.Nbody.Decay import NBodyDecay
 
 p0 = particle.get_particle("B+")
@@ -33,3 +33,13 @@ assert len(tg.trees) == 105
 
 
 decay = NBodyDecay(0,1,2,3,4, 5)
+
+momenta = {   1: jnp.array([1, 0, 0, 1]),
+              2: jnp.array([1, 0, 0, 1]),
+              3: jnp.array([1, 0, 0, 1]),
+              4: jnp.array([1, 0, 0, 1]),
+              5: jnp.array([1, 0, 0, 1])}
+
+for node in tg.topologies[0].tree.inorder():
+    print(node.value)
+    print(node.boost(node, momenta))

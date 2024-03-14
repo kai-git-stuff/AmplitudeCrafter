@@ -12,6 +12,8 @@ class LorentzTrafo:
         if M2 is not None and M4 is not None:
             self.M2 = M2
             self.M4 = M4
+        elif len(args) == 0:
+            raise ValueError("LorentzTrafo must be initialized with either 6 values or 2 matrices")
 
     def __matmul__(self, other):
         if isinstance(other, LorentzTrafo):
@@ -21,3 +23,6 @@ class LorentzTrafo:
         params = decode_4_4(self.M4)
         params = adjust_for_2pi_rotation(self.M2, *params)
         return params
+    
+    def __repr__(self):
+        return f"LorentzTrafo" + "\n SU(2): \n" + f"{self.M2}" + "\n O(3): \n" + f"{self.M4}"
