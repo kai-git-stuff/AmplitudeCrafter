@@ -170,6 +170,16 @@ class Topology:
         return self.tree.contains(contained_node)
 
 class TopologyGroup:
+    @staticmethod
+    def filter_list(trees:List[Node], contained_node: Node):
+        """
+        Filter the topologies based on the number of contained steps.
+
+        Args:
+            contained_step (list): sub topology for which to filter
+        """
+        return [t for t in trees if t.contains(contained_node)]
+
     def __init__(self, start_node:Particle, final_state_nodes:List[Particle]):
         self.start_node = start_node
         self.final_state_nodes = final_state_nodes
@@ -206,12 +216,15 @@ class TopologyGroup:
         nodes.update({(i, None):node for i,node in self.node_numbers.items()})
         return nodes
     
-    def filter(self, contained_node: Node):
+    def filter(self, *contained_nodes: Node):
         """
         Filter the topologies based on the number of contained steps.
 
         Args:
             contained_step (list): sub topology for which to filter
         """
-        return [t for t in self.topologies if t.contains(contained_node)]
+        trees = self.trees
+        for contained_node in contained_nodes:
+            trees = self.filter_list(trees, contained_node)
+        return trees
         

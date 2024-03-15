@@ -42,7 +42,7 @@ momenta = {   1: jnp.array([1, 0, 0, 0.9]),
 all_nodes = list(tg.topologies[0].tree.inorder())
 first_node = all_nodes[0]
 
-for node in tg.filter(Node((2, 1,3))):
+for node in tg.filter(Node((2, 1,3)), Node((1,2))) :
     # print(node.print_tree())
     print(node)
     # print(first_node.boost(node, momenta))
