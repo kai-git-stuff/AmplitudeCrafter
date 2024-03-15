@@ -10,6 +10,8 @@ from jitter import kinematics as jkm
 class Node:
     def __init__(self, value: Union[Any, tuple]):
         self.value = value
+        if isinstance(value, tuple):
+            self.value = tuple(sorted(value))
         self.daughters = []
         self.parent = None
     
@@ -32,9 +34,9 @@ class Node:
 
     def contains(self, contained_node:'Node'):
         if self.value == contained_node.value:
-            if len(self.daughters) == len(contained_node.daughters):
-                return all([d.contains(cd) for d,cd in zip(self.daughters, contained_node.daughters)])
-            if len(contained_node.daughters) == 0:
+            return True
+        for d in self.daughters:
+            if d.contains(contained_node):
                 return True
         return False
     
@@ -159,13 +161,13 @@ class Topology:
     def __repr__(self) -> str:
         return str(self.tree)
     
-    def contains(self, contained_topology:'Topology'):
+    def contains(self, contained_node:'Node'):
         """
-        Check if a given topology is contained in this topology.
-        Parameters: contained_topology: Topology to check if it is contained
-        Returns: True if the given topology is contained in this topology, False otherwise
+        Check if a given node is contained in this topology.
+        Parameters: contained_node: Node to check if it is contained
+        Returns: True if the given node is contained in this topology, False otherwise
         """
-        return self.tree.contains(contained_topology.tree)
+        return self.tree.contains(contained_node)
 
 class TopologyGroup:
     def __init__(self, start_node:Particle, final_state_nodes:List[Particle]):
@@ -204,12 +206,12 @@ class TopologyGroup:
         nodes.update({(i, None):node for i,node in self.node_numbers.items()})
         return nodes
     
-    def filter(self, contained_step: Topology):
+    def filter(self, contained_node: Node):
         """
         Filter the topologies based on the number of contained steps.
 
         Args:
             contained_step (list): sub topology for which to filter
         """
-        return [t for t in self.topologies if t.contains(contained_step)]
+        return [t for t in self.topologies if t.contains(contained_node)]
         
