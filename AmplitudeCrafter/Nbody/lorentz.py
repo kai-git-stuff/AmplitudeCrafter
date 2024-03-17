@@ -26,3 +26,15 @@ class LorentzTrafo:
     
     def __repr__(self):
         return f"LorentzTrafo" + "\n SU(2): \n" + f"{self.M2}" + "\n O(3): \n" + f"{self.M4}"
+    
+    def inverse(self):
+        return LorentzTrafo(M2=jnp.linalg.inv(self.M2), M4=jnp.linalg.inv(self.M4))
+
+    # TODO: think about whether this is a good idea
+    # def __getattr__(self, name):
+    #     try:
+    #         attr2 = getattr(self.M2, name)
+    #         attr4 = getattr(self.M4, name)
+    #         return lambda *args, **kwargs: LorentzTrafo(M2=attr2(*args, **kwargs), M4=attr4(*args, **kwargs))
+    #     except AttributeError:
+    #         raise AttributeError(f"Attribute {name} not found in LorentzTrafo")
