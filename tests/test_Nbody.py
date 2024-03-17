@@ -45,10 +45,10 @@ momenta = {   1: jnp.array([0, 0, -0.9, 1]),
 
 momenta = tg.trees[0].to_rest_frame(momenta)
 first_node = tg.trees[0].inorder()[0]
-
+tree = tg.trees[0]
 # print(first_node.value ,first_node.momentum(momenta))
 # exit(0)
-print(first_node.boost(first_node.daughters[0], momenta))
+print(tree.boost(Node(4), momenta).decode())
 # print(first_node.boost(first_node, momenta)
 exit(0)
 for node in tg.filter(Node((2,1,3)), Node((1,2))) :

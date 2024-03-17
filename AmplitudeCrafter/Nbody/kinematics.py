@@ -3,11 +3,6 @@ import numpy as np
 import scipy.linalg as la
 from jitter import kinematics as jkm
 
-def T(f):
-    def _f(*args, **kwargs):
-        return jnp.array(f(*args, **kwargs)).T
-    return _f
-
 def boost_matrix_2_2_x(xi):
     r""" 
     Build a 2x2 boost matrix in the x-direction
@@ -16,7 +11,6 @@ def boost_matrix_2_2_x(xi):
     """
     return jnp.array([[jnp.cosh(xi/2), jnp.sinh(xi/2)], 
                         [jnp.sinh(xi/2), jnp.cosh(xi/2)]])
-
 
 def boost_matrix_2_2_y(xi):
     r"""
@@ -175,6 +169,20 @@ def decode_4_4(matrix):
     return psi, theta, xi, theta_rf, phi_rf,  psi_rf
 
 def adjust_for_2pi_rotation(M_original_2x2, psi, theta, xi, theta_rf, phi_rf,  psi_rf):
+    """Adjust the rotation angles for the 2pi rotation ambiguity
+
+    Args:
+        M_original_2x2 (jax.numpy.ndarray): the original 2x2 matrix
+        psi (float): the recovered psi angle from the 4x4 matrix
+        theta (float): the recovered theta angle from the 4x4 matrix
+        xi (float): the recovered rapidity angle from the 4x4 matrix
+        theta_rf (float): the recovered theta_rf angle from the 4x4 matrix
+        phi_rf (float): the recovered phi_rf angle from the 4x4 matrix
+        psi_rf (float): the recovered psi_rf angle from the 4x4 matrix
+    
+    Returns:
+        tuple: the adjusted rotation angles
+    """
     new_2x2 = build_2_2(psi, theta, xi, theta_rf, phi_rf,  psi_rf)
 
     if np.allclose(M_original_2x2, new_2x2):

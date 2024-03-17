@@ -7,7 +7,7 @@ from AmplitudeCrafter.ParticleLibrary import Particle
 from AmplitudeCrafter.Nbody.lorentz import LorentzTrafo
 from AmplitudeCrafter.Nbody import kinematics as akm
 from jitter import kinematics as jkm
-from networkx import DiGraph
+import networkx as nx
 
 
 class Node:
@@ -94,19 +94,10 @@ class Node:
         # boost to the rest frame of the target
         xi = -akm.rapidity(target.momentum(rotated_momenta))
         boost = LorentzTrafo(zero, zero, xi, zero, zero, zero)
-        print(akm.gamma(target.momentum(self.transform(boost, rotated_momenta))))
+        # assert the boost worked as expected (TODO: remove this in the future, but for now, this gives security while debugging other parts of the code)
         assert jnp.allclose(akm.gamma(target.momentum(self.transform(boost, rotated_momenta))), one)
 
         return boost @ rotation
-
-    # def path_to(self, target: 'Node'):
-    #     if self == target:
-    #         return [self]
-    #     for d in self.daughters:
-    #         path = d.path_to(target)
-    #         if path is not None:
-    #             return [self] + path
-    #     return None
 
 class Tree:
     def __init__(self, root:Node):
@@ -123,13 +114,26 @@ class Tree:
         return {k: jkm.boost_to_rest(v, momentum) for k,v in momenta.items()}
 
     def __build_boost_tree(self, momenta:dict):
-        boost_tree = DiGraph()
+        boost_tree = nx.DiGraph()
+        node_dict = {}
         for node in self.inorder():
             boost_tree.add_node(node.value)
+            node_dict[node.value] = node
         for node in self.inorder():
             for d in node.daughters:
                 boost_tree.add_edge(node.value, d.value)
-        return boost_tree
+        return boost_tree, node_dict
+    
+    def boost(self, target: 'Node', momenta: dict):
+        boost_tree, node_dict = self.__build_boost_tree(momenta)
+        path = nx.shortest_path(boost_tree, self.root.value, target.value)[1:]
+        trafo = self.root.boost(node_dict[path[0]], momenta)
+        momenta = self.root.transform(trafo, momenta)
+        for i in range(1, len(path)):
+            boost = node_dict[path[i-1]].boost(node_dict[path[i]], momenta) 
+            momenta = node_dict[path[i-1]].transform(boost, momenta)
+            trafo = boost @ trafo
+        return trafo
     
     def __getattr__(self, name):
         return getattr(self.root, name)
