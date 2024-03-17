@@ -184,7 +184,6 @@ def adjust_for_2pi_rotation(M_original_2x2, psi, theta, xi, theta_rf, phi_rf,  p
         tuple: the adjusted rotation angles
     """
     new_2x2 = build_2_2(psi, theta, xi, theta_rf, phi_rf,  psi_rf)
-
     if np.allclose(M_original_2x2, new_2x2):
         return psi, theta, xi, theta_rf, phi_rf,  psi_rf
     elif np.allclose(M_original_2x2, -new_2x2):
