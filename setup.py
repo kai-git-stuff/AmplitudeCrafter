@@ -27,6 +27,7 @@ name = "AmplitudeCrafter",
     'sympy',
     'pyaml',
     'particle',
+    'networkx'
     ],
     packages=find_packages(),
     long_description=read('README.md'),

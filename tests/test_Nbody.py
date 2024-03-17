@@ -4,6 +4,9 @@ from AmplitudeCrafter.ParticleLibrary import particle
 from jax import numpy as jnp
 from AmplitudeCrafter.Nbody.Decay import NBodyDecay
 
+from jax import config
+config.update("jax_enable_x64", True)
+
 p0 = particle.get_particle("B+")
 p1 = particle.get_particle("K+")
 p2 = particle.get_particle("p")
@@ -34,15 +37,20 @@ assert len(tg.trees) == 105
 
 decay = NBodyDecay(0,1,2,3,4, 5)
 
-momenta = {   1: jnp.array([1, 0, 0, 0.9]),
-              2: jnp.array([1, 0, 0.15, 0.4]),
-              3: jnp.array([1, 0, 0.3, 0.3]),
-              4: jnp.array([1, 0, 0.1, 0.4]),
-              5: jnp.array([1, 0, 0.1, 0.8])}
-all_nodes = list(tg.topologies[0].tree.inorder())
-first_node = all_nodes[0]
+momenta = {   1: jnp.array([0, 0, -0.9, 1]),
+              2: jnp.array([0, 0.15, 0.4,1]),
+              3: jnp.array([ 0, 0.3, 0.3,1]),
+              4: jnp.array([ 0, 0.1, 0.4,1]),
+              5: jnp.array([ 0, 0.1, 0.8,1])}
 
-for node in tg.filter(Node((2, 1,3)), Node((1,2))) :
+momenta = tg.trees[0].to_rest_frame(momenta)
+first_node = tg.trees[0].inorder()[0]
+
+# print(first_node.value ,first_node.momentum(momenta))
+# exit(0)
+print(first_node.boost(first_node.daughters[0], momenta))
+# print(first_node.boost(first_node, momenta)
+exit(0)
+for node in tg.filter(Node((2,1,3)), Node((1,2))) :
     # print(node.print_tree())
-    print(node)
-    # print(first_node.boost(node, momenta))
+    print(node)    

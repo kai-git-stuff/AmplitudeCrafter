@@ -9,16 +9,27 @@ def T(f):
     return _f
 
 def boost_matrix_2_2_x(xi):
+    r""" 
+    Build a 2x2 boost matrix in the x-direction
+    Args:
+        xi (float): rapidity of the boost
+    """
     return jnp.array([[jnp.cosh(xi/2), jnp.sinh(xi/2)], 
                         [jnp.sinh(xi/2), jnp.cosh(xi/2)]])
 
 
 def boost_matrix_2_2_y(xi):
+    r"""
+    Build a 2x2 boost matrix in the y-direction
+    Args:
+        xi (float): rapidity of the boost
+    """
     return jnp.array([[jnp.cosh(xi/2), -1j*jnp.sinh(xi/2)],
                      [1j*jnp.sinh(xi/2), jnp.cosh(xi/2)]])
 
 def boost_matrix_2_2_z(xi):
     r"""
+    Build a 2x2 boost matrix in the z-direction
     Args:
         xi (float): rapidity of the boost
     """
@@ -26,7 +37,30 @@ def boost_matrix_2_2_z(xi):
                                     [0, 1]]) + jnp.sinh(xi/2)*jnp.array([[0, 1],
                                                                         [1, 0]])
 
+def rotate_to_z_axis(v):
+    """Given a vector, rotate it to the z-axis
+
+    Args:
+        v (jax.numpy.ndarray): the 4 vector to be rotated
+    
+    Returns:
+        jax.numpy.ndarray: the rotation angles around first z and then y axis
+    """ 
+    v = jnp.array(v)
+    psi_rf = -jnp.arctan2(jkm.y_component(v), jkm.x_component(v))
+    theta_rf = jnp.arccos(jkm.z_component(v) / jkm.p(v))
+    return psi_rf, -theta_rf
+
+
 def rotation_matrix_2_2_x(theta):
+    """Build a 2x2 rotation matrix around the x-axis
+
+    Args:
+        theta (jax.numpy.ndarray): the rotation angle
+
+    Returns:
+        jax.numpy.ndarray: the rotation matrix with shape (...,2,2)
+    """
     I = jnp.array([[1, 0],
                    [0, 1]])
     sgma_x = jnp.array([[0, 1],
@@ -34,6 +68,14 @@ def rotation_matrix_2_2_x(theta):
     return jnp.cos(theta/2) * I - 1j*jnp.sin(theta/2)*sgma_x
 
 def rotation_matrix_2_2_y(theta):
+    """Build a 2x2 rotation matrix around the y-axis
+
+    Args:
+        theta (jax.numpy.ndarray): the rotation angle
+
+    Returns:
+        jax.numpy.ndarray: the rotation matrix with shape (...,2,2)
+    """
     I = jnp.array([[1, 0],
                      [0, 1]])
     sgma_y = jnp.array([[0, -1],
@@ -41,6 +83,14 @@ def rotation_matrix_2_2_y(theta):
     return jnp.cos(theta/2)*I - jnp.sin(theta/2)*sgma_y
 
 def rotation_matrix_2_2_z(theta):
+    """Build a 2x2 rotation matrix around the z-axis
+
+    Args:
+        theta (jax.numpy.ndarray): the rotation angle
+
+    Returns:
+        jax.numpy.ndarray: the rotation matrix with shape (...,2,2)
+    """
     I = jnp.array([[1, 0], 
                    [0, 1]])
     sgma_z = jnp.array([[1,  0], 
@@ -48,6 +98,14 @@ def rotation_matrix_2_2_z(theta):
     return jnp.cos(theta/2)*I - 1j*jnp.sin(theta/2)*sgma_z
 
 def boost_matrix_4_4_z(xi):
+    r"""Build a 4x4 boost matrix in the z-direction
+
+    Args:
+        xi (float): rapidity of the boost
+    
+    Returns:
+        jax.numpy.ndarray: the 4x4 boost matrix with shape (...,4,4)
+    """
     gamma = jnp.cosh(xi)
     beta_gamma = jnp.sinh(xi)
     return jnp.array([
@@ -58,6 +116,14 @@ def boost_matrix_4_4_z(xi):
     ])
 
 def rotation_matrix_4_4_y(theta):
+    """Build a 4x4 rotation matrix around the y-axis
+
+    Args:
+        theta (jax.numpy.ndarray): the rotation angle
+
+    Returns:
+        jax.numpy.ndarray: the rotation matrix with shape (...,4,4)
+    """
     return jnp.array([
         [jnp.cos(theta), 0, jnp.sin(theta), 0,],
         [0, 1, 0, 0,],
@@ -126,11 +192,19 @@ def gamma(p):
     """
     return jkm.time_component(p) / jkm.mass(p)
 
+def beta(p):	
+    r"""calculate beta factor
+
+    Args:
+        p (_type_): momentum 4-vector
+    """
+    return jkm.p(p) / jkm.time_component(p)
+
 def rapidity(p):
     r"""calculate rapidity
 
     Args:
         p (_type_): momentum 4-vector
     """
-    g = gamma(p)
-    return 0.5 * jnp.log((g + 1) / (g - 1))
+    b = beta(p)
+    return 0.5 * jnp.log((b + 1) / (1 - b))

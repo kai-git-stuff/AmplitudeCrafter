@@ -5,10 +5,8 @@ from typing import List, Tuple, Optional, Union, Any
 from functools import cached_property
 from AmplitudeCrafter.ParticleLibrary import Particle
 from AmplitudeCrafter.Nbody.lorentz import LorentzTrafo
-from AmplitudeCrafter.Nbody import kinematics as akm
 from jitter import kinematics as jkm
 from networkx import DiGraph
-
 
 class Node:
     def __init__(self, value: Union[Any, tuple]):
@@ -61,52 +59,32 @@ class Node:
         if len(self.daughters) == 0:
             return momenta[self.value]
         return sum([d.momentum(momenta) for d in self.daughters])
-    
-    def transform(self, trafo:LorentzTrafo, momenta:dict):
-        return {k: trafo.M4 @ v for k,v in momenta.items()}
 
     def boost(self, target: 'Node', momenta: dict):
-        """ Get the boost from this node to a target node
-            The momenta dictionary will define the initial configuration.
-            It is expected, that the momenta are jax or numpy compatible and that the momenta are given in the rest frame of this node.
-        
-        """
-        if not jnp.allclose(akm.gamma(self.momentum(momenta)), jnp.ones_like(self.momentum(momenta))):
-            gamma = akm.gamma(self.momentum(momenta))
-            raise ValueError(f"gamma = {gamma} For the time being only particles at rest are supported as start nodes for a boost. This will be fixed in the future.")
-        zero = jnp.zeros_like(jkm.time_component(self.momentum(momenta)))
-        one = jnp.ones_like(zero)
         if self.value == target.value:
+            zero = jnp.zeros_like(jkm.time_component(self.momentum(momenta)))
             return LorentzTrafo(zero ,zero, zero, zero, zero, zero)
+        for d in self.daughters:
+            path = d.path_to(target)
+            if path is not None:
+                if len(path) == 1:
+                    # TODO: boost propery here
+                    psi, theta = jkm.rotate_to_z_axis(self.momentum(momenta))
+                    return LorentzTrafo(zero ,zero, zero, zero, zero, zero)
+                boosts = [d.boost(path[i+1], momenta) for i,d in enumerate(path[:-1])]
+                boost = boosts[0]
+                for b in boosts[1:]:
+                    boost = boost @ b
+                return boost
         
-        if not target in self.daughters:
-            raise ValueError(f"Target node {target} is not a direct daughter of this node {self}")
-        
-        # rotate so that the target momentum is aligned with the 
-        psi_rf, theta_rf = akm.rotate_to_z_axis(target.momentum(momenta))
-        rotation = LorentzTrafo(zero, zero, zero, theta_rf, zero, psi_rf)
-        rotated_momenta = self.transform(rotation, momenta)
-        # assert the rotation worked as expected (TODO: remove this in the future, but for now, this gives security while debugging other parts of the code)
-        assert jnp.allclose(jkm.y_component(target.momentum(rotated_momenta)), jnp.zeros_like(jkm.y_component(target.momentum(rotated_momenta))))
-        assert jnp.allclose(jkm.x_component(target.momentum(rotated_momenta)), jnp.zeros_like(jkm.x_component(target.momentum(rotated_momenta))))
-
-
-        # boost to the rest frame of the target
-        xi = -akm.rapidity(target.momentum(rotated_momenta))
-        boost = LorentzTrafo(zero, zero, xi, zero, zero, zero)
-        print(akm.gamma(target.momentum(self.transform(boost, rotated_momenta))))
-        assert jnp.allclose(akm.gamma(target.momentum(self.transform(boost, rotated_momenta))), one)
-
-        return boost @ rotation
-
-    # def path_to(self, target: 'Node'):
-    #     if self == target:
-    #         return [self]
-    #     for d in self.daughters:
-    #         path = d.path_to(target)
-    #         if path is not None:
-    #             return [self] + path
-    #     return None
+    def path_to(self, target: 'Node'):
+        if self == target:
+            return [self]
+        for d in self.daughters:
+            path = d.path_to(target)
+            if path is not None:
+                return [self] + path
+        return None
 
 class Tree:
     def __init__(self, root:Node):
@@ -115,24 +93,8 @@ class Tree:
     def __repr__(self):
         return str(self.root)
     
-    def contains(self, contained_node:'Node'):
-        return self.root.contains(contained_node)
-    
-    def to_rest_frame(self, momenta:dict):
-        momentum = self.root.momentum(momenta)
-        return {k: jkm.boost_to_rest(v, momentum) for k,v in momenta.items()}
-
-    def __build_boost_tree(self, momenta:dict):
-        boost_tree = DiGraph()
-        for node in self.inorder():
-            boost_tree.add_node(node.value)
-        for node in self.inorder():
-            for d in node.daughters:
-                boost_tree.add_edge(node.value, d.value)
-        return boost_tree
-    
-    def __getattr__(self, name):
-        return getattr(self.root, name)
+    def contains(self, contained_tree:'Tree'):
+        return self.root.contains(contained_tree.root)
 
 def split(nodes:List[Node], split:int) -> Tuple[Tuple[Node], Tuple[Node]]:
     """
@@ -195,7 +157,7 @@ class Topology:
         """
         Returns: Tree representation of the topology
         """
-        return Tree(self.__tree)
+        return self.__tree
     
     def __repr__(self) -> str:
         return str(self.tree)
@@ -215,8 +177,6 @@ class Topology:
         Returns: Boost graph for this topology
         """
         return 
-    
-
 
 class TopologyGroup:
     @staticmethod
@@ -235,7 +195,7 @@ class TopologyGroup:
         self.node_numbers = {i:node for i,node in enumerate([start_node] + final_state_nodes)}
     
     @cached_property
-    def trees(self) -> List[Tree]:
+    def trees(self):
         trees = generateTreeDefinitions(self.final_state_nodes)    
         trees_with_root_node = []
         for l,r in trees:
@@ -243,7 +203,7 @@ class TopologyGroup:
             root.add_daughter(l)
             root.add_daughter(r)
             trees_with_root_node.append(root)
-        return [Tree(node) for node in trees_with_root_node]
+        return trees_with_root_node
     
     @cached_property
     def topologies(self):
