@@ -18,10 +18,14 @@ class LorentzTrafo:
     def __matmul__(self, other):
         if isinstance(other, LorentzTrafo):
             return LorentzTrafo(M2=self.M2 @ other.M2, M4=self.M4 @ other.M4)
+        else:
+            raise ValueError(f"Cannot multiply LorentzTrafo with {type(other)}")
     
-    def decode(self):
+    def decode(self, two_pi_aware=True):
         params = decode_4_4(self.M4)
-        params = adjust_for_2pi_rotation(self.M2, *params)
+        assert jnp.allclose(self.M4, build_4_4(*params))
+        if two_pi_aware:
+            params = adjust_for_2pi_rotation(self.M2, *params)
         return params
     
     def __repr__(self):

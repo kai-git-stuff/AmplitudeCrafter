@@ -3,6 +3,7 @@ from AmplitudeCrafter.Nbody.DecayTopology import generateTreeDefinitions, Node, 
 from AmplitudeCrafter.ParticleLibrary import particle
 from jax import numpy as jnp
 from AmplitudeCrafter.Nbody.Decay import NBodyDecay
+from AmplitudeCrafter.Nbody.lorentz import LorentzTrafo
 
 from jax import config
 config.update("jax_enable_x64", True)
@@ -39,11 +40,12 @@ decay = NBodyDecay(0,1,2,3,4, 5)
 
 momenta = {   1: jnp.array([0, 0, -0.9, 1]),
               2: jnp.array([0, 0.15, 0.4,1]),
-              3: jnp.array([ 0, 0.3, 0.3,1]),
-              4: jnp.array([ 0, 0.1, 0.4,1]),
+              3: jnp.array([ 0, -0.3, -0.3,1]),
+              4: jnp.array([ 0, 0.2, 0.4,1]),
               5: jnp.array([ 0, 0.1, 0.8,1])}
 
 momenta = tg.trees[0].to_rest_frame(momenta)
+# print(momenta)
 first_node = tg.trees[0].inorder()[0]
 tree = tg.trees[0]
 tree2 = tg.trees[1]
@@ -52,9 +54,18 @@ tree2 = tg.trees[1]
 
 frame1 = tree.boost(Node(4), momenta)
 frame2 = tree2.boost(Node(4), momenta)
+# print(Node(4).momentum(Node(4).transform(frame1, momenta)))
 
 difference = frame1 @ frame2.inverse()
+# print(tree2.boost(Node(4), momenta, inverse=True).M4 - frame2.inverse().M4)
+
+assert jnp.allclose(tree2.boost(Node(4), momenta, inverse=True).M4, frame2.inverse().M4)
+
+print(difference.decode(False))
 print(difference.decode())
+
+# print(frame1.decode() - frame2.decode())
+
 
 
 # print(tree.boost(Node(4), momenta))

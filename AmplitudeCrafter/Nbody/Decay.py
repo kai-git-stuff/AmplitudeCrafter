@@ -12,7 +12,6 @@ class NBodyDecay:
         self.__children = children
         self.__parent = parent
         self.__particles = [parent, *children]
-
     
     @property
     def children(self):

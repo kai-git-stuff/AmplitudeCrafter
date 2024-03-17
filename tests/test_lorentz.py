@@ -5,13 +5,11 @@ import jax
 import numpy as np
 
 jax.config.update("jax_enable_x64", True)
-def test_lotentz():
+def test_lotentz( psi, theta, xi, theta_rf, phi_rf, psi_rf):
     m = 139.57018 # MeV
     p = jnp.array([-400., 0, 0])
     P = jnp.array([*p, (m**2 + jnp.sum(p**2))**0.5])
 
-  
-    psi, theta, xi, theta_rf, phi_rf, psi_rf = -1.8, 1.3, 1.4, 1.5, 2.6, -2.1 + 2* np.pi
     M = build_4_4(psi, theta, xi, theta_rf, phi_rf, psi_rf)
 
 
@@ -31,4 +29,10 @@ def test_lotentz():
 
 
 if __name__ == "__main__":
-    test_lotentz()
+    for i in range(20):
+        args = np.random.rand(6) * np.pi
+        args[-1] = args[-1] + 2 * np.pi
+        print(args)
+        test_lotentz(*args)
+    test_lotentz(-1.8, 1.3, 1.4, 1.5, 2.6, -2.1 + 2* np.pi)
+    
