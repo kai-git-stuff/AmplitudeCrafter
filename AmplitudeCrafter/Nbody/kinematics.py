@@ -162,7 +162,9 @@ def decode_4_4(matrix):
     xi = jnp.arccosh(gamma)
 
     psi = jnp.arctan2(jkm.y_component(V), jkm.x_component(V))
-    theta = jnp.arccos(jkm.z_component(V) / p)
+
+    cosine_input = jnp.where(abs(p) <= 1e-19, 0, jkm.z_component(V) / p)
+    theta = jnp.arccos(cosine_input)
 
     M_rf = boost_matrix_4_4_z(-xi) @ rotation_matrix_4_4_y(-theta) @ rotation_matrix_4_4_z(-psi) @ matrix
     phi_rf, theta_rf, psi_rf = decode_rotation_4x4(M_rf[:3, :3])

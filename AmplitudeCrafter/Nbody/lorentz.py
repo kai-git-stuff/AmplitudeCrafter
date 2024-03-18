@@ -21,9 +21,18 @@ class LorentzTrafo:
         else:
             raise ValueError(f"Cannot multiply LorentzTrafo with {type(other)}")
     
+    def __floor(self):
+        self.M4 = jnp.where(jnp.abs(self.M4) < 1e-10, 0, self.M4)
+        self.M2 = jnp.where(jnp.abs(self.M2) < 1e-10, 0 + 0j, self.M2)
+
     def decode(self, two_pi_aware=True):
+        self.__floor()
         params = decode_4_4(self.M4)
-        assert jnp.allclose(self.M4, build_4_4(*params))
+        if not jnp.allclose(self.M4, build_4_4(*params)):
+            print(params)
+            print(build_4_4(*params))
+            print(self.M4)
+            raise ValueError("Decoding failed")
         if two_pi_aware:
             params = adjust_for_2pi_rotation(self.M2, *params)
         return params
