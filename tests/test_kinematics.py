@@ -6,8 +6,22 @@ import numpy as np
 jax.config.update("jax_enable_x64", True)
 def test_kinematics():
     m = 139.57018 # MeV
-    p = jnp.array([-400., 0, 0])
+    p = jnp.array([-600., 0, 0])
     P = jnp.array([*p, (m**2 + jnp.sum(p**2))**0.5])
+
+    for matrix in [rotation_matrix_2_2_x, rotation_matrix_2_2_y, rotation_matrix_2_2_z]:
+        print(matrix(1.5) @ jnp.conj(matrix(1.5).T))
+        assert (
+                jnp.allclose(matrix(1.5) @ jnp.conj(matrix(1.5).T), jnp.eye(2))
+        )
+
+    for matrix in [boost_matrix_2_2_x, boost_matrix_2_2_y, boost_matrix_2_2_z]:
+        print(f"matrix: {matrix.__name__}" + "#" * 20)
+        print(matrix(rapidity(P)) @ matrix(rapidity(P)).T)
+        assert (
+                
+                jnp.allclose(matrix(rapidity(P)) @ matrix(rapidity(P)).T, jnp.eye(2))
+        )
 
     assert ( jnp.sum(
         abs(
