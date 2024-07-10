@@ -163,8 +163,6 @@ class Resonance:
 
         self.args = kwargs["args"]
         self.mapping_dict = mapping_dict
-        # self.data_key = [k for k,v in mapping_dict.items() if isinstance(v,specialParameter) and "sigma" in v.name][0]
-        # self.data_replacement = mapping_dict[self.data_key]
 
         module = importlib.import_module(".".join(kwargs["func"].split(".")[:-1]))
         self.lineshape = getattr(module,kwargs["func"].split(".")[-1])

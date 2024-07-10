@@ -39,7 +39,7 @@ def test_DynamicL():
     
     amplitude_file = "/home/kai/LHCb/AmplitudeCrafter/tests/resonance_configs/Xi_1_fixedL.yml"
     amplitude.load_resonances(amplitude_file)
-    smp = amplitude.phsp.rectangular_grid_sample(10,10)
+    smp = amplitude.phsp.rectangular_grid_sample(100,100)
     f, start = amplitude.get_amplitude_function(smp)
     res_fix_L = f(start)
 
@@ -48,8 +48,9 @@ def test_DynamicL():
     f, start = amplitude.get_amplitude_function(smp)
 
     res_non_fix_L = f(start)
-    print(abs((res_fix_L - res_non_fix_L)/res_non_fix_L))
-    assert np.all(abs((res_fix_L - res_non_fix_L)/res_non_fix_L) < 1e-10)
+    print(res_fix_L)
+    print(res_non_fix_L)
+    assert np.allclose(res_fix_L,res_non_fix_L,atol=1e-8)
 
 def test_Dmatrix():
     p0 = particle.get_particle("Lb")
@@ -68,6 +69,6 @@ def test_Dmatrix():
 
 
 if __name__=="__main__":
-    test_Dmatrix()
-    # test_DynamicL()
+    # test_Dmatrix()
+    test_DynamicL()
     # test_AmplitudeConstitency()

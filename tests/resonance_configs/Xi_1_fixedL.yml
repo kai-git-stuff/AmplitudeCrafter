@@ -1,69 +1,70 @@
-Ds3_2860:
-  func: jitter.resonances.relativisticBWResonance
-  spin: 6
+
+
+DKmatrix:
+  func: jitter.resonances.KmatX_ff
+  spin: 2
   parity: -1
   channel: 1
+  partial waves in:
+  - L: 0
+    S: 1
+    coupling: complex(1,0) const
+  - L: 2
+    S: 1
+    coupling: complex(-0.9024601594173283,-2.5332127239534)
+  - L: 2
+    S: 3
+    coupling: complex(2.8158791501493368,-0.3243050760487654)
+  partial waves out:
+  - L: 2
+    S: 0
+    coupling: complex(1,0.0) const
+  type: D0-Kmatrix
   expects:
+  - channels:
+    - chanel1:
+      - index: const 0
+      - L: const 2
+      - bg: -1.8772545435030707e-05
+      - mDbar: 1864.84 const
+      - mKaon: 493.677 const
+    - chanel2:
+      - index: const 1
+      - L: const 2
+      - bg: -0.024724158714961697
+      - mKanon: 493.677 const
+      - mD2007: 2006.85 const
+    - chanel3:
+      - index: const 3
+      - L: const 0
+      - bg: 10.979460713638325
+      - mKanon: 493.677 const
+      - mD_1_0_2420: 2420.0 const
+  - alphas:
+    - a1: complex(-20.508833773831405 from -40 to 40,-33.43855011158661 const)
+    - a2: complex(-8.247816343917291,47.273560172458865)
+  - resonances:
+    - pole1:
+      - pole mass: 2727.361693398764 from 2700.0 to 2730.0
+      - g:
+        - g1: -11.851028586984752
+        - g2: -0.7854880361135815
+        - g3: -442.50645611655216
+    - pole2:
+      - pole mass: 2950.0025887950583 from 2950.0 to 2980.0
+      - g:
+        - g1: -13.800685963019822
+        - g2: 0.4435143035808427
+        - g3: -1.549243380487963
   - sigma: sigma1
-  - m: 2860. const
-  - width: 53. const
-  - mD: 1864.84 const
-  - mK: 493.677 const
+  - index:  0 const
+  - L: 
+    - L1: 2 const
+    - L2: 2 const
+    - L3: 0 const
   - mLc: 2286.46 const
   - mLb: 5619.60 const
   - radiusResonance: 0.0015 const
   - radiusMother: 0.0015 const
-  - lr: 6 const
-  - ld: 4 const
-  partial waves in:
-  - L: 4
-    S: 5
-    coupling: complex(28.254172001510163,-41.59839711894527)
-  partial waves out:
-  - L: 6
-    S: 0
-    coupling: complex(1,0) const
-
-
-String_Test:
-  func: linespahes_for_testing.string_one
-  spin: 6
-  parity: -1
-  channel: 1
-  expects:
-    - string: hello wolrd! const
-  partial waves in:
-  - L: 4
-    S: 5
-    coupling: complexRPhi(28.254172001510163,-41.59839711894527 from -100 to 100 NAMED(var1) ) 
-  partial waves out:
-  - L: 6
-    S: 0
-    coupling: complex(1,1.4) const 
-  
-
-Ds3_2560:
-  func: jitter.resonances.relativisticBWResonance
-  spin: 6
-  parity: -1
-  channel: 1
-  expects:
-  - sigma: sigma1
-  - m: 2560. NAMED(mass2)
-  - width: 53. const
-  - mD: 1864.84 const
-  - mK: 493.677 const
-  - mLc: 2286.46 const
-  - mLb: 5619.60 const
-  - radiusResonance: 0.0015 NAMED(var2)
-  - radiusMother: 0.0015 NAMED(var3)
-  - lr: 6 const
-  - ld: 4 const
-  partial waves in:
-  - L: 4
-    S: 5
-    coupling: "lambda(x,y,z: - x + y *z) (var2; var3; 10. from -4 to 15 NAMED(var5))"
-  partial waves out:
-  - L: 6
-    S: 0
-    coupling: complex(1, 1.9) const
+  - lr: L
+  - ld: L_0
