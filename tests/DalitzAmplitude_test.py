@@ -23,7 +23,7 @@ def test_AmplitudeConstitency():
     smp = amplitude.phsp.rectangular_grid_sample(10,10)
     f, start = amplitude.get_amplitude_function(smp)
     ampl = f(start)
-    assert np.all( abs((np.array(ampl) - np.load(amplitude_dump))/np.load(amplitude_dump)) < 1e-8 )
+    assert np.allclose(ampl,np.load(amplitude_dump))
 
     interference,_ = amplitude.get_interference_terms(smp,["DKmatrix"],["Ds3_2860"])
     interference = interference(start)
@@ -48,11 +48,8 @@ def test_DynamicL():
     f, start = amplitude.get_amplitude_function(smp)
 
     res_non_fix_L = f(start)
-    print(abs((res_fix_L - res_non_fix_L)/res_non_fix_L))
-    assert np.all(abs((res_fix_L - res_non_fix_L)/res_non_fix_L) < 1e-10)
-
-
-
+    print(res_fix_L)
+    assert np.allclose(res_fix_L,res_non_fix_L)
 
 if __name__=="__main__":
     test_DynamicL()
