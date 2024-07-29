@@ -70,5 +70,5 @@ def test_Dmatrix():
 
 if __name__=="__main__":
     # test_Dmatrix()
-    test_DynamicL()
-    # test_AmplitudeConstitency()
+    # test_DynamicL()
+    test_AmplitudeConstitency()

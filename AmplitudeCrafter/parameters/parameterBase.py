@@ -58,7 +58,7 @@ def closing_index(string: str, opening_index):
 
 
 def inside(opening, string: str):
-    if not "(" in opening:
+    if "(" not in opening:
         raise ValueError("")
 
     opening_index = string.index(opening) + len(opening) - 1
