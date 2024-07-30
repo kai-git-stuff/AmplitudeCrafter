@@ -126,6 +126,10 @@ class DecayTreeNode:
         return self.__decay
     
     @property
+    def momenta(self):
+        return {i + 1: n.p for i,n in enumerate(self.daughters)}
+    
+    @property
     def stable(self):
         return self.decay is None
     
@@ -196,8 +200,8 @@ class DecayTreeNode:
             helicities.append(hel)
 
         if len(self.daughters) == 3 :
-            smp = self.smp
-            f, start = self.decay.get_amplitude_function(smp,total_absolute=False, just_in_time_compile = False, numericArgs=False,resonances=resonances)
+            momenta = self.momenta
+            f, start = self.decay.get_amplitude_function(momenta, numericArgs=False,resonances=resonances)
             hel = [self] + list(self.daughters)
             fs.append(f)
             start_params.append(start)

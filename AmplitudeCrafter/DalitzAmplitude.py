@@ -14,6 +14,7 @@ from jitter.amplitudes.dalitz_plot_function import helicity_options_nojit
 from jax import numpy as jnp
 from multiprocessing import Pool
 from AmplitudeCrafter.helpers import flatten, ensure_numeric
+from decayangle.kinematics import mass_squared  
 import warnings
 
 class DalitzAmplitude:
@@ -175,7 +176,8 @@ class DalitzAmplitude:
         parameters = [ensure_numeric(p) for p in parameters] # to get rid of numpy types and so on
         write(self.dumpd(parameters,fit_result,mapping_dict=mapping_dict),fname)
 
-    def get_amplitude_function(self,smp,resonances = None, total_absolute=True, just_in_time_compile = True, numericArgs=True):
+    def get_amplitude_function(self,momenta,resonances = None, numericArgs=True):
+        # for definition of momenta see decayangle documentation
         # resonances parameter designed to get run systematic studies later
         # so we can use the same config, but exclude or include specific resonances
         if not self.loaded:
@@ -190,31 +192,30 @@ class DalitzAmplitude:
         params = self.get_args()
 
         mapping_dict = {p.name:p(numeric=True) for k,p in  self.mapping_dict.items() }
-        mapping_dict["sigma3"] = self.phsp.m2ab(smp)
-        mapping_dict["sigma2"] = self.phsp.m2ac(smp)
-        mapping_dict["sigma1"] = self.phsp.m2bc(smp)
+
+        mapping_dict["sigma1"] = mass_squared(momenta[2] + momenta[3])
+        mapping_dict["sigma2"] = mass_squared(momenta[1] + momenta[3])
+        mapping_dict["sigma3"] = mass_squared(momenta[1] + momenta[2])
 
         bls_in = self.get_bls_in(resonances)
         bls_out = self.get_bls_out(resonances)
         resonance_tuples = self.get_resonance_tuples(resonances)
         resonance_args = self.get_resonance_targs(resonances)
         spins = [self.p0.spin] + [p.spin for p in self.particles]
-        parities = [self.p0.parity] + [p.parity for p in self.particles]
         masses = [self.p0.mass] + [p.mass for p in self.particles]
 
-        resonances = [[r for r in self.resonances[i] if check_if_wanted(r.name,resonances)] for i in [1,2,3]]
-        f,start = construct_function(masses,spins,parities,params,mapping_dict,
-                                resonances,resonance_tuples,bls_in,bls_out,resonance_args,smp,self.phsp,total_absolute,just_in_time_compile, numericArgs = numericArgs)
-        
+        resonances = {i:[r for r in self.resonances[i] if check_if_wanted(r.name,resonances)] for i in [1,2,3]}
+        f,start = construct_function(masses,spins,params,mapping_dict,
+                                resonances, resonance_tuples, bls_in,bls_out,resonance_args,momenta,numericArgs = numericArgs)
         return f,start
 
-    def get_interference_terms(self,smp,resonances1,resonances2):
+    def get_interference_terms(self,momenta,resonances1,resonances2):
         """
         Not yet properly tested, even though it should work!
         TODO: Test 
         """
-        f1,start = self.get_amplitude_function(smp,resonances=resonances1,total_absolute=False,just_in_time_compile=False)
-        f2,start = self.get_amplitude_function(smp,resonances=resonances2,total_absolute=False,just_in_time_compile=False)
+        f1,start = self.get_amplitude_function(momenta,resonances=resonances1)
+        f2,start = self.get_amplitude_function(momenta,resonances=resonances2)
 
         def interference(args,nu,*lambdas):
             return f1(args,nu,*lambdas) * conjugate(f2(args,nu,*lambdas)) + conjugate(f1(args,nu,*lambdas)) * f2(args,nu,*lambdas)
