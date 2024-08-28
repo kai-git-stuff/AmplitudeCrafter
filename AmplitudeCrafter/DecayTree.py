@@ -143,10 +143,10 @@ class DecayTreeNode:
     def __repr__(self):
         return self.name + " " + str(self.particle)
 
-    def load_resonances(self,f):
+    def load_resonances(self,f, bls_check = True):
         if len(self.daughters) != 3:
             raise NotImplementedError("Only resonances for Dalitz Decays!")
-        self.decay.load_resonances(f)
+        self.decay.load_resonances(f, bls_check=bls_check)
 
     def getHelicityAngles(self):
         """

@@ -1,0 +1,30 @@
+# ch3:
+#   func: linespahes_for_testing.constant_one
+#   spin: 1
+#   parity: 1
+#   channel: 3
+#   expects: []
+#   partial waves in:
+#   - L: 2
+#     S: 1
+#     coupling: complex(1,0)
+#   partial waves out:
+#   - L: 2
+#     S: 3
+#     coupling: complex(1,0) const
+
+
+ch1:
+  func: linespahes_for_testing.constant_one
+  spin: 4
+  parity: 1
+  channel: 1
+  expects: []
+  partial waves in:
+  - L: 2
+    S: 3
+    coupling: complex(1,0)
+  partial waves out:
+  - L: 4
+    S: 2
+    coupling: complex(1,0) const

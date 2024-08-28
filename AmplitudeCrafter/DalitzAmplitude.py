@@ -128,7 +128,7 @@ class DalitzAmplitude:
         # dtc.update({k:arg_dict[v.name] for k,v in dtc.items()})
         return dtc
             
-    def load_resonances(self,f=config_dir + "decay_example.yml"):
+    def load_resonances(self,f=config_dir + "decay_example.yml", bls_check = True):
         with ParameterScope(self.__scope) as scope:
             res, mapping_dict = load_resonances(f)
             self.add_file(f)
@@ -139,7 +139,8 @@ class DalitzAmplitude:
                 for resonance in resonances_channel:
                     resonance.p0 = two_body_momentum(self.md,*masses[channel])
             
-            self.check_bls()
+            if bls_check:
+                self.check_bls()
             self.__loaded = True
   
     def get_resonance_tuples(self,resonances=None):
