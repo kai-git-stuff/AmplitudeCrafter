@@ -128,3 +128,13 @@ def flatten(listoflists):
         ret_list.append(listoflists)
     flatten_recursive(listoflists,lst)
     return lst
+
+def CPSign(L,S):
+    return (-1)**(L//2)
+
+def flipCP(bls):
+    new_bls = {}
+    for (L,S), b in bls:
+        new_bls[(L,S)] = CPSign(L,S) * b
+
+    return new_bls

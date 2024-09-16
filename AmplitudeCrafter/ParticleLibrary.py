@@ -13,6 +13,7 @@ class particle:
         self.mass = mass
         self.spin = spin
         self.parity = parity
+        self.C = c
         self.decay = None
         self.c = c
         self.charge = charge
